@@ -1,0 +1,25 @@
+{
+  "name": "react-project-setup",
+  "version": "1.0.0",
+  "description": "Shell scripts for creating boilerplate react code.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coryell1287/setup.git"
+  },
+  "keywords": [
+    "react",
+    "javascript",
+    "BDD",
+    "testing"
+  ],
+  "author": "Coryell Long",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/coryell1287/setup/issues"
+  },
+  "homepage": "https://github.com/coryell1287/setup#readme"
+}
