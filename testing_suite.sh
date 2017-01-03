@@ -17,11 +17,11 @@ echo "module.exports = function(config) {
     basePath: '',
     frameworks: ['browserify', 'mocha'],
     files: [
-      'test/**/*.test.js'
+      'tests/**/*.test.jsx'
     ],
     preprocessors: {
-      'src/**/*.js': ['babel', 'browserify'],
-      'test/**/*.js': ['babel', 'browserify']
+      'src/**/*.jsx': ['babel', 'browserify'],
+      'tests/**/*.jsx': ['babel', 'browserify']
     },
     babelPreprocessor: {
       options: {
@@ -30,6 +30,7 @@ echo "module.exports = function(config) {
     },
     browserify: {
       debug: true,
+      extensions: ['.jsx', '.js'],
       transform: [
         ['babelify', { presets: ['airbnb'] }]
       ],
@@ -52,7 +53,7 @@ echo "module.exports = function(config) {
 "> karma.conf.js
 
 mkdir src tests
-touch src/Foo.js test/Foo.test.js
+touch src/Foo.jsx tests/Foo.test.jsx
 echo "import React, { PropTypes } from 'react';
 
 const propTypes = {};
@@ -75,7 +76,7 @@ Foo.propTypes = propTypes;
 Foo.defaultProps = defaultProps;
 
 export default Foo;
-"> ./src/Foo.js
+"> ./src/Foo.jsx
 
 echo "import React from 'react';
 import { shallow, mount, render } from 'enzyme';
@@ -95,9 +96,9 @@ describe(\"A suite\", function() {
     expect(mount(<Foo />).find('.foo').length).equal(1);
   });
 });
-"> ./tests/Foo.test.js
+"> ./tests/Foo.test.jsx
 
 echo -e "\n\nLaunching testing suite.\n\n"
- sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers Chrome",/' package.json
-sed -i '/"test":/a "test:watch": ".\/node_modules\/karma\/bin\/karma start --auto-watch"' package.json
+sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1",/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers Chrome",/' package.json
+sed -i '/"test":/a \\t"test:watch": ".\/node_modules\/karma\/bin\/karma start --auto-watch"' package.json
 npm test

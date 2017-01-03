@@ -23,7 +23,9 @@ sudo npm install --save-dev babel-plugin-transform-react-jsx
 sudo npm install --save-dev live-server
 
 
-
+sed -i '/"test":/a \\t"clean": "rm -f ./*.js; rm -f .\/*.js.map; rm -f .\/intermediates\/*.js; rm -f .\/intermediates\/*.js.map",' package.json
+sed -i '/"clean":/a \\t"serve": ".\/node_modules\/.bin\/live-server --host=localhost --port=8080 .",' package.json
+sed -i '/"serve":/a \\t"go": "concurrent \\"npm run serve\\" "' package.json
 # "clean": "rm -f ./*.js; rm -f ./*.js.map; rm -f ./intermediates/*.js; rm -f ./intermediates/*.js.map",
 # "serve": "./node_modules/.bin/live-server --host=localhost --port=8080 .",
 # "go": "concurrent \"npm run serve\" "
