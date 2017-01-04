@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-echo -e "\n\nBeginning basic react setup.\n\n"
+echo -e "\n\n\t\e[1;35mBeginning basic react setup.\n\n\e[0m"
 #Install npm packages
 
 # react dependencies
@@ -21,14 +21,6 @@ sudo npm install --save-dev babel-plugin-transform-react-jsx
 
 # Install live reload
 sudo npm install --save-dev live-server
-
-
-sed -i '/"test":/a \\t"clean": "rm -f ./*.js; rm -f .\/*.js.map; rm -f .\/intermediates\/*.js; rm -f .\/intermediates\/*.js.map",' package.json
-sed -i '/"clean":/a \\t"serve": ".\/node_modules\/.bin\/live-server --host=localhost --port=8080 .",' package.json
-sed -i '/"serve":/a \\t"go": "concurrent \\"npm run serve\\" "' package.json
-# "clean": "rm -f ./*.js; rm -f ./*.js.map; rm -f ./intermediates/*.js; rm -f ./intermediates/*.js.map",
-# "serve": "./node_modules/.bin/live-server --host=localhost --port=8080 .",
-# "go": "concurrent \"npm run serve\" "
 
 
 # Install browserify
@@ -51,7 +43,9 @@ sudo npm install --save-dev gulp gulp-load-plugins gulp-sass gulp-cssmin gulp-au
 
 
 # Create the directory structure
-mkdir -p ./{public,app/{components,styles}}
+mkdir -p ./{public,app/{components,styles/{css,scss}}}
+touch ./app/styles/scss/styles.scss
+touch ./app/styles/css/styles.min.css
 
 # Creata a template for Application.jsx
 touch ./app/Application.jsx
@@ -141,8 +135,30 @@ echo -e "{
   \"presets\": [\"es2015\", \"stage-0\", \"react\"]
 }"> ./.babelrc
 
+
+echo -e "<!doctype html>
+<html lang=\"en\">
+<head>
+    <meta charset=\"UTF-8\">
+    <meta name=\"viewport\"
+          content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">
+    <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">
+    <link rel=\"stylesheet\" href=\"node_modules/bootstrap/dist/css/bootstrap.min.css\">
+    <link rel=\"stylesheet\" href=\"app/styles/css/styles.min.css\">
+    <title>React Basic Setup</title>
+</head>
+<body>
+<div id=\"app\"></div>
+<script src=\"public/build/browserify.js\"></script>
+</body>
+</html>">index.html
+
 # Launch the application
 
-echo -e "\n\nLaunching application.\n\n"
+sed -i '/"test":/i \\t"clean": "rm -f ./*.js; rm -f .\/*.js.map; rm -f .\/intermediates\/*.js; rm -f .\/intermediates\/*.js.map",' package.json
+sed -i '/"clean":/a \\t"serve": ".\/node_modules\/.bin\/live-server --host=localhost --port=8080 .",' package.json
+sed -i '/"serve":/i \\t"go": "concurrent \\"npm run serve\\" ",' package.json
+
+echo -e "\n\n\t\e[1;32mLaunching application.\n\n\e[0m"
 npm run serve &
 gulp
