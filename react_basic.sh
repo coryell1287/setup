@@ -9,7 +9,7 @@ sudo npm install --save react react-dom react-addons-test-utils
 sudo npm install --save object-assign
 sudo npm install --save es6-promise
 sudo npm install --save es6-shim
-
+sudo npm install --save whatwg-fetch
 #Install bootstrap
 sudo npm install --save bootstrap
 
@@ -34,7 +34,29 @@ sudo npm install --save-dev browserify
 sudo npm install --save-dev vinyl-source-stream
 
 # Install all gulp plugins
+
+#Install gulp globally if not present
+#sudo npm install -g gulp
 sudo npm install --save-dev gulp gulp-load-plugins gulp-sass gulp-cssmin gulp-autoprefixer gulp-rename gulp-sourcemaps
+
+#Install jsHint
+sudo npm install jshint gulp-jshint --save-dev
+sudo npm install --save-dev jshint-stylish
+
+echo -e "
+{
+  \"node\": true,
+  \"browser\": true,
+  \"esnext\": true,
+  \"newcap\": false,
+  \"eqeqeq\": true,
+  \"latedef\": false,
+  \"nonbsp\": true,
+  \"quotmark\": true,
+  \"single\": require single quotes
+  \"undef\": true,
+  \"unused\": true,
+}">.jshintrc
 
 #The below plugins are optional
 #sudo npm install --save-dev gulp-uglify
@@ -43,27 +65,27 @@ sudo npm install --save-dev gulp gulp-load-plugins gulp-sass gulp-cssmin gulp-au
 
 
 # Create the directory structure
-mkdir -p ./{public,app/{components,styles/{css,scss}}}
-touch ./app/styles/scss/styles.scss
-touch ./app/styles/css/styles.min.css
+mkdir -p ./{public,src/{components,styles/{css,scss}}}
+touch ./src/styles/scss/styles.scss
+touch ./src/styles/css/styles.min.css
 
 # Creata a template for Application.jsx
 touch ./app/Application.jsx
 
-echo -e "import React from \"react\";
-import ReactDOM from \"react-dom\";
-import Main from \"Main\";
+echo -e "import React from 'react';
+import ReactDOM from 'react-dom';
+import Main from 'Main';
 
 ReactDOM.render(
     <Main/>,
     document.getElementById('app')
-);">./app/Application.jsx
+);">./src/Application.jsx
 
 
 # Create a template for Main.jsx with bootstrap included
-touch ./app/components/Main.jsx
+touch ./src/components/Main.jsx
 
-echo -e "import React from \"react\";
+echo -e "import React from 'react';
 
 const Main = () =>{
     return (
@@ -83,52 +105,51 @@ export default Main;
 echo -e "const gulp = require('gulp');
 const browserify = require('browserify');
 const source = require('vinyl-source-stream');
-const plug = require('gulp-load-plugins')({lazy: true});
+const plug = require('gulp-load-plugins')({ lazy: true });
 const sourcemaps = require('gulp-sourcemaps');
-
+const whatwgfetch = require('whatwg-fetch');
 
 gulp.task('react', function () {
-    return browserify({
-        entries: ['./app/Application.jsx'],
-        extensions: ['.jsx', '.js'],
-        paths: ['./app/components/']
+  return browserify({
+    entries: [whatwgfetch, './src/Application.jsx'],
+    extensions: ['.jsx', '.js'],
+    paths: ['./src/components/']
+  })
+    .transform('babelify', {
+      //The order of this is important
+      presets: ['es2015', 'stage-0', 'react']
     })
-        .transform('babelify', {
-
-            //The order of this is important
-            presets: [\"es2015\", \"stage-0\", \"react\"]
-        })
-        .bundle()
-        .pipe(source('browserify.js'))
-        .pipe(gulp.dest('./public/build/'))
+    .pipe(plug.jshint())
+    .pipe(plug.jshint.reporter('stylish', { verbose: true }))
+    .bundle()
+    .pipe(source('browserify.js'))
+    .pipe(gulp.dest('./public/build/'))
 });
 
-gulp.task(\"sasstocss\", function () {
-    gulp.src(\"./app/styles/scss/styles.scss\")
-        .pipe(plug.autoprefixer({browsers: ['last 2 versions'], cascade: false}))
-        .pipe(plug.sass())
-        .pipe(plug.cssmin())
-        .pipe(plug.rename('styles.min.css'))
-        .pipe(gulp.dest(\"./app/styles/css\"));
+gulp.task('sasstocss', function () {
+  gulp.src('./src/styles/scss/styles.scss')
+    .pipe(plug.autoprefixer({ browsers: ['last 2 versions'], cascade: false }))
+    .pipe(plug.sass())
+    .pipe(plug.cssmin())
+    .pipe(plug.rename('styles.min.css'))
+    .pipe(gulp.dest('./src/styles/css'));
 });
 
 
 gulp.task('sourcemaps', function () {
-    gulp.src('public/build/*.js')
-        .pipe(sourcemaps.init())
-        .pipe(sourcemaps.write('../maps'))
-        .pipe(gulp.dest('public/maps/'));
+  gulp.src('public/build/*.js')
+    .pipe(sourcemaps.init())
+    .pipe(sourcemaps.write('../maps'))
+    .pipe(gulp.dest('public/maps/'));
 });
 
-gulp.task(\"watch\", function () {
-    gulp.watch(\"./app/components/**/*.jsx\", [\"react\", \"sourcemaps\"]);
-    gulp.watch(\"./public/scss/**/*.scss\", [\"sasstocss\"])
+gulp.task('watch', function () {
+  gulp.watch('./src/components/**/*.jsx', ['react', 'sourcemaps']);
+  gulp.watch('./src/styles/scss/**/*.scss', ['sasstocss'])
 });
 
 
-gulp.task(\"default\", [\"react\", \"sasstocss\", \"sourcemaps\", \"watch\"]);
-
-"> Gulpfile.js
+gulp.task('default', ['react', 'sasstocss', 'sourcemaps', 'watch']);"> Gulpfile.js
 
 # Create the .babelrc file
 echo -e "{
