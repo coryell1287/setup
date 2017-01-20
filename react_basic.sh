@@ -70,24 +70,21 @@ touch ./src/styles/scss/styles.scss
 touch ./src/styles/css/styles.min.css
 
 # Creata a template for Application.jsx
-touch ./app/Application.jsx
+touch ./app/app.jsx
 
 echo -e "import React from 'react';
 import ReactDOM from 'react-dom';
-import Main from 'Main';
+import Application from 'Application';
 
 ReactDOM.render(
-    <Main/>,
+    <Application/>,
     document.getElementById('app')
-);">./src/Application.jsx
+);">./src/app.jsx
 
-
-# Create a template for Main.jsx with bootstrap included
-touch ./src/components/Main.jsx
 
 echo -e "import React from 'react';
 
-const Main = () =>{
+const Application = () =>{
     return (
         <div className=\"jumbotron\">
             <h1>Hello, world!</h1>
@@ -97,8 +94,8 @@ const Main = () =>{
     );
 };
 
-export default Main;
-">./app/components/Main.jsx
+export default Application;
+">./app/components/Application.jsx
 
 
 # Create the Gulpfile
@@ -107,11 +104,10 @@ const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 const plug = require('gulp-load-plugins')({ lazy: true });
 const sourcemaps = require('gulp-sourcemaps');
-const whatwgfetch = require('whatwg-fetch');
 
 gulp.task('react', function () {
   return browserify({
-    entries: [whatwgfetch, './src/Application.jsx'],
+    entries: ['./node_modules/whatwg-fetch/fetch.js', './src/app.jsx'],
     extensions: ['.jsx', '.js'],
     paths: ['./src/components/']
   })
