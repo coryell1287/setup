@@ -118,7 +118,7 @@ gulp.task('react', function () {
     .pipe(plug.jshint())
     .pipe(plug.jshint.reporter('stylish', { verbose: true }))
     .bundle()
-    .pipe(source('browserify.js'))
+    .pipe(source('app.js'))
     .pipe(gulp.dest('./public/build/'))
 });
 
@@ -166,7 +166,7 @@ echo -e "<!doctype html>
 </head>
 <body>
 <div id=\"app\"></div>
-<script src=\"public/build/browserify.js\"></script>
+<script src=\"public/build/app.js\"></script>
 </body>
 </html>">index.html
 
