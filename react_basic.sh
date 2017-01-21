@@ -22,11 +22,8 @@ sudo npm install --save-dev babel-plugin-transform-react-jsx
 # Install live reload
 sudo npm install --save-dev live-server
 
-
 # Install browserify
 sudo npm install --save-dev browserify
-
-
 
 # vinyl-source-stream is is a Virtual file that converts the readable
 # stream you get from browserify into a vinyl stream that gulp is expecting to get.
@@ -64,13 +61,11 @@ echo -e "
 #sudo npm install --save-dev gulp-plumber
 
 
-# Create the directory structure
+# Create the directory structure 
 mkdir -p ./{public,src/{components,styles/{css,scss}}}
 touch ./src/styles/scss/styles.scss
 touch ./src/styles/css/styles.min.css
 
-# Creata a template for Application.jsx
-touch ./app/app.jsx
 
 echo -e "import React from 'react';
 import ReactDOM from 'react-dom';
@@ -79,7 +74,7 @@ import Application from 'Application';
 ReactDOM.render(
     <Application/>,
     document.getElementById('root')
-);">./src/app.jsx
+);">./src/index.js
 
 
 echo -e "import React from 'react';
@@ -95,7 +90,7 @@ const Application = () =>{
 };
 
 export default Application;
-">./app/components/Application.jsx
+">./src/components/Application.jsx
 
 
 # Create the Gulpfile
@@ -107,12 +102,14 @@ const sourcemaps = require('gulp-sourcemaps');
 
 gulp.task('react', function () {
   return browserify({
-    entries: ['./node_modules/whatwg-fetch/fetch.js', './src/app.jsx'],
+    entries: [
+    './node_modules/whatwg-fetch/fetch.js',
+    './src/index.js'
+    ],
     extensions: ['.jsx', '.js'],
     paths: ['./src/components/']
   })
     .transform('babelify', {
-      //The order of this is important
       presets: ['es2015', 'stage-0', 'react']
     })
     .pipe(plug.jshint())
