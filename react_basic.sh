@@ -78,7 +78,7 @@ import Application from 'Application';
 
 ReactDOM.render(
     <Application/>,
-    document.getElementById('app')
+    document.getElementById('root')
 );">./src/app.jsx
 
 
@@ -165,7 +165,7 @@ echo -e "<!doctype html>
     <title>React Basic Setup</title>
 </head>
 <body>
-<div id=\"app\"></div>
+<div id=\"root\"></div>
 <script src=\"public/build/app.js\"></script>
 </body>
 </html>">index.html
