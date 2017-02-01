@@ -20,7 +20,7 @@ sudo npm install --save-dev babel-plugin-transform-class-properties
 sudo npm install --save-dev babel-plugin-transform-react-jsx
 
 # Install live reload
-sudo npm install --save-dev live-server
+sudo npm install --save-dev browser-sync
 
 # Install browserify
 sudo npm install --save-dev browserify
@@ -61,7 +61,7 @@ echo -e "
 #sudo npm install --save-dev gulp-plumber
 
 
-# Create the directory structure 
+# Create the directory structure
 mkdir -p ./{public,src/{components,styles/{css,scss}}}
 touch ./src/styles/scss/styles.scss
 touch ./src/styles/css/styles.min.css
@@ -97,50 +97,58 @@ export default Application;
 echo -e "const gulp = require('gulp');
 const browserify = require('browserify');
 const source = require('vinyl-source-stream');
+const browserSync = require('browser-sync').create();
 const plug = require('gulp-load-plugins')({ lazy: true });
-const sourcemaps = require('gulp-sourcemaps');
 
-gulp.task('react', function () {
+
+gulp.task('browser-sync', () => {
+   browserSync.init({
+     server: {
+       baseDir: './public/',
+     },
+   });
+ });
+
+gulp.task('react', () => {
   return browserify({
     entries: [
-    './node_modules/whatwg-fetch/fetch.js',
-    './src/index.js'
+      './node_modules/whatwg-fetch/fetch.js',
+      './src/index.js',
     ],
     extensions: ['.jsx', '.js'],
-    paths: ['./src/components/']
+    paths: ['./src/components/'],
   })
     .transform('babelify', {
-      presets: ['es2015', 'stage-0', 'react']
+      presets: ['es2015', 'stage-0', 'react'],
     })
     .pipe(plug.jshint())
     .pipe(plug.jshint.reporter('stylish', { verbose: true }))
     .bundle()
     .pipe(source('app.js'))
-    .pipe(gulp.dest('./public/build/'))
+    .pipe(gulp.dest('./public/js/'));
 });
 
-gulp.task('sasstocss', function () {
+gulp.task('sasstocss', () => {
   gulp.src('./src/styles/scss/styles.scss')
     .pipe(plug.autoprefixer({ browsers: ['last 2 versions'], cascade: false }))
     .pipe(plug.sass())
     .pipe(plug.cssmin())
     .pipe(plug.rename('styles.min.css'))
-    .pipe(gulp.dest('./src/styles/css'));
+    .pipe(gulp.dest('./public/css/'));
 });
 
-
-gulp.task('sourcemaps', function () {
-  gulp.src('public/build/*.js')
-    .pipe(sourcemaps.init())
-    .pipe(sourcemaps.write('../maps'))
+gulp.task('sourcemaps', () => {
+  gulp.src('./public/js/*.js')
+    .pipe(plug.sourcemaps.init())
+    .pipe(plug.sourcemaps.write('../maps'))
     .pipe(gulp.dest('public/maps/'));
 });
 
-gulp.task('watch', function () {
+gulp.task('watch', () => {
   gulp.watch('./src/components/**/*.jsx', ['react', 'sourcemaps']);
-  gulp.watch('./src/styles/scss/**/*.scss', ['sasstocss'])
+  gulp.watch('./src/components/d3/**/*.js', ['react', 'sourcemaps']);
+  gulp.watch('./src/styles/scss/**/*.scss', ['sasstocss']);
 });
-
 
 gulp.task('default', ['react', 'sasstocss', 'sourcemaps', 'watch']);"> Gulpfile.js
 
@@ -169,10 +177,8 @@ echo -e "<!doctype html>
 
 # Launch the application
 
-sed -i '/"test":/i \\t"clean": "rm -f ./*.js; rm -f .\/*.js.map; rm -f .\/intermediates\/*.js; rm -f .\/intermediates\/*.js.map",' package.json
-sed -i '/"clean":/a \\t"serve": ".\/node_modules\/.bin\/live-server --host=localhost --port=8080 .",' package.json
-sed -i '/"serve":/i \\t"go": "concurrent \\"npm run serve\\" ",' package.json
+sed -i '/"test":/i \\t"clean": "rm -f ./public/maps/*.js",' package.json
 
 echo -e "\n\n\t\e[1;32mLaunching application.\n\n\e[0m"
-npm run serve &
+
 gulp
