@@ -62,7 +62,7 @@ echo -e "
 
 
 # Create the directory structure
-mkdir -p ./{public,src/{components,styles/{css,scss}}}
+mkdir -p ./{public/{css,js},src/{components,styles/scss}}
 touch ./src/styles/scss/styles.scss
 touch ./src/styles/css/styles.min.css
 
@@ -99,15 +99,18 @@ const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 const browserSync = require('browser-sync').create();
 const plug = require('gulp-load-plugins')({ lazy: true });
+const stylish = require('jshint-stylish');
 
-
-gulp.task('browser-sync', () => {
-   browserSync.init({
-     server: {
-       baseDir: './public/',
-     },
-   });
- });
+gulp.task('browser-sync', ['lint', 'react', 'sasstocss', 'sourcemaps'], () => {
+  browserSync.init({
+    server: {
+      baseDir: './public/',
+      files: ['./public/css/*.css', './public/js/*.js'],
+    },
+  });
+  gulp.watch('./src/components/**/*.jsx', ['react', 'lint', 'sourcemaps']);
+  gulp.watch('./src/styles/scss/**/*.scss', ['sasstocss']);
+});
 
 gulp.task('react', () => {
   return browserify({
@@ -121,11 +124,17 @@ gulp.task('react', () => {
     .transform('babelify', {
       presets: ['es2015', 'stage-0', 'react'],
     })
-    .pipe(plug.jshint())
-    .pipe(plug.jshint.reporter('stylish', { verbose: true }))
     .bundle()
     .pipe(source('app.js'))
-    .pipe(gulp.dest('./public/js/'));
+    .pipe(gulp.dest('./public/js/'))
+    .pipe(browserSync.stream());
+});
+
+gulp.task('lint', () => {
+  return gulp.src('./src/components/**/*.jsx')
+    .pipe(plug.jshint())
+    .pipe(plug.jshint.reporter(stylish, { verbose: true }))
+    .pipe(browserSync.stream());
 });
 
 gulp.task('sasstocss', () => {
@@ -134,23 +143,25 @@ gulp.task('sasstocss', () => {
     .pipe(plug.sass())
     .pipe(plug.cssmin())
     .pipe(plug.rename('styles.min.css'))
-    .pipe(gulp.dest('./public/css/'));
+    .pipe(gulp.dest('./public/css/'))
+    .pipe(browserSync.stream());
 });
 
 gulp.task('sourcemaps', () => {
   gulp.src('./public/js/*.js')
     .pipe(plug.sourcemaps.init())
     .pipe(plug.sourcemaps.write('../maps'))
-    .pipe(gulp.dest('public/maps/'));
+    .pipe(gulp.dest('public/maps/'))
+    .pipe(browserSync.stream());
 });
 
 gulp.task('watch', () => {
-  gulp.watch('./src/components/**/*.jsx', ['react', 'sourcemaps']);
-  gulp.watch('./src/components/d3/**/*.js', ['react', 'sourcemaps']);
+  gulp.watch('./src/components/**/*.jsx', ['react', 'lint', 'sourcemaps']);
   gulp.watch('./src/styles/scss/**/*.scss', ['sasstocss']);
 });
 
-gulp.task('default', ['react', 'sasstocss', 'sourcemaps', 'watch']);"> Gulpfile.js
+gulp.task('default', ['browser-sync']);
+"> Gulpfile.js
 
 # Create the .babelrc file
 echo -e "{
@@ -171,9 +182,9 @@ echo -e "<!doctype html>
 </head>
 <body>
 <div id=\"root\"></div>
-<script src=\"public/build/app.js\"></script>
+<script src=\"js/app.js\"></script>
 </body>
-</html>">index.html
+</html>">./public/index.html
 
 # Launch the application
 
