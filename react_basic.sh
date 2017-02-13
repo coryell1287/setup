@@ -36,29 +36,12 @@ sudo npm install --save-dev vinyl-source-stream
 #sudo npm install -g gulp
 sudo npm install --save-dev gulp gulp-load-plugins gulp-sass gulp-cssmin gulp-autoprefixer gulp-rename gulp-sourcemaps
 
-#Install jsHint
-sudo npm install jshint gulp-jshint --save-dev
-sudo npm install --save-dev jshint-stylish
-
-echo -e "
-{
-  \"node\": true,
-  \"browser\": true,
-  \"esnext\": true,
-  \"newcap\": false,
-  \"eqeqeq\": true,
-  \"latedef\": false,
-  \"nonbsp\": true,
-  \"quotmark\": true,
-  \"single\": require single quotes
-  \"undef\": true,
-  \"unused\": true,
-}">.jshintrc
 
 #The below plugins are optional
 #sudo npm install --save-dev gulp-uglify
 #sudo npm install --save-dev gulp-concat-css
-#sudo npm install --save-dev gulp-plumber
+sudo npm install --save-dev gulp-imagemin
+sudo npm install --save-dev gulp-plumber
 
 
 # Create the directory structure
@@ -99,9 +82,9 @@ const browserify = require('browserify');
 const source = require('vinyl-source-stream');
 const browserSync = require('browser-sync').create();
 const plug = require('gulp-load-plugins')({ lazy: true });
-const stylish = require('jshint-stylish');
 
-gulp.task('browser-sync', ['lint', 'react', 'sasstocss', 'sourcemaps'], () => {
+
+gulp.task('browser-sync', ['react', 'sasstocss', 'sourcemaps'], () => {
   browserSync.init({
     server: {
       baseDir: './public/',
@@ -125,20 +108,17 @@ gulp.task('react', () => {
       presets: ['es2015', 'stage-0', 'react'],
     })
     .bundle()
+    .pipe(plug.plumber())
     .pipe(source('app.js'))
     .pipe(gulp.dest('./public/js/'))
     .pipe(browserSync.stream());
 });
 
-gulp.task('lint', () => {
-  return gulp.src('./src/components/**/*.jsx')
-    .pipe(plug.jshint())
-    .pipe(plug.jshint.reporter(stylish, { verbose: true }))
-    .pipe(browserSync.stream());
-});
+
 
 gulp.task('sasstocss', () => {
   gulp.src('./src/styles/scss/styles.scss')
+    .pipe(plug.plumber())
     .pipe(plug.autoprefixer({ browsers: ['last 2 versions'], cascade: false }))
     .pipe(plug.sass())
     .pipe(plug.cssmin())
@@ -147,8 +127,15 @@ gulp.task('sasstocss', () => {
     .pipe(browserSync.stream());
 });
 
+gulp.task('compress-images', () => {
+   gulp.src('./src/styles/scss/styles.scss')
+     .pipe(plug.imagemin())
+     .pipe(gulp.dest('public/assets/img/'))
+}
+
 gulp.task('sourcemaps', () => {
   gulp.src('./public/js/*.js')
+    .pipe(plug.plumber())
     .pipe(plug.sourcemaps.init())
     .pipe(plug.sourcemaps.write('../maps'))
     .pipe(gulp.dest('public/maps/'))
