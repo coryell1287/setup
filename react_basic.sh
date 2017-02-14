@@ -19,7 +19,7 @@ sudo npm install --save-dev babel-preset-react babel-preset-es2015 babel-es6-pol
 sudo npm install --save-dev babel-plugin-transform-class-properties
 sudo npm install --save-dev babel-plugin-transform-react-jsx
 
-# Install live reload
+# Install browser sync
 sudo npm install --save-dev browser-sync
 
 # Install browserify
@@ -34,20 +34,19 @@ sudo npm install --save-dev vinyl-source-stream
 
 #Install gulp globally if not present
 #sudo npm install -g gulp
-sudo npm install --save-dev gulp gulp-load-plugins gulp-sass gulp-cssmin gulp-autoprefixer gulp-rename gulp-sourcemaps
+sudo npm install --save-dev gulp gulp-load-plugins gulp-sass gulp-cssmin gulp-autoprefixer gulp-rename gulp-sourcemaps gulp-plumber
 
 
 #The below plugins are optional
 #sudo npm install --save-dev gulp-uglify
 #sudo npm install --save-dev gulp-concat-css
-sudo npm install --save-dev gulp-imagemin
-sudo npm install --save-dev gulp-plumber
+#sudo npm install --save-dev gulp-imagemin
+
 
 
 # Create the directory structure
 mkdir -p ./{public/{css,js},src/{components,styles/scss}}
 touch ./src/styles/scss/styles.scss
-touch ./src/styles/css/styles.min.css
 
 
 echo -e "import React from 'react';
@@ -127,11 +126,7 @@ gulp.task('sasstocss', () => {
     .pipe(browserSync.stream());
 });
 
-gulp.task('compress-images', () => {
-   gulp.src('./src/styles/scss/styles.scss')
-     .pipe(plug.imagemin())
-     .pipe(gulp.dest('public/assets/img/'))
-}
+
 
 gulp.task('sourcemaps', () => {
   gulp.src('./public/js/*.js')
@@ -164,7 +159,7 @@ echo -e "<!doctype html>
           content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">
     <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">
     <link rel=\"stylesheet\" href=\"node_modules/bootstrap/dist/css/bootstrap.min.css\">
-    <link rel=\"stylesheet\" href=\"app/styles/css/styles.min.css\">
+    <link rel=\"stylesheet\" href=\"./css/styles.min.css\">
     <title>React Basic Setup</title>
 </head>
 <body>

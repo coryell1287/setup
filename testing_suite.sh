@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo -e "\n\nBeginning Karma setup.\n\n"
+echo -e "\n\n\t\e[1;35mBeginning Karma setup.\n\n\e[0m"
 
 sudo npm install --save-dev babel
 sudo npm install --save-dev babel-preset-airbnb
@@ -56,11 +56,7 @@ mkdir src tests
 touch src/Foo.jsx tests/Foo.test.jsx
 echo "import React, { PropTypes } from 'react';
 
-const propTypes = {};
-
-const defaultProps = {};
-
-class Foo extends React.Component {
+class Foo extends Component {
   constructor(props) {
     super(props);
   }
@@ -85,7 +81,7 @@ import Foo from '../src/Foo';
 
 describe(\"A suite\", function() {
   it(\"contains spec with an expectation\", function() {
-    expect(shallow(<Foo />).contains(<div className="foo" />)).equal(true);
+    expect(shallow(<Foo />).contains(<div className=\"foo\" />)).equal(true);
   });
 
   it(\"contains spec with an expectation\", function() {
@@ -98,7 +94,8 @@ describe(\"A suite\", function() {
 });
 "> ./tests/Foo.test.jsx
 
-echo -e "\n\nLaunching testing suite.\n\n"
+echo -e "\n\n\t\e[1;32mLaunching testing suite.\n\n\e[0m"
+
 sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1",/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers Chrome",/' package.json
 sed -i '/"test":/a \\t"test:watch": ".\/node_modules\/karma\/bin\/karma start --auto-watch"' package.json
 npm test
