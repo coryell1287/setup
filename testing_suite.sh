@@ -2,13 +2,15 @@
 
 echo -e "\n\n\t\e[1;35mBeginning Karma setup.\n\n\e[0m"
 
+sudo npm install --save-dev react-addons
 sudo npm install --save-dev babel
 sudo npm install --save-dev babel-preset-airbnb
 sudo npm install --save-dev babelify
 sudo npm install --save-dev browserify
 sudo npm install --save-dev chai
+sudo npm install --save-dev enzyme chai-enzyme
 sudo npm install --save-dev karma-babel-preprocessor karma-browserify karma-phantomjs-launcher phantomjs-prebuilt
-sudo npm install --save-dev karma karma-mocha-reporter mocha
+sudo npm install --save-dev karma mocha karma-mocha-reporter karma-mocha
 sudo npm install --save-dev watchify
 
 
@@ -36,6 +38,7 @@ echo "module.exports = function(config) {
       ],
       configure: function(bundle) {
         bundle.on('prebundle', function() {
+          bundle.external('react/addons');
           bundle.external('react/lib/ReactContext');
           bundle.external('react/lib/ExecutionEnvironment');
         });
@@ -47,14 +50,14 @@ echo "module.exports = function(config) {
     logLevel: config.LOG_INFO,
     autoWatch: false,
     browsers: ['PhantomJS'],
-    singleRun: false,
+    singleRun: false
   })
-};
-"> karma.conf.js
+};"> karma.conf.js
 
-mkdir src tests
+#mkdir src
+mkdir tests
 touch src/Foo.jsx tests/Foo.test.jsx
-echo "import React, { PropTypes } from 'react';
+echo "import React, { PropTypes, Component } from 'react';
 
 class Foo extends Component {
   constructor(props) {
@@ -68,11 +71,7 @@ class Foo extends Component {
   }
 }
 
-Foo.propTypes = propTypes;
-Foo.defaultProps = defaultProps;
-
-export default Foo;
-"> ./src/Foo.jsx
+export default Foo;"> ./src/Foo.jsx
 
 echo "import React from 'react';
 import { shallow, mount, render } from 'enzyme';
@@ -94,8 +93,8 @@ describe(\"A suite\", function() {
 });
 "> ./tests/Foo.test.jsx
 
-echo -e "\n\n\t\e[1;32mLaunching testing suite.\n\n\e[0m"
-
-sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1",/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers Chrome",/' package.json
+sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers PhantomJS",' package.json
 sed -i '/"test":/a \\t"test:watch": ".\/node_modules\/karma\/bin\/karma start --auto-watch"' package.json
+
+echo -e "\n\n\t\e[1;32mLaunching testing suite.\n\n\e[0m"
 npm test

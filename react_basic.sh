@@ -82,7 +82,6 @@ const source = require('vinyl-source-stream');
 const browserSync = require('browser-sync').create();
 const plug = require('gulp-load-plugins')({ lazy: true });
 
-
 gulp.task('browser-sync', ['react', 'sasstocss', 'sourcemaps'], () => {
   browserSync.init({
     server: {
@@ -90,7 +89,7 @@ gulp.task('browser-sync', ['react', 'sasstocss', 'sourcemaps'], () => {
       files: ['./public/css/*.css', './public/js/*.js'],
     },
   });
-  gulp.watch('./src/components/**/*.jsx', ['react', 'lint', 'sourcemaps']);
+  gulp.watch('./src/components/**/*.jsx', ['react', 'sourcemaps']);
   gulp.watch('./src/styles/scss/**/*.scss', ['sasstocss']);
 });
 
@@ -138,12 +137,11 @@ gulp.task('sourcemaps', () => {
 });
 
 gulp.task('watch', () => {
-  gulp.watch('./src/components/**/*.jsx', ['react', 'lint', 'sourcemaps']);
+  gulp.watch('./src/components/**/*.jsx', ['react', 'sourcemaps']);
   gulp.watch('./src/styles/scss/**/*.scss', ['sasstocss']);
 });
 
-gulp.task('default', ['browser-sync']);
-"> Gulpfile.js
+gulp.task('default', ['browser-sync']);"> Gulpfile.js
 
 # Create the .babelrc file
 echo -e "{
@@ -170,7 +168,7 @@ echo -e "<!doctype html>
 
 # Launch the application
 
-sed -i '/"test":/i \\t"clean": "rm -f ./public/maps/*.js",' package.json
+sed -i '/"test":/i \\t"clean": "rm -f ./public/maps/*.js && " rm -f ./public/maps/*.js.map,' package.json
 
 echo -e "\n\n\t\e[1;32mLaunching application.\n\n\e[0m"
 
