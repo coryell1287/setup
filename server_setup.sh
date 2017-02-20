@@ -38,6 +38,6 @@ app.listen(port, () => {
 
 export default app;">./lib/server.js
 
-echo -e "\n\n\t\e[1;32mLaunching testing suite.\n\n\e[0m"
+echo -e "\n\n\t\e[1;32mLaunching appliction.\n\n\e[0m"
 
 npm start

@@ -32,3 +32,6 @@ sudo npm install --save-dev browserify
 # stream you get from browserify into a vinyl stream that gulp is expecting to get.
 # Gulp doesn't need to write a temporal file between different transformations.
 sudo npm install --save-dev vinyl-source-stream
+
+
+echo -e "\n\n\t\e[1;32mCompleted Redux setup.\n\n\e[0m"
