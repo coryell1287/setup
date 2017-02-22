@@ -14,35 +14,36 @@ sudo npm install --save-dev karma mocha karma-mocha-reporter karma-mocha
 sudo npm install --save-dev watchify
 
 
-echo "module.exports = function(config) {
+echo "module.exports = function (config) {
+
   config.set({
     basePath: '',
     frameworks: ['browserify', 'mocha'],
     files: [
-      'tests/**/*.test.jsx'
+      'tests/**/*.test.jsx',
     ],
     preprocessors: {
       'src/**/*.jsx': ['babel', 'browserify'],
-      'tests/**/*.jsx': ['babel', 'browserify']
+      'tests/**/*.jsx': ['babel', 'browserify'],
     },
     babelPreprocessor: {
       options: {
-        presets: ['airbnb']
-      }
+        presets: ['airbnb'],
+      },
     },
     browserify: {
       debug: true,
       extensions: ['.jsx', '.js'],
       transform: [
-        ['babelify', { presets: ['airbnb'] }]
+        ['babelify', { presets: ['airbnb'] }],
       ],
-      configure: function(bundle) {
-        bundle.on('prebundle', function() {
+      configure(bundle) {
+        bundle.on('prebundle', () => {
           bundle.external('react/addons');
           bundle.external('react/lib/ReactContext');
           bundle.external('react/lib/ExecutionEnvironment');
         });
-      }
+      },
     },
     reporters: ['mocha'],
     port: 9876,
@@ -50,8 +51,8 @@ echo "module.exports = function(config) {
     logLevel: config.LOG_INFO,
     autoWatch: false,
     browsers: ['PhantomJS'],
-    singleRun: false
-  })
+    singleRun: false,
+  });
 };"> karma.conf.js
 
 #mkdir src

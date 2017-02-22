@@ -18,7 +18,7 @@ sudo npm install --save-dev babel-plugin-transform-react-jsx
 
 # Redux dependencies
 
-sudo npm install --save react-redux react-route react-router-redux redux redux-devtools-extension
+sudo npm install --save redux react-redux react-route react-router-redux redux redux-devtools-extension
 
 # ESLint development dependencies
 sudo npm install --save-dev eslint eslint-config-airbnb eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react
@@ -33,5 +33,16 @@ sudo npm install --save-dev browserify
 # Gulp doesn't need to write a temporal file between different transformations.
 sudo npm install --save-dev vinyl-source-stream
 
+mkdir -p ./components/{store,action,router,reducers}
+
+echo -e "import React from 'react';
+import ReactDOM from 'react-dom';
+import Application from 'Application';
+import { Route, Router, IndexRoute, hashHistory } from 'react-router';
+
+ReactDOM.render(
+    <Application/>,
+    document.getElementById('root')
+);">>./src/index.js
 
 echo -e "\n\n\t\e[1;32mCompleted Redux setup.\n\n\e[0m"

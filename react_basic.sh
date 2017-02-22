@@ -145,8 +145,10 @@ gulp.task('default', ['browser-sync']);"> Gulpfile.js
 
 # Create the .babelrc file
 echo -e "{
-  \"presets\": [\"es2015\", \"stage-0\", \"react\"]
-}"> ./.babelrc
+  \"presets\": [\"es2015\", \"stage-0\", \"react\"],
+ \"plugins\": [\"babel-plugin-transform-class-properties\"]
+}
+"> ./.babelrc
 
 
 echo -e "<!doctype html>
