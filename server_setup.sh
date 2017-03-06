@@ -9,6 +9,22 @@ sudo npm install --save-dev nodemon
 sudo npm install --save-dev cors
 sudo npm install --save-dev http-server
 
+# react dependencies
+sudo npm install --save react react-dom react-addons-test-utils
+sudo npm install --save object-assign
+sudo npm install --save es6-promise
+sudo npm install --save es6-shim
+sudo npm install --save whatwg-fetch
+
+#Install bootstrap
+sudo npm install --save bootstrap
+
+# Development dependencies
+sudo npm install --save-dev babelify babel-core
+sudo npm install --save-dev babel-preset-react babel-preset-es2015 babel-es6-polyfill babel-preset-stage-0
+sudo npm install --save-dev babel-plugin-transform-class-properties
+sudo npm install --save-dev babel-plugin-transform-react-jsx
+
 mkdir ./{dist,lib}
 
 sed -i '/"clean":/a \\t"start": "nodemon lib\/server.js --exec babel-node --presets es2015,stage-2",' package.json

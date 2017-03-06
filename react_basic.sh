@@ -42,6 +42,8 @@ sudo npm install --save-dev gulp gulp-load-plugins gulp-sass gulp-cssmin gulp-au
 #sudo npm install --save-dev gulp-concat-css
 #sudo npm install --save-dev gulp-imagemin
 
+#Installing linting
+sudo npm install --save-dev eslint eslint-config-airbnb eslint-plugin-import eslint-plugin-jsx-ally eslint-plugin-react
 
 
 # Create the directory structure
