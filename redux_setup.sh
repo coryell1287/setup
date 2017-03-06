@@ -107,6 +107,36 @@ function comments(state = [], action) {
 
 export default comments;">>./src/reducers/comment.jsx
 
+echo -e "import { combineReducers } from 'redux';
+import { routerReducer } from 'react-router-redux';
+
+import posts from './posts';
+import comments from './comments';
+
+const rootReducer = combineReducers({posts, comments, routing: routerReducer });
+
+export default rootReducer;">>./src/reducers/index.js
+
+
+echo -e "import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+import * as action from '../actions/actionCreators';
+import Main from './Main';
+
+function mapStateToProps(state) {
+  return {
+    posts: state.posts,
+    comments: state.comments
+  }
+}
+
+function mapDispachToProps(dispatch) {
+  return bindActionCreators(action, dispatch);
+}
+
+const App = connect(mapStateToProps, mapDispachToProps)(Main);
+
+export default App;">>./src/config/propsConfig.js
 
 echo -e "import { createStore, compose } from 'redux';
 import { syncHistoryWithStore} from 'react-router-redux';
@@ -198,7 +228,7 @@ module.exports = {
     ]
   }
 };
-"./webpack.config.js
+">>./webpack.config.js
 
 echo -e "{
   \"ecmaFeatures\": {
@@ -227,7 +257,7 @@ echo -e "{
     \"react\"
   ]
 }
-"./.eslintrc
+">>./.eslintrc
 
 echo -e "import React from 'react';
 import ReactDOM from 'react-dom';
