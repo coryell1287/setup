@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 echo -e "\n\n\t\e[1;35mBeginning basic react setup.\n\n\e[0m"
 #Install npm packages

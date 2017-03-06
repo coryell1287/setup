@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 echo -e "\n\n\t\e[1;35mBeginning Karma setup.\n\n\e[0m"
 
@@ -10,11 +10,13 @@ sudo npm install --save-dev browserify
 sudo npm install --save-dev chai
 sudo npm install --save-dev enzyme chai-enzyme
 sudo npm install --save-dev karma-babel-preprocessor karma-browserify karma-phantomjs-launcher phantomjs-prebuilt
-sudo npm install --save-dev karma mocha karma-mocha-reporter karma-mocha
+sudo npm install --save-dev karma mocha karma-mocha-reporter karma-mocha karma-sourcemap-loader karma-webpack
 sudo npm install --save-dev watchify
+sudo npm install --save-dev json-loader
 
 
-echo -e "var path = require('path');
+
+echo -e "const path = require('path');
 
 module.exports = function(config) {
   config.set({
