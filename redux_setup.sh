@@ -23,18 +23,19 @@ sudo npm install --save redux react-redux react-route react-router-redux redux-d
 # ESLint development dependencies
 sudo npm install --save-dev eslint eslint-config-airbnb eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react
 
+
+sudo npm install --save autoprefixer-loader sass-loader style-loader css-loader extract-text-webpack-plugin
+
+
 sudo npm install --save-dev lodash
 sudo npm install --save-dev classnames
-sudo npm install --save-dev browser-sync
-sudo npm install --save-dev browserify
+#sudo npm install --save-dev browser-sync
+#sudo npm install --save-dev browserify
 
 # vinyl-source-stream is is a Virtual file that converts the readable
 # stream you get from browserify into a vinyl stream that gulp is expecting to get.
 # Gulp doesn't need to write a temporal file between different transformations.
-sudo npm install --save-dev vinyl-source-stream
-
-sudo npm install --save-dev css-loader
-sudo npm install --save-dev style-loader
+#sudo npm install --save-dev vinyl-source-stream
 
 sudo npm install --save-dev webpack webpack-dev-middleware webpack-hot-middleware
 
@@ -193,30 +194,45 @@ export default router;
 ">>./src/routes/routes.jsx
 
 
-echo -e "var path = require('path');
-var webpack = require('webpack');
+echo -e "const path = require('path');
+const webpack = require('webpack');
+const srcPath = path.join(__dirname, './src');
 
 module.exports = {
   devtool: 'source-map',
   entry: [
     'webpack-hot-middleware/client',
-    './client/reduxstagram'
+    './src/index.jsx'
   ],
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/static/'
+    publicPath: '/public/'
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoErrorsPlugin()
   ],
+  resolve: {
+  extensions: ['', '.js', '.jsx'],
+  root: path.resolve(__dirname),
+  alias: Object.assign({}, alias,{
+    components: 'components/',
+    actions: 'components/home',
+    store: 'components/common/utility',
+    reducers: 'services/textService',
+    tests: 'tests/'
+  }),
+}
   module: {
     loaders: [
     // js
     {
       test: /\.js$/,
       loaders: ['babel'],
+      query: {
+        presets: ['react', 'es2015', 'stage-1']
+      },
       include: path.join(__dirname, 'public')
     },
     // CSS
