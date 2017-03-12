@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #!/bin/bash
 
 
@@ -14,7 +15,7 @@ sudo npm install --save whatwg-fetch
 sudo npm install --save bootstrap
 
 # Development dependencies
-sudo npm install --save-dev babelify babel-core
+sudo npm install --save-dev babelify babel-core babel babel-loader
 sudo npm install --save-dev babel-preset-react babel-preset-es2015 babel-es6-polyfill babel-preset-stage-0
 sudo npm install --save-dev babel-plugin-transform-class-properties
 sudo npm install --save-dev babel-plugin-transform-react-jsx
@@ -172,7 +173,6 @@ echo -e "<!doctype html>
 
 # Launch the application
 
-sed -i '/"test":/i \\t"clean": "rm -f ./public/maps/*.js && " rm -f ./public/maps/*.js.map,' package.json
 
 echo -e "\n\n\t\e[1;32mLaunching application.\n\n\e[0m"
 
