@@ -15,7 +15,7 @@ sudo npm install --save whatwg-fetch
 sudo npm install --save bootstrap
 
 # Development dependencies
-sudo npm install --save-dev babelify babel-core babel babel-loader
+sudo npm install --save-dev babelify babel-core babel-loader
 sudo npm install --save-dev babel-preset-react babel-preset-es2015 babel-es6-polyfill babel-preset-stage-0
 sudo npm install --save-dev babel-plugin-transform-class-properties
 sudo npm install --save-dev babel-plugin-transform-react-jsx
@@ -153,6 +153,35 @@ echo -e "{
 }
 "> ./.babelrc
 
+
+echo -e "const path = require('path');
+
+module.exports = {
+  entry: [
+    './src/index.jsx'
+  ],
+  output: {
+    path: __dirname,
+    publicPath: '/',
+    filename: 'js/app.js'
+  },
+  module: {
+    loaders: [{
+      exclude: /node_modules/,
+      loader: 'babel-loader'
+    }]
+  },
+  resolve: {
+    alias: {
+      components: path.resolve(__dirname, 'src/components/')
+    },
+    extensions: ['*', '.js', '.jsx']
+  },
+  devServer: {
+    contentBase: './public'
+  }
+};
+">>webpack.config.js
 
 echo -e "<!doctype html>
 <html lang=\"en\">
