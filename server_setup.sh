@@ -5,9 +5,9 @@ echo -e "\n\n\t\e[1;35mBeginning Karma setup.\n\n\e[0m"
 #Install dependencies
 
 sudo npm install --save-dev express
-sudo npm install --save-dev nodemon
 sudo npm install --save-dev cors
 sudo npm install --save-dev http-server
+sudo npm install --save-dev nodemon
 
 # react dependencies
 sudo npm install --save react react-dom react-addons-test-utils

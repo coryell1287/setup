@@ -24,49 +24,58 @@ sudo npm install --save redux react-redux react-route react-router-redux redux-d
 sudo npm install --save-dev eslint eslint-config-airbnb eslint-plugin-import eslint-plugin-jsx-a11y eslint-plugin-react
 
 
-sudo npm install --save autoprefixer-loader sass-loader style-loader css-loader extract-text-webpack-plugin
-
+sudo npm install --save autoprefixer-loader sass-loader style-loader css-loader node-sass extract-text-webpack-plugin
 
 sudo npm install --save-dev lodash
 sudo npm install --save-dev classnames
-#sudo npm install --save-dev browser-sync
-#sudo npm install --save-dev browserify
-
-# vinyl-source-stream is is a Virtual file that converts the readable
-# stream you get from browserify into a vinyl stream that gulp is expecting to get.
-# Gulp doesn't need to write a temporal file between different transformations.
-#sudo npm install --save-dev vinyl-source-stream
 
 sudo npm install --save-dev webpack webpack-dev-middleware webpack-hot-middleware
 
+
 mkdir -p ./src/{store,actions,router,reducers,components}
 
-echo -e "// Increment
-export function increment(index) {
+echo -e "/**
+  Action Creators
+
+  These fire events which the reducer will handle
+  We will later call these functions from inside our component
+
+  Later these functions get bound to 'dispatch' fires the actual event
+  Right now they just return an object
+
+  It's a code convention to use all capitals and snake case for the event names
+  We use const to store the name of the event so it is immutable
+
+*/
+
+export function increment(i) {
   return {
     type: 'INCREMENT_LIKES',
-    index
-  }
+    index: i
+  };
 }
 
-// Add comment
+/*
+  Comments
+*/
+
 export function addComment(postId, author, comment) {
   return {
     type: 'ADD_COMMENT',
     postId,
-    author,
-    comment
-  }
+    author, // same as author: author
+    comment // same as comment: comment
+  };
 }
 
-// Remove comment
-export function removeComment(postId, i) {
+export function removeComment(postId, i){
   return {
     type: 'REMOVE_COMMENT',
     i,
     postId
-  }
-}">>./src/actions/actionCreators.jsx
+  };
+}
+">>./src/actions/actionCreators.jsx
 
 echo -e "// A reducer takes in 2 things:
 // 1. Action
@@ -109,12 +118,13 @@ function comments(state = [], action) {
 export default comments;">>./src/reducers/comment.jsx
 
 echo -e "import { combineReducers } from 'redux';
-import { routerReducer } from 'react-router-redux';
+import BooksReducer from './reducer_books';
+import ActiveBook from './reducer_active_book';
 
-import posts from './posts';
-import comments from './comments';
-
-const rootReducer = combineReducers({posts, comments, routing: routerReducer });
+const rootReducer = combineReducers({
+  books: BooksReducer,
+  activeBook: ActiveBook
+});
 
 export default rootReducer;">>./src/reducers/index.js
 
@@ -175,12 +185,11 @@ export default store;
 
 
 echo -e "import React from 'react';
-import { render } from 'react-dom';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 import { Provider } from 'react-redux';
 import store, { history } from './store';
 
-const router = (
+const Routes = (
   <Provider store={store}>
     <Router history={history}>
       <Route path=\"/\" component={App}>
@@ -190,9 +199,8 @@ const router = (
     </Router>
   </Provider>
 );
-export default router;
+export default Routes;
 ">>./src/routes/routes.jsx
-
 
 echo -e "const path = require('path');
 const webpack = require('webpack');
@@ -206,7 +214,7 @@ module.exports = {
   ],
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js',
+    filename: 'app.js',
     publicPath: '/public/'
   },
   plugins: [
@@ -214,22 +222,21 @@ module.exports = {
     new webpack.NoErrorsPlugin()
   ],
   resolve: {
-  extensions: ['', '.js', '.jsx'],
-  root: path.resolve(__dirname),
-  alias: Object.assign({}, alias,{
-    components: 'components/',
-    actions: 'components/home',
-    store: 'components/common/utility',
-    reducers: 'services/textService',
-    tests: 'tests/'
-  }),
-}
+    alias: {
+      components: path.resolve(__dirname, 'src/components/'),
+      reducers: path.resolve(__dirname, 'src/reducers/'),
+    },
+    extensions: ['*', '.js', '.jsx']
+  },
+  devServer: {
+    contentBase: './public'
+  },
   module: {
     loaders: [
     // js
     {
       test: /\.js$/,
-      loaders: ['babel'],
+      loaders: ['babel-loader'],
       query: {
         presets: ['react', 'es2015', 'stage-1']
       },
@@ -244,7 +251,7 @@ module.exports = {
     ]
   }
 };
-">>./webpack.config.js
+">>./webpack.config.dev.js
 
 echo -e "const path = require('path');
 const express = require('express');
@@ -307,12 +314,11 @@ echo -e "{
 ">>./.eslintrc
 
 echo -e "import React from 'react';
-import ReactDOM from 'react-dom';
-import router from 'routes/routes';
-import { Route, Router, IndexRoute, hashHistory } from 'react-router';
+import { render } from 'react-dom';
+import Routes from 'routes/routes';
 
-ReactDOM.render(
-    <Application/>,
+render(
+    <Routes/>,
     document.getElementById('root')
 );">>./src/index.js
 
