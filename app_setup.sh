@@ -5,18 +5,28 @@ echo -e "\n\n\t\e[1;35mBeginning application setup...\n\n\e[0m"
 #Install npm packages
 
 # react dependencies
-sudo npm install --save react react-dom react-addons-test-utils react-addons-transition-group
+sudo npm i -S react react-dom
+sudo npm i -S react-addons-test-utils
+sudo npm i -S react-addons-transition-group
 sudo npm install --save object-assign
 sudo npm install --save es6-promise
 sudo npm install --save es6-shim
 sudo npm install --save whatwg-fetch
 
 # Development dependencies
-sudo npm install --save-dev babelify babel-core babel-loader
-sudo npm install --save-dev babel-preset-react babel-preset-es2015 babel-es6-polyfill babel-preset-stage-0 babel-preset-stage-2 babel-eslint
-sudo npm install --save-dev babel-plugin-transform-class-properties
-sudo npm install --save-dev babel-plugin-transform-react-jsx
+sudo npm i -D babelify babel-core babel-loader
+sudo npm i -D babel-preset-react
+sudo npm i -D babel-plugin-transform-class-properties
+sudo npm i -D babel-plugin-transform-react-jsx
+sudo npm i -D babel-preset-env
+sudo npm i -D babel-es6-polyfill
+sudo npm i -D babel-preset-stage-0
+sudo npm i -D babel-preset-stage-2
+sudo npm i -D babel-eslint
+sudo npm i -D babel-plugin-transform-runtime
 
+
+sudo npm i -S aphrodite
 # Redux dependencies
 
 sudo npm install --save redux react-redux react-router redux-devtools-extension redux-thunk redux-logger
@@ -606,8 +616,8 @@ echo -e "{
 
 
 echo -e "{
-\"presets\": [\"es2015\", \"stage-0\", \"react\"],
-\"plugins\": [\"babel-plugin-transform-class-properties\"]
+\"presets\": [\"env\", \"stage-0\",\"stage-2\",\"airbnb\", \"react\"],
+\"plugins\": [\"babel-plugin-transform-class-properties\", \"transform-runtime\"]
 }">./.babelrc
 
 sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers PhantomJS",' package.json
