@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo -e "\n\n\t\e[1;35mBeginning Karma setup.\n\n\e[0m"
+echo -e "\n\n\t\e[1;35mBeginning server setup.\n\n\e[0m"
 
 #Install dependencies
 
@@ -8,6 +8,13 @@ sudo npm install --save-dev express
 sudo npm install --save-dev cors
 sudo npm install --save-dev http-server
 sudo npm install --save-dev nodemon
+
+sudo npm i babel-cli babel-es6-polyfill
+sudo npm i babel-preset-es2015
+sudo npm i babel-preset-stage-0
+sudo npm i bcrypt-nodejs
+sudo npm i morgan
+sudo npm i body-parser
 
 # react dependencies
 sudo npm install --save react react-dom react-addons-test-utils
@@ -24,6 +31,7 @@ sudo npm install --save-dev babelify babel-core
 sudo npm install --save-dev babel-preset-react babel-preset-es2015 babel-es6-polyfill babel-preset-stage-0
 sudo npm install --save-dev babel-plugin-transform-class-properties
 sudo npm install --save-dev babel-plugin-transform-react-jsx
+
 
 mkdir ./{dist,lib}
 
