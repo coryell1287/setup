@@ -4,38 +4,21 @@ echo -e "\n\n\t\e[1;35mBeginning server setup.\n\n\e[0m"
 
 #Install dependencies
 
-sudo npm install --save-dev express
-sudo npm install --save-dev cors
-sudo npm install --save-dev http-server
-sudo npm install --save-dev nodemon
+sudo npm i -S express
+sudo npm i -S cors
+sudo npm i -S http-server
+sudo npm i -S nodemon
 
-sudo npm i babel-cli babel-es6-polyfill
-sudo npm i babel-preset-es2015
-sudo npm i babel-preset-stage-0
-sudo npm i bcrypt-nodejs
-sudo npm i morgan
-sudo npm i body-parser
-
-# react dependencies
-sudo npm install --save react react-dom react-addons-test-utils
-sudo npm install --save object-assign
-sudo npm install --save es6-promise
-sudo npm install --save es6-shim
-sudo npm install --save whatwg-fetch
-
-#Install bootstrap
-sudo npm install --save bootstrap
-
-# Development dependencies
-sudo npm install --save-dev babelify babel-core
-sudo npm install --save-dev babel-preset-react babel-preset-es2015 babel-es6-polyfill babel-preset-stage-0
-sudo npm install --save-dev babel-plugin-transform-class-properties
-sudo npm install --save-dev babel-plugin-transform-react-jsx
-
+sudo npm i -S babel-cli babel-es6-polyfill
+sudo npm i -S babel-preset-es2015
+sudo npm i -S babel-preset-stage-0
+sudo npm i -S bcrypt-nodejs
+sudo npm i -S morgan
+sudo npm i -S body-parser
 
 mkdir ./{dist,lib}
 
-sed -i '/"clean":/a \\t"start": "nodemon lib\/server.js --exec babel-node --presets es2015,stage-2",' package.json
+sed -i '/"clean":/a \\t"start": "nodemon lib\/server.js --exec babel-node --presets env,stage-2",' package.json
 sed -i '/"start":/a \\t"build": "babel lib -d dist --presets es2015,stage-2",' package.json
 sed -i '/"build":/a \\t"serve": "node dist\/server.js",' package.json
 
@@ -69,17 +52,14 @@ const server = http.createServer(app);
 
 server.listen(port, () => {
   console.log(\`Server has started and is listening on \${port}\`);
-});
-
-export default app;">./lib/server.js
+});">./lib/server.js
 
 
 echo -e "export default app => {
   app.get('/', (req, res) => {
    res.send({ message: 'Service is properly working.' });
   });
-}
-">./lib/router.js
+}">./lib/router.js
 
 echo -e "\n\n\t\e[1;32mLaunching appliction.\n\n\e[0m"
 
