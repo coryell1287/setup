@@ -449,6 +449,7 @@ echo -e "<!doctype html>
 
 echo -e "const path = require('path');
 const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   devtool: 'source-map',
@@ -464,6 +465,7 @@ module.exports = {
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
+    new ExtractTextPlugin('css/styles.css'),
   ],
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -475,33 +477,41 @@ module.exports = {
       components: path.join(__dirname, 'src/components/'),
       containers: path.join(__dirname, 'src/containers/'),
       api: path.join(__dirname, 'src/api/'),
-      devTools: path.join(__dirname, 'src/devTools'),
+      devTools: path.join(__dirname, 'src/devTools/'),
+      assets: path.join(__dirname, 'src/assets/')
     },
   },
   module: {
-    loaders: [{
-      test: /\.jsx?$/,
-      loaders: ['babel-loader'],
-      include: path.join(__dirname, 'src'),
+    rules: [{
+      use: 'babel-loader',
+      test: /\.jsx?$/
     }, {
       test: /\.css$/,
-      loader: 'style-loader!css-loader!autoprefixer-loader?browsers=last 2 versions',
-      include: path.join(__dirname, 'src'),
-    }, {
-      test: /\.scss$/,
-      loader: 'style-loader!sass-loader!autoprefixer-loader?browsers=last 2 versions',
-      include: path.join(__dirname, 'src'),
-    },
-    ],
+      use: ExtractTextPlugin.extract({
+        loader: 'css-loader'
+      }),
+    },{
+      test: /\.(jpe?g|png|gif|svg)$/,
+      use: [{
+        loader: 'url-loader',
+        options: {
+          limit: 40000,
+          name: 'assets/[name].[ext]',
+          context: './images'
+        }
+      },
+        'image-webpack-loader?{}'
+      ]
+    }]
   },
-};
-">./webpack.config.dev.js
+};">./webpack.config.dev.js
 
 
 # Create the webpack production file
 
 echo -e "const path = require('path');
 const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   devtool: 'source-map',
@@ -527,22 +537,30 @@ module.exports = {
     }),
   ],
   module: {
-    loaders: [{
-      test: /\.jsx?$/,
-      loaders: ['babel-loader'],
-      include: path.join(__dirname, 'src'),
+    rules: [{
+      use: 'babel-loader',
+      test: /\.jsx?$/
     }, {
       test: /\.css$/,
-      loader: 'style-loader!css-loader!autoprefixer-loader?browsers=last 2 versions',
-      include: path.join(__dirname, 'src'),
-    }, {
-      test: /\.scss$/,
-      loader: 'style-loader!sass-loader!autoprefixer-loader?browsers=last 2 versions',
-      include: path.join(__dirname, 'src'),
-    },
-    ],
+      use: ExtractTextPlugin.extract({
+        loader: 'css-loader'
+      }),
+    },{
+      test: /\.(jpe?g|png|gif|svg)$/,
+      use: [{
+        loader: 'url-loader',
+        options: {
+          limit: 40000,
+          name: 'assets/[name].[ext]',
+          context: './images'
+        }
+      },
+        'image-webpack-loader?{}'
+      ]
+    }]
   },
-};">./webpack.config.prod.js
+};
+">./webpack.config.prod.js
 
 
 
