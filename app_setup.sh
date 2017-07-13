@@ -12,6 +12,7 @@ sudo npm install --save object-assign
 sudo npm install --save es6-promise
 sudo npm install --save es6-shim
 sudo npm install --save whatwg-fetch
+sudo npm i -S babel-plugin-transform-runtime
 
 # Development dependencies
 sudo npm i -D babelify babel-core babel-loader
@@ -19,11 +20,12 @@ sudo npm i -D babel-preset-react
 sudo npm i -D babel-plugin-transform-class-properties
 sudo npm i -D babel-plugin-transform-react-jsx
 sudo npm i -D babel-preset-env
+sudo npm i -D babel-preset-es2017
 sudo npm i -D babel-es6-polyfill
 sudo npm i -D babel-preset-stage-0
 sudo npm i -D babel-preset-stage-2
-sudo npm i -D babel-eslint
-sudo npm i -D babel-plugin-transform-runtime
+sudo npm i -D babel-plugin-transform-async-generator-functions
+sudo npm i -D babel-plugin-syntax-async-function
 
 
 sudo npm i -S aphrodite
@@ -56,9 +58,6 @@ sudo npm i -S webpack-dev-middleware
 sudo npm i -S webpack-hot-middleware
 
 #Install server setup
-sudo npm install --save express
-sudo npm install --save cors
-sudo npm install --save http-server
 sudo npm i -S axios
 
 
@@ -114,7 +113,9 @@ export const history = createHistory();
 # Create the action creators   #
 ################################
 
-echo -e "export const REQUEST_POSTS = 'REQUEST_POSTS';
+echo -e "import { get, post } from 'api';
+
+export const REQUEST_POSTS = 'REQUEST_POSTS';
 export const RECEIVE_POSTS = 'RECEIVE_POSTS';
 export const SELECT_REDDIT = 'SELECT_REDDIT';
 export const INVALIDATE_REDDIT = 'INVALIDATE_REDDIT';
@@ -142,7 +143,7 @@ export const receivePosts = (reddit, json) => ({
 });
 
 const fetchPosts = reddit => dispatch => {
-  dispatch(requestPosts(reddit));
+  dispatch(get(reddit));
   return fetch(\`https://www.reddit.com/r/\${reddit}.json\`)
   .then(response => response.json())
   .then(json => dispatch(receivePosts(reddit, json)));
@@ -410,7 +411,7 @@ const mapStateToProps = state => {
 export default connect(mapStateToProps)(Application)">./src/containers/Application.jsx
 
 ################################
-#  Create the entry point    #
+#  Create the entry point      #
 ################################
 echo -e "import React from 'react';
 import { render } from 'react-dom';
@@ -435,13 +436,15 @@ echo -e "<!doctype html>
   <meta name=\"viewport\"
         content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">
   <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">
+  <link rel=\"stylesheet\" href=\"static/css/styles.css\">
   <title>Application</title>
 </head>
 <body>
   <div id=\"root\"></div>
   <script src=\"static/bundle.js\"></script>
 </body>
-</html>">./index.html
+</html>
+">./public/index.html
 
 
 
@@ -631,11 +634,48 @@ echo -e "{
     \"react\"
   ]
 }">./.eslintrc
+###################################
+#  Create the index file for async#
+# services             point      #
+###################################
 
+echo -e "import axios from 'axios'
+let host = 'localhost:4000/rest/'
+
+async function httpRequest(method, url, payload) {
+  try {
+    const response = await axios[method](url, payload, config);
+    const onSuccess = await dispatch(config.[successFunction](response));
+    return await onSuccess();
+  } catch (err) {
+    return dispatch(onError(config.[errorFunction]()));
+  }
+}
+
+export const get (basePath, request) {
+   return httpRequest('get', '\${host}\${basePath}', request)
+ };
+
+ export const delete (basePath, request) {
+   return httpRequest('delete', '\${host}\${basePath}', request)
+ };
+
+ export const post (basePath, request) {
+   return httpRequest('post', '\${host}\${basePath}', request)
+ };
+
+ export const put (basePath, request) {
+   return httpRequest('put', '\${host}\${basePath}', request)
+ };
+
+ export patch (basePath, request) {
+   return httpRequest('patch', '\${host}\${basePath}', request)
+ };
+"
 
 echo -e "{
-\"presets\": [\"env\", \"stage-0\",\"stage-2\",\"airbnb\", \"react\"],
-\"plugins\": [\"babel-plugin-transform-class-properties\", \"transform-runtime\"]
+\"presets\": [\"env\", \"stage-0\",\"stage-2\",\"airbnb\", \"react\", \"es2017\"],
+\"plugins\": [\"babel-plugin-transform-class-properties\", \"transform-runtime\", \"syntax-async-functions\", \"transform-async-generator-functions\"]
 }">./.babelrc
 
 sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers PhantomJS",' package.json
