@@ -642,7 +642,7 @@ echo -e "{
 echo -e "import axios from 'axios'
 let host = 'localhost:4000/rest/'
 
-async function httpRequest(method, url, payload) {
+async function httpRequest(method, url, payload, config) {
   try {
     const response = await axios[method](url, payload, config);
     const onSuccess = await dispatch(config.[successFunction](response));
@@ -652,23 +652,23 @@ async function httpRequest(method, url, payload) {
   }
 }
 
-export const get (basePath, request) {
+export const get (basePath, request, config) {
    return httpRequest('get', '\${host}\${basePath}', request)
  };
 
- export const delete (basePath, request) {
+ export const delete (basePath, request, config) {
    return httpRequest('delete', '\${host}\${basePath}', request)
  };
 
- export const post (basePath, request) {
+ export const post (basePath, request, config) {
    return httpRequest('post', '\${host}\${basePath}', request)
  };
 
- export const put (basePath, request) {
+ export const put (basePath, request, config) {
    return httpRequest('put', '\${host}\${basePath}', request)
  };
 
- export patch (basePath, request) {
+ export patch (basePath, request, config) {
    return httpRequest('patch', '\${host}\${basePath}', request)
  };
 "
