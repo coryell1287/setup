@@ -110,65 +110,6 @@ export const history = createHistory();
 
 
 ################################
-# Create the action creators   #
-################################
-
-echo -e "import { get, post } from 'api';
-
-export const REQUEST_POSTS = 'REQUEST_POSTS';
-export const RECEIVE_POSTS = 'RECEIVE_POSTS';
-export const SELECT_REDDIT = 'SELECT_REDDIT';
-export const INVALIDATE_REDDIT = 'INVALIDATE_REDDIT';
-
-export const selectReddit = reddit => ({
-  type: SELECT_REDDIT,
-  reddit,
-});
-
-export const invalidateReddit = reddit => ({
-  type: INVALIDATE_REDDIT,
-  reddit,
-});
-
-export const requestPosts = reddit => ({
-  type: REQUEST_POSTS,
-  reddit,
-});
-
-export const receivePosts = (reddit, json) => ({
-  type: RECEIVE_POSTS,
-  reddit,
-  posts: json.data.children.map(child => child.data),
-  receivedAt: Date.now(),
-});
-
-const fetchPosts = reddit => dispatch => {
-  dispatch(get(reddit));
-  return fetch(\`https://www.reddit.com/r/\${reddit}.json\`)
-  .then(response => response.json())
-  .then(json => dispatch(receivePosts(reddit, json)));
-};
-
-const shouldFetchPosts = (state, reddit) => {
-  const posts = state.postsByReddit[reddit];
-  if (!posts) {
-    return true;
-  }
-
-  if (posts.isFetching) {
-    return false;
-  }
-
-  return posts.didInvalidate;
-};
-
-export const fetchPostsIfNeeded = reddit => (dispatch, getState) => {
-  if (shouldFetchPosts(getState(), reddit)) {
-    return dispatch(fetchPosts(reddit));
-  }
-};">./src/actions/index.jsx
-
-################################
 #      Create the routes       #
 ################################
 
@@ -634,6 +575,86 @@ echo -e "{
     \"react\"
   ]
 }">./.eslintrc
+
+################################
+# Create the action creators   #
+################################
+
+echo -e "import { get, post } from 'api';
+
+export const REQUEST_POSTS = 'REQUEST_POSTS';
+export const RECEIVE_POSTS = 'RECEIVE_POSTS';
+export const SELECT_REDDIT = 'SELECT_REDDIT';
+export const INVALIDATE_REDDIT = 'INVALIDATE_REDDIT';
+
+export const selectReddit = reddit => ({
+  type: SELECT_REDDIT,
+  reddit,
+});
+
+export const invalidateReddit = reddit => ({
+  type: INVALIDATE_REDDIT,
+  reddit,
+});
+
+export const requestPosts = reddit => ({
+  type: REQUEST_POSTS,
+  reddit,
+});
+
+export const asyncGet = (reddit, json) => ({
+  type: RECEIVE_POSTS,
+  reddit,
+  posts: json.data.children.map(child => child.data),
+  receivedAt: Date.now(),
+});
+
+const asyncGet = reddit => dispatch => {
+  const config = {
+    url: 'fetch',
+    onSuccess: completeFetchSuccessfully,
+    onError: failedToCompleteFetch,
+  };
+
+  dispatch(get(config.url, config));
+
+};
+
+export const receivePosts = (reddit, json) => ({
+  type: RECEIVE_POSTS,
+  reddit,
+  posts: json.data.children.map(child => child.data),
+  receivedAt: Date.now(),
+});
+
+const fetchPosts = reddit => dispatch => {
+  dispatch(get(reddit));
+  return fetch(\`https://www.reddit.com/r/\${reddit}.json\`)
+  .then(response => response.json())
+  .then(json => dispatch(receivePosts(reddit, json)));
+};
+
+const shouldFetchPosts = (state, reddit) => {
+  const posts = state.postsByReddit[reddit];
+  if (!posts) {
+    return true;
+  }
+
+  if (posts.isFetching) {
+    return false;
+  }
+
+  return posts.didInvalidate;
+};
+
+export const fetchPostsIfNeeded = reddit => (dispatch, getState) => {
+  if (shouldFetchPosts(getState(), reddit)) {
+    return dispatch(fetchPosts(reddit));
+  }
+};">./src/actions/index.jsx
+
+
+
 ###################################
 #  Create the index file for async#
 # services             point      #
@@ -645,31 +666,31 @@ let host = 'localhost:4000/rest/'
 async function httpRequest(method, url, payload, config) {
   try {
     const response = await axios[method](url, payload, config);
-    const onSuccess = await dispatch(config.[successFunction](response));
+    const onSuccess = await dispatch(config.[onSucess](response));
     return await onSuccess();
   } catch (err) {
-    return dispatch(onError(config.[errorFunction]()));
+    return dispatch(config.[onError]());
   }
 }
 
-export const get (basePath, request, config) {
-   return httpRequest('get', '\${host}\${basePath}', request)
- };
-
- export const delete (basePath, request, config) {
-   return httpRequest('delete', '\${host}\${basePath}', request)
+export const get (basePath, config) {
+   return httpRequest('get', '\${host}\${basePath}');
  };
 
  export const post (basePath, request, config) {
-   return httpRequest('post', '\${host}\${basePath}', request)
+   return httpRequest('post', '\${host}\${basePath}', request, config);
+ };
+
+ export const delete (basePath, request, config) {
+   return httpRequest('delete', '\${host}\${basePath}', request);
  };
 
  export const put (basePath, request, config) {
-   return httpRequest('put', '\${host}\${basePath}', request)
+   return httpRequest('put', '\${host}\${basePath}', request);
  };
 
  export patch (basePath, request, config) {
-   return httpRequest('patch', '\${host}\${basePath}', request)
+   return httpRequest('patch', '\${host}\${basePath}', request);
  };
 "
 
