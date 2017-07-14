@@ -30,7 +30,7 @@ echo -e "export default app => {
   });
 }">./lib/router.js
 
-echo "import express, { favicon } from 'express';
+echo "import express from 'express';
 import path from 'path';
 import cors from 'cors';
 import morgan from 'morgan';
@@ -46,8 +46,7 @@ const server = http.createServer(app);
 
 app.use(cors());
 app.use(helmet());
-app.use(favicon());
-app.use(bodyParser());
+app.use(bodyParser.json());
 app.use(morgan('combined'));
 
 router(app);
