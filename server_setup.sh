@@ -42,12 +42,13 @@ import router from './router';
 const port = process.env.PORT || 4000;
 const app = express();
 const publicPath = path.join(__dirname, '../public');
+const server = http.createServer(app);
 
 app.use(cors());
 app.use(helmet());
 app.use(favicon());
+app.use(bodyParser());
 app.use(morgan('combined'));
-app.use(bodyParser.json({ type: */* }));
 
 router(app);
 
@@ -57,8 +58,6 @@ app.get('*', (request, response) => {
   response.sendFile(path.resolve(publicPath, 'index.html'));
 });
 
-const port = process.env.PORT || 4000;
-const server = http.createServer(app);
 
 server.listen(port, () => {
   console.log(\`Server has started and is listening on \${port}\`);
