@@ -516,7 +516,7 @@ const webpack = require('webpack');
 const config = require('./webpack.config.dev');
 
 const app = express();
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 3000;
 const compiler = webpack(config);
 
 app.use(require('webpack-dev-middleware')(compiler, {
@@ -609,11 +609,17 @@ export const asyncGet = (reddit, json) => ({
   receivedAt: Date.now(),
 });
 
-const asyncGet = reddit => dispatch => {
+const asyncGet = () => dispatch => {
   const config = {
     url: 'fetch',
+    timeout: 4000,
     onSuccess: completeFetchSuccessfully,
     onError: failedToCompleteFetch,
+    headers: {
+      'accept': 'application/json',
+      'accept-language': 'en_US',
+      content-type: 'application/json',
+    }
   };
 
   dispatch(get(config.url, config));
@@ -660,39 +666,38 @@ export const fetchPostsIfNeeded = reddit => (dispatch, getState) => {
 # services             point      #
 ###################################
 
-echo -e "import axios from 'axios'
-let host = 'localhost:4000/rest/'
+echo -e "import axios from 'axios';
+
+let host = 'localhost:4000/rest/';
 
 async function httpRequest(method, url, payload, config) {
   try {
-    const response = await axios[method](url, payload, config);
-    const onSuccess = await dispatch(config.[onSucess](response));
-    return await onSuccess();
+    const { data } = await axios[method](url, payload, config);
+    return dispatch(config[onSuccess](data));
   } catch (err) {
-    return dispatch(config.[onError]());
+    return dispatch(config[onFail]());
   }
 }
 
-export const get (basePath, config) {
-   return httpRequest('get', '\${host}\${basePath}');
- };
+export const get = (basePath, config) => {
+  return httpRequest('GET', `\${host}\${basePath}`, config);
+};
 
- export const post (basePath, request, config) {
-   return httpRequest('post', '\${host}\${basePath}', request, config);
- };
+export const post = (basePath, request, config) => {
+  return httpRequest('POST', `\${host}\${basePath}`, request, config);
+};
 
- export const delete (basePath, request, config) {
-   return httpRequest('delete', '\${host}\${basePath}', request);
- };
+export const remove = (basePath, request, config) => {
+  return httpRequest('DELETE', `\${host}\${basePath}`, request, config);
+};
 
- export const put (basePath, request, config) {
-   return httpRequest('put', '\${host}\${basePath}', request);
- };
+export const put = (basePath, request, config) => {
+  return httpRequest('PUT', `\${host}\${basePath}`, request, config);
+};
 
- export patch (basePath, request, config) {
-   return httpRequest('patch', '\${host}\${basePath}', request);
- };
-"
+export const patch = (basePath, request, config) => {
+  return httpRequest('PATCH', `\${host}\${basePath}`, request, config);
+};">./api/index.js
 
 echo -e "{
 \"presets\": [\"env\", \"stage-0\",\"stage-2\",\"airbnb\", \"react\", \"es2017\"],

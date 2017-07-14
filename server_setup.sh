@@ -19,18 +19,18 @@ sudo npm i -S body-parser
 
 mkdir ./{dist,lib,api}
 
-sed -i '/"clean":/a \\t"start": "nodemon lib\/server.js --exec babel-node --presets env,stage-2",' package.json
-sed -i '/"start":/a \\t"build": "babel lib -d dist --presets es2015,stage-2",' package.json
-sed -i '/"build":/a \\t"serve": "node dist\/server.js",' package.json
+sed -i '/"clean":/a \\t"server": "nodemon lib\/server.js --exec babel-node --presets env,stage-2",' package.json
+sed -i '/"start":/a \\t"build": "babel lib -d dist --presets env,stage-2",' package.json
+sed -i '/"build":/a \\t"server": "node dist\/server.js",' package.json
 
 echo -e "export default app => {
-  app.get('/', (req, res) => {
-   res.setHeader('Content-Type', 'text/plain');
+  app.get('/rest', (req, res) => {
+   res.setHeader('Content-Type', 'application/json');
    res.send({ message: 'Service is properly working.' });
   });
 }">./lib/router.js
 
-echo "import express from 'express';
+echo "import express, { favicon } from 'express';
 import path from 'path';
 import cors from 'cors';
 import morgan from 'morgan';
@@ -39,12 +39,13 @@ import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import router from './router';
 
-const port = process.env.PORT || 8100;
+const port = process.env.PORT || 4000;
 const app = express();
 const publicPath = path.join(__dirname, '../public');
 
 app.use(cors());
 app.use(helmet());
+app.use(favicon());
 app.use(morgan('combined'));
 app.use(bodyParser.json({ type: '*/* }));
 
@@ -66,4 +67,4 @@ server.listen(port, () => {
 
 echo -e "\n\n\t\e[1;32mLaunching appliction.\n\n\e[0m"
 
-npm start
+npm run server
