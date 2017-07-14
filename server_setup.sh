@@ -47,7 +47,7 @@ app.use(cors());
 app.use(helmet());
 app.use(favicon());
 app.use(morgan('combined'));
-app.use(bodyParser.json({ type: '*/* }));
+app.use(bodyParser.json({ type: */* }));
 
 router(app);
 
@@ -62,7 +62,7 @@ const server = http.createServer(app);
 
 server.listen(port, () => {
   console.log(\`Server has started and is listening on \${port}\`);
-});">./server.js
+});">./lib/server.js
 
 
 echo -e "\n\n\t\e[1;32mLaunching appliction.\n\n\e[0m"
