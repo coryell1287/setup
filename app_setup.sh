@@ -8,10 +8,9 @@ echo -e "\n\n\t\e[1;35mBeginning application setup...\n\n\e[0m"
 sudo npm i -S react react-dom
 sudo npm i -S react-addons-test-utils
 sudo npm i -S react-addons-transition-group
-sudo npm install --save object-assign
-sudo npm install --save es6-promise
-sudo npm install --save es6-shim
-sudo npm install --save whatwg-fetch
+sudo npm i -S object-assign
+sudo npm i -S es6-promise
+sudo npm i -S es6-shim
 sudo npm i -S babel-plugin-transform-runtime
 
 # Development dependencies
@@ -26,32 +25,47 @@ sudo npm i -D babel-preset-stage-0
 sudo npm i -D babel-preset-stage-2
 sudo npm i -D babel-plugin-transform-async-generator-functions
 sudo npm i -D babel-plugin-syntax-async-function
+sudo npm i -D babel-preset-airbnb
+sudo npm i -D babel-plugin-add-module-exports
+sudo npm i -D babel-plugin-transform-regenerator
 
 
 sudo npm i -S aphrodite
 # Redux dependencies
 
-sudo npm install --save redux react-redux react-router redux-devtools-extension redux-thunk redux-logger
+sudo npm i -S redux
+sudo npm i -S react-redux
+sudo npm i -S react-router
+sudo npm i -S redux-devtools-extension
+sudo npm i -S redux-thunk redux-logger
 
 # ESLint development dependencies
-sudo npm install --save-dev eslint
-sudo npm install --save-dev eslint-config-airbnb
-sudo npm install --save-dev eslint-plugin-import
-sudo npm install --save-dev eslint-plugin-jsx-a11y
-sudo npm install --save-dev eslint-plugin-react
-sudo npm install --save-dev eslint-plugin-babel
-sudo npm install --save-dev eslint-config-default
-sudo npm install --save-dev eslint-plugin-standard
+sudo npm i -D eslint
+sudo npm i -D eslint-config-airbnb
+sudo npm i -D eslint-plugin-import
+sudo npm i -D eslint-plugin-jsx-a11y
+sudo npm i -D eslint-plugin-react
+sudo npm i -D eslint-plugin-babel
+sudo npm i -D eslint-config-default
+sudo npm i -D eslint-plugin-standard
 
 
-sudo npm install --save autoprefixer-loader sass-loader style-loader css-loader node-sass extract-text-webpack-plugin
+sudo npm i -D autoprefixer-loader
+sudo npm i -D sass-loader
+sudo npm i -D css-loader
+sudo npm i -D image-webpack-loader
+sudo npm i -D img-loader
+sudo npm i -D style-loader
+sudo npm i -D file-loader
+sudo npm i -D url-loader
+sudo npm i -D node-sass
+sudo npm i -D extract-text-webpack-plugin
 
-sudo npm install --save-dev lodash
-sudo npm install --save-dev classnames
-sudo npm install --save rimraf
+sudo npm i -D lodash
+sudo npm i -D classnames
+sudo npm i -D rimraf
 
-sudo npm install --save-dev deep-freeze-strict
-
+sudo npm i -D deep-freeze-strict
 
 sudo npm i -S webpack
 sudo npm i -S webpack-dev-middleware
@@ -60,15 +74,13 @@ sudo npm i -S webpack-hot-middleware
 #Install server setup
 sudo npm i -S axios
 
-
-######################################################
-# Run these command to get react-router-redux to work#
-######################################################
-sudo npm i -S react-router-redux@5.0.0-alpha.6
-sudo npm i -S react-router-dom@4.0.0-beta.8
+mkdir -p ./{public/styles,src/{store,actions,router,reducers,components,containers,api}}
 
 
-mkdir -p ./src/{store,actions,router,reducers,components,containers}
+
+#Add bootstrap to the public directory
+mkdir -p public/styles
+curl -sL https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css | tee public/styles/bootstrap.min.css
 
 
 ####################
@@ -115,15 +127,14 @@ export const history = createHistory();
 
 
 echo -e "import React from 'react';
-import { Route } from 'react-router-dom'
-import { ConnectedRouter } from 'react-router-redux';
+import { Router, Route } from 'react-router';
 import { history } from 'store/configureStore';
 import Application from 'containers/Application';
 
 const Routes = (
-  <ConnectedRouter history={history}>
+  <Router history={history}>
     <Route path=\"/\" component={Application} />
-  </ConnectedRouter>
+  </Router>
 );
 export default Routes;">./src/router/router.jsx
 
@@ -377,6 +388,7 @@ echo -e "<!doctype html>
   <meta name=\"viewport\"
         content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">
   <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">
+  <link rel=\"stylesheet\" href=\"styles/boostrap.min.css\">
   <link rel=\"stylesheet\" href=\"static/css/styles.css\">
   <title>Application</title>
 </head>
@@ -402,7 +414,7 @@ module.exports = {
     './src/index.jsx',
   ],
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, '/public'),
     filename: 'bundle.js',
     publicPath: '/static/',
   },
@@ -428,13 +440,15 @@ module.exports = {
   module: {
     rules: [{
       use: 'babel-loader',
-      test: /\.jsx?$/
+      test: /\.jsx?$/,
+      include: [path.resolve(__dirname, './src')]
     }, {
       test: /\.css$/,
       use: ExtractTextPlugin.extract({
-        loader: 'css-loader'
+        fallback: 'style-loader',
+        use: ['css-loader', 'sass-loader']
       }),
-    },{
+    }, {
       test: /\.(jpe?g|png|gif|svg)$/,
       use: [{
         loader: 'url-loader',
@@ -527,7 +541,7 @@ app.use(require('webpack-dev-middleware')(compiler, {
 app.use(require('webpack-hot-middleware')(compiler));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 app.listen(port, 'localhost', (err) => {
@@ -602,7 +616,7 @@ export const requestPosts = reddit => ({
   reddit,
 });
 
-export const asyncGet = (reddit, json) => ({
+export const asyncFetch = (reddit, json) => ({
   type: RECEIVE_POSTS,
   reddit,
   posts: json.data.children.map(child => child.data),
@@ -618,7 +632,7 @@ const asyncGet = () => dispatch => {
     headers: {
       'accept': 'application/json',
       'accept-language': 'en_US',
-      content-type: 'application/json',
+      'content-type': 'application/json',
     }
   };
 
@@ -680,31 +694,46 @@ async function httpRequest(method, url, payload, config) {
 }
 
 export const get = (basePath, config) => {
-  return httpRequest('GET', `\${host}\${basePath}`, config);
+  return httpRequest('GET', \`\${host}\${basePath}\`, config);
 };
 
 export const post = (basePath, request, config) => {
-  return httpRequest('POST', `\${host}\${basePath}`, request, config);
+  return httpRequest('POST', \`\${host}\${basePath}\`, request, config);
 };
 
 export const remove = (basePath, request, config) => {
-  return httpRequest('DELETE', `\${host}\${basePath}`, request, config);
+  return httpRequest('DELETE', \`\${host}\${basePath}\`, request, config);
 };
 
 export const put = (basePath, request, config) => {
-  return httpRequest('PUT', `\${host}\${basePath}`, request, config);
+  return httpRequest('PUT', \`\${host}\${basePath}\`, request, config);
 };
 
 export const patch = (basePath, request, config) => {
-  return httpRequest('PATCH', `\${host}\${basePath}`, request, config);
-};">./api/index.js
+  return httpRequest('PATCH', \`\${host}\${basePath}\`, request, config);
+};">./src/api/index.js
 
 echo -e "{
-\"presets\": [\"env\", \"stage-0\",\"stage-2\",\"airbnb\", \"react\", \"es2017\"],
-\"plugins\": [\"babel-plugin-transform-class-properties\", \"transform-runtime\", \"syntax-async-functions\", \"transform-async-generator-functions\"]
+  \"sourceMaps\": \"inline\",
+  \"presets\": [
+    \"react\",
+    \"airbnb\",
+    \"env\",
+    \"es2017\",
+    \"stage-0\",
+    \"stage-2\"
+  ],
+  \"plugins\": [
+    \"babel-plugin-transform-class-properties\",
+    \"syntax-async-functions\",
+    \"transform-async-generator-functions\",
+    \"transform-runtime\",
+    \"add-module-exports\",
+    \"transform-regenerator\"
+  ]
 }">./.babelrc
 
-sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers PhantomJS",' package.json
+#sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers PhantomJS",' package.json
 sed -i '/"test":/i \\t"build:webpack": "NODE_ENV=production webpack --config webpack.config.prod.js",' package.json
 sed -i '/"build:webpack":/i \\t"build": "npm run clean && npm run build:webpack",' package.json
 sed -i '/"build":/a \\t"clean": "rimraf dist",' package.json
