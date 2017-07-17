@@ -694,23 +694,23 @@ async function httpRequest(method, url, payload, config) {
 }
 
 export const get = (basePath, config) => {
-  return httpRequest('GET', \`\${host}\${basePath}\`, config);
+  return httpRequest('get', \`\${host}\${basePath}\`, config);
 };
 
 export const post = (basePath, request, config) => {
-  return httpRequest('POST', \`\${host}\${basePath}\`, request, config);
+  return httpRequest('post', \`\${host}\${basePath}\`, request, config);
 };
 
 export const remove = (basePath, request, config) => {
-  return httpRequest('DELETE', \`\${host}\${basePath}\`, request, config);
+  return httpRequest('delete', \`\${host}\${basePath}\`, request, config);
 };
 
 export const put = (basePath, request, config) => {
-  return httpRequest('PUT', \`\${host}\${basePath}\`, request, config);
+  return httpRequest('put', \`\${host}\${basePath}\`, request, config);
 };
 
 export const patch = (basePath, request, config) => {
-  return httpRequest('PATCH', \`\${host}\${basePath}\`, request, config);
+  return httpRequest('patch', \`\${host}\${basePath}\`, request, config);
 };">./src/api/index.js
 
 echo -e "{
