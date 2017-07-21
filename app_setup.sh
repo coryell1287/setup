@@ -36,6 +36,7 @@ sudo npm i -S aphrodite
 sudo npm i -S redux
 sudo npm i -S react-redux
 sudo npm i -S react-router
+sudo npm i -S redux-async-await
 sudo npm i -S redux-devtools-extension
 sudo npm i -S redux-thunk redux-logger
 
@@ -92,6 +93,7 @@ echo -e "import React from 'react';
 import { createStore, applyMiddleware, compose } from 'redux';
 import createHistory from 'history/createBrowserHistory';
 import thunk from 'redux-thunk';
+import asyncAwait from 'redux-async-await';
 import { createLogger } from 'redux-logger';
 import reducers from 'reducers';
 
@@ -107,7 +109,7 @@ const enhancers = compose(
 export const store = createStore(
     reducers,
     enhancers,
-    applyMiddleware(...middleware)
+    applyMiddleware(...middleware, asyncAwait)
 );
 
 if (module.hot) {
@@ -497,7 +499,8 @@ module.exports = {
   module: {
     rules: [{
       use: 'babel-loader',
-      test: /\.jsx?$/
+      test: /\.jsx?$/,
+      include: [path.resolve(__dirname, './src')]
     }, {
       test: /\.css$/,
       use: ExtractTextPlugin.extract({
