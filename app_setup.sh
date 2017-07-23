@@ -50,10 +50,12 @@ sudo npm i -D eslint-plugin-babel
 sudo npm i -D eslint-config-default
 sudo npm i -D eslint-plugin-standard
 
-
-sudo npm i -D autoprefixer-loader
+sudo npm i -D copyfiles
 sudo npm i -D sass-loader
 sudo npm i -D css-loader
+sudo npm i -D postcss-loader
+sudo npm i -D postcss-cssnext
+sudo npm i -D postcss-import
 sudo npm i -D image-webpack-loader
 sudo npm i -D img-loader
 sudo npm i -D style-loader
@@ -285,12 +287,12 @@ echo -e "<!doctype html>
         content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">
   <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">
   <link rel=\"stylesheet\" href=\"styles/boostrap.min.css\">
-  <link rel=\"stylesheet\" href=\"static/css/styles.css\">
+  <link rel=\"stylesheet\" href=\"public/css/styles.css\">
   <title>Application</title>
 </head>
 <body>
   <div id=\"root\"></div>
-  <script src=\"static/bundle.js\"></script>
+  <script src=\"public/bundle.js\"></script>
 </body>
 </html>
 ">./public/index.html
@@ -312,7 +314,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/static/',
+    publicPath: '/public/',
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
@@ -342,7 +344,14 @@ module.exports = {
       test: /\.css$/,
       use: ExtractTextPlugin.extract({
         fallback: 'style-loader',
-        use: 'css-loader'
+        use: [
+          {
+            loader: 'css-loader',
+            options: { importLoaders: 1 },
+          },
+          { loader: 'postcss-loader', },
+          { loader: 'sass-loader', }
+        ],
       }),
     }, {
       test: /\.(jpe?g|png|gif|svg)$/,
@@ -375,7 +384,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/static/',
+    publicPath: '/public/',
   },
   plugins: [
     new ExtractTextPlugin('css/styles.css'),
