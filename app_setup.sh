@@ -549,15 +549,19 @@ export const cancelFetchIndicator = () => {
 ###################################
 
 echo -e "import axios from 'axios';
+import { store } from 'store/configureStore';
 
-let host = 'localhost:4000/rest/';
+const { dispatch } = store;
+let host = 'http://localhost:4000/rest';
 
-async function httpRequest(method, url, payload, config) {
+async function httpRequest(method, url, config) {
   try {
-    const { data } = await axios[method](url, payload, config);
-    return dispatch(config[onSuccess](data));
+    dispatch({ type: 'START_FETCHING' });
+    const { data } = await axios[method](url, config);
+    data && dispatch({ type: 'STOP_FETCHING' });
+    return await dispatch(config.onSuccess(data));
   } catch (err) {
-    return dispatch(config[onFail]());
+    return await dispatch(config.onError(err));
   }
 }
 
