@@ -82,8 +82,7 @@ mkdir -p ./{public/styles,src/{store,actions,router,reducers,components,containe
 
 
 #Add bootstrap to the public directory
-mkdir -p public/styles
-curl -sL https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css | tee public/styles/bootstrap.min.css
+sudo npm i -S bootstrap-css@4.0.0-alpha.5
 
 
 ####################
@@ -297,6 +296,18 @@ echo -e "<!doctype html>
 </html>
 ">./public/index.html
 
+
+
+#Create the postcss.config file
+
+echo -e "module.exports = {
+  plugins: {
+    'postcss-import': {},
+    'postcss-cssnext': {
+      browsers: ['last 2 versions', '> 5%'],
+    },
+  },
+};">./postcss.config.js
 
 
 #Create the development webpack file
