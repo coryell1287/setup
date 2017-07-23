@@ -20,7 +20,7 @@ sudo npm i -S body-parser
 mkdir ./{dist,lib}
 
 sed -i '/"test":/i \\t"server": "nodemon lib\/server.js --exec babel-node --presets env,stage-2",' package.json
-sed -i '/"server:/i \\t"build:sever": "babel lib -d dist --presets env,stage-2",' package.json
+sed -i '/"server":/i \\t"build:sever": "babel lib -d dist --presets env,stage-2",' package.json
 sed -i '/"build:sever":/a \\t"server": "node dist\/server.js",' package.json
 
 echo -e "export default app => {

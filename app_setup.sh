@@ -23,7 +23,7 @@ sudo npm i -D babel-preset-es2017
 sudo npm i -D babel-es6-polyfill
 sudo npm i -D babel-preset-stage-0
 sudo npm i -D babel-preset-stage-2
-sudo npm i -D babel-plugin-transform-async-generator-functions
+sudo npm i -D babel-plugin-async-to-promises
 sudo npm i -D babel-plugin-syntax-async-function
 sudo npm i -D babel-preset-airbnb
 sudo npm i -D babel-plugin-add-module-exports
@@ -183,7 +183,7 @@ const progressIndicator = (state = false, action) => {
 export default combineReducers({
   serviceTestReducer,
   progressIndicator,
-});">>./src/reducers/serviceReducer.jsx
+});">>./src/reducers/serviceReducers.jsx
 
 ################################
 #      Create the routes       #
@@ -285,12 +285,12 @@ echo -e "<!doctype html>
         content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">
   <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">
   <link rel=\"stylesheet\" href=\"styles/boostrap.min.css\">
-  <link rel=\"stylesheet\" href=\"dist/css/styles.css\">
+  <link rel=\"stylesheet\" href=\"static/css/styles.css\">
   <title>Application</title>
 </head>
 <body>
   <div id=\"root\"></div>
-  <script src=\"dist/bundle.js\"></script>
+  <script src=\"static/bundle.js\"></script>
 </body>
 </html>
 ">./public/index.html
@@ -310,9 +310,9 @@ module.exports = {
     './src/index.jsx',
   ],
   output: {
-    path: path.join(__dirname, '/public'),
+    path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/dist/',
+    publicPath: '/static/',
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
@@ -342,7 +342,7 @@ module.exports = {
       test: /\.css$/,
       use: ExtractTextPlugin.extract({
         fallback: 'style-loader',
-        use: ['css-loader', 'sass-loader']
+        use: 'css-loader'
       }),
     }, {
       test: /\.(jpe?g|png|gif|svg)$/,
@@ -370,18 +370,19 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 module.exports = {
   devtool: 'source-map',
   entry: [
-    './src/index.js',
+    './src/index.jsx',
   ],
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/dist/',
+    publicPath: '/static/',
   },
   plugins: [
-    new webpack.optimize.OccurenceOrderPlugin(),
+    new ExtractTextPlugin('css/styles.css'),
+    new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.DefinePlugin({
       'process.env': {
-        'NODE_ENV': production,
+        'NODE_ENV': 'production',
       }
     }),
     new webpack.optimize.UglifyJsPlugin({
@@ -390,6 +391,20 @@ module.exports = {
       },
     }),
   ],
+  resolve: {
+    extensions: ['.js', '.jsx'],
+    alias: {
+      actions: path.join(__dirname, 'src/actions/'),
+      reducers: path.join(__dirname, 'src/reducers/'),
+      store: path.join(__dirname, 'src/store/'),
+      router: path.join(__dirname, 'src/router/'),
+      components: path.join(__dirname, 'src/components/'),
+      containers: path.join(__dirname, 'src/containers/'),
+      api: path.join(__dirname, 'src/api/'),
+      devTools: path.join(__dirname, 'src/devTools/'),
+      assets: path.join(__dirname, 'src/assets/')
+    },
+  },
   module: {
     rules: [{
       use: 'babel-loader',
@@ -398,7 +413,8 @@ module.exports = {
     }, {
       test: /\.css$/,
       use: ExtractTextPlugin.extract({
-        loader: 'css-loader'
+        fallback: 'style-loader',
+        use: 'css-loader'
       }),
     },{
       test: /\.(jpe?g|png|gif|svg)$/,
@@ -414,8 +430,7 @@ module.exports = {
       ]
     }]
   },
-};
-">./webpack.config.prod.js
+};">./webpack.config.prod.js
 
 
 
@@ -598,7 +613,7 @@ echo -e "{
   \"plugins\": [
     \"babel-plugin-transform-class-properties\",
     \"syntax-async-functions\",
-    \"transform-async-generator-functions\",
+    \"async-to-promises\",
     \"transform-runtime\",
     \"add-module-exports\",
     \"transform-regenerator\"
