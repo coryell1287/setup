@@ -93,9 +93,9 @@ echo -e "import React from 'react';
 import { createStore, applyMiddleware, compose } from 'redux';
 import createHistory from 'history/createBrowserHistory';
 import thunk from 'redux-thunk';
-import asyncAwait from 'redux-async-await';
 import { createLogger } from 'redux-logger';
 import reducers from 'reducers';
+import asyncAwait from 'redux-async-await';
 
 const middleware = [thunk];
 
@@ -106,6 +106,7 @@ if (process.env.NODE_ENV !== 'production') {
 const enhancers = compose(
     window.devToolsExtension ? window.devToolsExtension() : f => f
 );
+
 export const store = createStore(
     reducers,
     enhancers,
@@ -119,8 +120,7 @@ if (module.hot) {
   });
 }
 
-export const history = createHistory();
-">./src/store/configureStore.jsx
+export const history = createHistory();">./src/store/configureStore.jsx
 
 
 ################################
@@ -144,63 +144,46 @@ export default Routes;">./src/router/router.jsx
 #      Create the reducer      #
 ################################
 echo -e "import { combineReducers } from 'redux';
-import { SELECT_REDDIT, INVALIDATE_REDDIT, REQUEST_POSTS, RECEIVE_POSTS } from 'actions';
-
-const selectedReddit = (state = 'reactjs', action) => {
-  switch (action.type) {
-    case SELECT_REDDIT:
-      return action.reddit;
-    default:
-      return state;
-  }
-};
-
-const posts = (state = { isFetching: false, didInvalidate: false, items: [], }, action) => {
-  switch (action.type) {
-    case INVALIDATE_REDDIT:
-      return {
-        ...state,
-        didInvalidate: true,
-      };
-    case REQUEST_POSTS:
-      return {
-        ...state,
-        isFetching: true,
-        didInvalidate: false,
-      };
-    case RECEIVE_POSTS:
-      return {
-        ...state,
-        isFetching: false,
-        didInvalidate: false,
-        items: action.posts,
-        lastUpdated: action.receivedAt,
-      };
-    default:
-      return state;
-  }
-};
-
-const postsByReddit = (state = { }, action) => {
-  switch (action.type) {
-    case INVALIDATE_REDDIT:
-    case RECEIVE_POSTS:
-    case REQUEST_POSTS:
-      return {
-        ...state,
-        [action.reddit]: posts(state[action.reddit], action)
-      };
-    default:
-      return state;
-  }
-};
+import serviceReducer from 'reducers/serviceReducers';
 
 const rootReducer = combineReducers({
-  postsByReddit,
-  selectedReddit,
+  serviceState: serviceReducer
 });
 
-export default rootReducer;">./src/reducers/index.jsx
+export default rootReducer;
+">./src/reducers/index.jsx
+
+
+echo -e "import { combineReducers } from 'redux';
+
+const serviceTestReducer = (state = '', action) => {
+  switch (action.type) {
+    case 'SUCCESSUFLLY_FETCHED_DATA':
+      const { message } = action.payload.data;
+      return message;
+    case 'FAILED_TO_RETRIEVE_DATA':
+      return action.err;
+    default:
+      return state;
+  }
+};
+
+const progressIndicator = (state = false, action) => {
+  switch (action.type) {
+    case 'START_FETCHING':
+      return true;
+    case 'STOP_FETCHING':
+      return false;
+    default:
+      return state;
+  }
+};
+
+
+export default combineReducers({
+  serviceTestReducer,
+  progressIndicator,
+});">>./src/reducers/serviceReducer.jsx
 
 ################################
 #      Create the routes       #
@@ -220,122 +203,31 @@ render(
   document.getElementById('root')
 );">./src/index.jsx
 
-################################
-#      Create the Picker       #
-################################
-
-echo -e "import React, { PropTypes } from 'react';
-
-const Picker = ({ value, onChange, options }) => (
-  <span>
-    <h1>{value}</h1>
-    <select onChange={e => onChange(e.target.value)}
-            value={value}>
-      {options.map(option =>
-        <option value={option} key={option}>
-          {option}
-        </option>)
-      }
-    </select>
-  </span>
-);
-
-Picker.propTypes = {
-  options: PropTypes.arrayOf(
-    PropTypes.string.isRequired
-  ).isRequired,
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
-};
-
-export default Picker;">./src/components/Picker.jsx
-
-
-################################
-#      Create the Posts        #
-################################
-echo -e "import React, { PropTypes } from 'react';
-
-const Posts = ({ posts }) => (
-    <ul>
-      {posts.map((post, i) =>
-          <li key={i}>{post.title}</li>
-      )}
-    </ul>
-);
-
-Posts.propTypes = {
-  posts: PropTypes.array.isRequired,
-};
-
-export default Posts;
-">./src/components/Posts.jsx
-
-echo -e "import React, { Component, PropTypes } from 'react';
+echo -e "import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { selectReddit, fetchPostsIfNeeded, invalidateReddit } from 'actions';
-import Picker from 'components/Picker';
-import Posts from 'components/Posts';
+import { mapDispatchToProps, mapStateToProps } from 'containers/propConfig';
+
 
 class Application extends Component {
-  static propTypes = {
-    selectedReddit: PropTypes.string.isRequired,
-    posts: PropTypes.array.isRequired,
-    isFetching: PropTypes.bool.isRequired,
-    lastUpdated: PropTypes.number,
-    dispatch: PropTypes.func.isRequired,
-  };
 
   componentDidMount() {
-    const { dispatch, selectedReddit } = this.props;
-    dispatch(fetchPostsIfNeeded(selectedReddit));
+    const { asyncGet } = this.props;
+    asyncGet();
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedReddit !== this.props.selectedReddit) {
-      const { dispatch, selectedReddit } = nextProps;
-      dispatch(fetchPostsIfNeeded(selectedReddit));
-    }
-  }
-
-  handleChange = nextReddit => {
-    this.props.dispatch(selectReddit(nextReddit))
-  };
-
-  handleRefreshClick = e => {
-    e.preventDefault();
-
-    const { dispatch, selectedReddit } = this.props;
-    dispatch(invalidateReddit(selectedReddit));
-    dispatch(fetchPostsIfNeeded(selectedReddit))
-  };
 
   render() {
-    const { selectedReddit, posts, isFetching, lastUpdated } = this.props;
-    const isEmpty = posts.length === 0;
+    const { fetchState, serviceState } = this.props;
     return (
       <div>
-        <Picker value={selectedReddit}
-                onChange={this.handleChange}
-                options={[ 'reactjs', 'frontend' ]} />
-        <p>
-          {lastUpdated &&
-            <span>
-              Last updated at {new Date(lastUpdated).toLocaleTimeString()}.
-              {' '}
-            </span>
-          }
-          {!isFetching &&
-            <a href=\"#\"
-               onClick={this.handleRefreshClick}>
-              Refresh
-            </a>
-          }
-        </p>
-        {isEmpty
-          ? (isFetching ? <h2>Loading...</h2> : <h2>Empty.</h2>)
-          : <div style={{ opacity: isFetching ? 0.5 : 1 }}>
-              <Posts posts={posts} />
+        {
+          fetchState ? 'Loading'
+            :
+            <div>
+              <h1>Service test</h1>
+              <div>
+                <span>{serviceState}</span>
+              </div>
             </div>
         }
       </div>
@@ -343,26 +235,28 @@ class Application extends Component {
   }
 }
 
-const mapStateToProps = state => {
-  const { selectedReddit, postsByReddit } = state;
-  const {
-    isFetching,
-    lastUpdated,
-    items: posts
-  } = postsByReddit[selectedReddit] || {
-    isFetching: true,
-    items: []
-  }
+export default connect(mapStateToProps, mapDispatchToProps)(Application)
+">./src/containers/Application.jsx
 
+
+################################
+#     Create the propConfig    #
+################################
+
+echo -e "import { bindActionCreators } from 'redux'
+import * as action from 'actions';
+
+export function mapStateToProps(state) {
   return {
-    selectedReddit,
-    posts,
-    isFetching,
-    lastUpdated
+    serviceState: state.serviceState.serviceTestReducer,
+    fetchState: state.serviceState.progressIndicator,
   }
 }
 
-export default connect(mapStateToProps)(Application)">./src/containers/Application.jsx
+export function mapDispatchToProps(dispatch) {
+  return bindActionCreators(action, dispatch);
+}">./src/containers/propConfig.js
+
 
 ################################
 #  Create the entry point      #
@@ -391,12 +285,12 @@ echo -e "<!doctype html>
         content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">
   <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">
   <link rel=\"stylesheet\" href=\"styles/boostrap.min.css\">
-  <link rel=\"stylesheet\" href=\"static/css/styles.css\">
+  <link rel=\"stylesheet\" href=\"dist/css/styles.css\">
   <title>Application</title>
 </head>
 <body>
   <div id=\"root\"></div>
-  <script src=\"static/bundle.js\"></script>
+  <script src=\"dist/bundle.js\"></script>
 </body>
 </html>
 ">./public/index.html
@@ -418,7 +312,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, '/public'),
     filename: 'bundle.js',
-    publicPath: '/static/',
+    publicPath: '/dist/',
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
@@ -481,7 +375,7 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/static/',
+    publicPath: '/dist/',
   },
   plugins: [
     new webpack.optimize.OccurenceOrderPlugin(),
@@ -599,36 +493,9 @@ echo -e "{
 
 echo -e "import { get, post } from 'api';
 
-export const REQUEST_POSTS = 'REQUEST_POSTS';
-export const RECEIVE_POSTS = 'RECEIVE_POSTS';
-export const SELECT_REDDIT = 'SELECT_REDDIT';
-export const INVALIDATE_REDDIT = 'INVALIDATE_REDDIT';
-
-export const selectReddit = reddit => ({
-  type: SELECT_REDDIT,
-  reddit,
-});
-
-export const invalidateReddit = reddit => ({
-  type: INVALIDATE_REDDIT,
-  reddit,
-});
-
-export const requestPosts = reddit => ({
-  type: REQUEST_POSTS,
-  reddit,
-});
-
-export const asyncFetch = (reddit, json) => ({
-  type: RECEIVE_POSTS,
-  reddit,
-  posts: json.data.children.map(child => child.data),
-  receivedAt: Date.now(),
-});
-
-const asyncGet = () => dispatch => {
+export const asyncGet = () => dispatch => {
   const config = {
-    url: 'fetch',
+    url: '/',
     timeout: 4000,
     onSuccess: completeFetchSuccessfully,
     onError: failedToCompleteFetch,
@@ -643,36 +510,34 @@ const asyncGet = () => dispatch => {
 
 };
 
-export const receivePosts = (reddit, json) => ({
-  type: RECEIVE_POSTS,
-  reddit,
-  posts: json.data.children.map(child => child.data),
-  receivedAt: Date.now(),
-});
 
-const fetchPosts = reddit => dispatch => {
-  dispatch(get(reddit));
-  return fetch(\`https://www.reddit.com/r/\${reddit}.json\`)
-  .then(response => response.json())
-  .then(json => dispatch(receivePosts(reddit, json)));
+export const completeFetchSuccessfully = message => {
+  return {
+    type: 'SUCCESSUFLLY_FETCHED_DATA',
+    payload: {
+      data: message,
+    }
+  }
 };
 
-const shouldFetchPosts = (state, reddit) => {
-  const posts = state.postsByReddit[reddit];
-  if (!posts) {
-    return true;
+export const failedToCompleteFetch = err => {
+  return {
+    type: 'FAILED_TO_RETRIEVE_DATA',
+    err: err.message,
   }
-
-  if (posts.isFetching) {
-    return false;
-  }
-
-  return posts.didInvalidate;
 };
 
-export const fetchPostsIfNeeded = reddit => (dispatch, getState) => {
-  if (shouldFetchPosts(getState(), reddit)) {
-    return dispatch(fetchPosts(reddit));
+export const loadFetchIndicator = () => {
+  return {
+    type: 'START_FETCHING',
+    isFetching: true,
+  }
+};
+
+export const cancelFetchIndicator = () => {
+  return {
+    type: 'STOP_FETCHING',
+    isFetching: false,
   }
 };">./src/actions/index.jsx
 
