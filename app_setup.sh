@@ -23,7 +23,6 @@ sudo npm i -D babel-preset-es2017
 sudo npm i -D babel-es6-polyfill
 sudo npm i -D babel-preset-stage-0
 sudo npm i -D babel-preset-stage-2
-sudo npm i -D babel-plugin-async-to-promises
 sudo npm i -D babel-plugin-syntax-async-function
 sudo npm i -D babel-preset-airbnb
 sudo npm i -D babel-plugin-add-module-exports
@@ -640,7 +639,6 @@ echo -e "{
   \"plugins\": [
     \"babel-plugin-transform-class-properties\",
     \"syntax-async-functions\",
-    \"async-to-promises\",
     \"transform-runtime\",
     \"add-module-exports\",
     \"transform-regenerator\"
