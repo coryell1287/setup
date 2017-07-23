@@ -360,8 +360,8 @@ module.exports = {
             loader: 'css-loader',
             options: { importLoaders: 1 },
           },
-          { loader: 'postcss-loader', },
-          { loader: 'sass-loader', }
+          { loader: 'postcss-loader' },
+          { loader: 'sass-loader' }
         ],
       }),
     }, {
@@ -434,7 +434,14 @@ module.exports = {
       test: /\.css$/,
       use: ExtractTextPlugin.extract({
         fallback: 'style-loader',
-        use: 'css-loader'
+        use: [
+          {
+            loader: 'css-loader',
+            options: { importLoaders: 1 },
+          },
+          { loader: 'postcss-loader' },
+          { loader: 'sass-loader' }
+        ],
       }),
     },{
       test: /\.(jpe?g|png|gif|svg)$/,
