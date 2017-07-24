@@ -632,14 +632,15 @@ echo -e "{
   \"presets\": [
     \"react\",
     \"airbnb\",
-    \"env\":{
-    \"production\": {
-      \"presets\": [\"react-optimize\"]
-    },
+    \"env\",
     \"es2017\",
     \"stage-0\",
     \"stage-2\"
   ],
+  \"env\":{
+    \"production\": {
+      \"presets\": [\"react-optimize\"]
+    },
   \"plugins\": [
     \"babel-plugin-transform-class-properties\",
     \"syntax-async-functions\",
@@ -647,6 +648,7 @@ echo -e "{
     \"add-module-exports\",
     \"transform-regenerator\"
   ],
+
 }">./.babelrc
 
 #sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers PhantomJS",' package.json
