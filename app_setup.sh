@@ -20,6 +20,7 @@ sudo npm i -D babel-plugin-transform-class-properties
 sudo npm i -D babel-plugin-transform-react-jsx
 sudo npm i -D babel-preset-env
 sudo npm i -D babel-preset-es2017
+sudo npm i -D babel-preset-react-optimize
 sudo npm i -D babel-es6-polyfill
 sudo npm i -D babel-preset-stage-0
 sudo npm i -D babel-preset-stage-2
@@ -631,7 +632,10 @@ echo -e "{
   \"presets\": [
     \"react\",
     \"airbnb\",
-    \"env\",
+    \"env\":{
+    \"production\": {
+      \"presets\": [\"react-optimize\"]
+    },
     \"es2017\",
     \"stage-0\",
     \"stage-2\"
@@ -642,7 +646,7 @@ echo -e "{
     \"transform-runtime\",
     \"add-module-exports\",
     \"transform-regenerator\"
-  ]
+  ],
 }">./.babelrc
 
 #sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers PhantomJS",' package.json
