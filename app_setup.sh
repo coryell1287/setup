@@ -647,8 +647,8 @@ echo -e "{
     \"transform-runtime\",
     \"add-module-exports\",
     \"transform-regenerator\"
-  ],
-
+  ]
+ }
 }">./.babelrc
 
 #sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers PhantomJS",' package.json
