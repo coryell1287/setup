@@ -637,10 +637,11 @@ echo -e "{
     \"stage-0\",
     \"stage-2\"
   ],
-  \"env\":{
+  \"env\": {
     \"production\": {
       \"presets\": [\"react-optimize\"]
-    },
+    }
+  },
   \"plugins\": [
     \"babel-plugin-transform-class-properties\",
     \"syntax-async-functions\",
@@ -648,8 +649,8 @@ echo -e "{
     \"add-module-exports\",
     \"transform-regenerator\"
   ]
- }
-}">./.babelrc
+}
+">./.babelrc
 
 #sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers PhantomJS",' package.json
 sed -i '/"test":/i \\t"build:webpack": "NODE_ENV=production webpack --config webpack.config.prod.js",' package.json
