@@ -285,7 +285,6 @@ echo -e "<!doctype html>
   <meta name=\"viewport\"
         content=\"width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0\">
   <meta http-equiv=\"X-UA-Compatible\" content=\"ie=edge\">
-  <link rel=\"stylesheet\" href=\"styles/boostrap.min.css\">
   <link rel=\"stylesheet\" href=\"public/css/styles.css\">
   <title>Application</title>
 </head>
@@ -431,13 +430,13 @@ module.exports = {
       test: /\.jsx?$/,
       include: [path.resolve(__dirname, './src')]
     }, {
-      test: /\.css$/,
+      test: /\.(sass|scss|css)$/,
       use: ExtractTextPlugin.extract({
         fallback: 'style-loader',
         use: [
           {
             loader: 'css-loader',
-            options: { importLoaders: 1 },
+            options: { importLoaders: 1, sourceMap: true, modules: true, url: true },
           },
           { loader: 'postcss-loader' },
           { loader: 'sass-loader' }
@@ -593,17 +592,24 @@ export const cancelFetchIndicator = () => {
 echo -e "import axios from 'axios';
 import { store } from 'store/configureStore';
 
+const { location: { hostname, origin } } = window;
 const { dispatch } = store;
-let host = 'http://localhost:4000/rest';
+
+let host;
+if (hostname !== 'localhost') {
+  host = \`\${origin}/rest/\`;
+}
+host = 'http://localhost:4000/rest';
 
 async function httpRequest(method, url, config) {
   try {
     dispatch({ type: 'START_FETCHING' });
     const { data } = await axios[method](url, config);
-    data && dispatch({ type: 'STOP_FETCHING' });
     return await dispatch(config.onSuccess(data));
   } catch (err) {
     return await dispatch(config.onError(err));
+  } finally {
+    dispatch({ type: 'STOP_FETCHING' });
   }
 }
 

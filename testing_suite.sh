@@ -187,3 +187,4 @@ sed -i '/"test":/a \\t"test:watch": ".\/node_modules\/karma\/bin\/karma start --
 
 echo -e "\n\n\t\e[1;32mLaunching testing suite.\n\n\e[0m"
 npm test
+
