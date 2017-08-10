@@ -351,7 +351,7 @@ module.exports = {
       test: /\.jsx?$/,
       include: [path.resolve(__dirname, './src')]
     }, {
-      test: /\.css$/,
+      test: /\.(sass|scss|css)$/,
       use: ExtractTextPlugin.extract({
         fallback: 'style-loader',
         use: [
