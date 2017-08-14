@@ -198,12 +198,14 @@ import { Provider } from 'react-redux';
 import { store } from 'store/configureStore';
 import Routes from 'router/router';
 
-render(
+const node = document.getElementById('root');
+const element = (
   <Provider store={store}>
     {Routes}
-  </Provider>,
-  document.getElementById('root')
-);">./src/index.jsx
+  </Provider>
+);
+render(element, node);
+">./src/index.jsx
 
 echo -e "import React, { Component } from 'react';
 import { connect } from 'react-redux';
