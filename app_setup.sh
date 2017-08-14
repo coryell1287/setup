@@ -18,9 +18,10 @@ sudo npm i -D babelify babel-core babel-loader
 sudo npm i -D babel-preset-react
 sudo npm i -D babel-plugin-transform-class-properties
 sudo npm i -D babel-plugin-transform-react-jsx
+sudo npm i -D babel-plugin-transform-react-constant-elements
+sudo npm i -D babel-plugin-transform-react-inline-elements
 sudo npm i -D babel-preset-env
 sudo npm i -D babel-preset-es2017
-sudo npm i -D babel-preset-react-optimize
 sudo npm i -D babel-es6-polyfill
 sudo npm i -D babel-preset-stage-0
 sudo npm i -D babel-preset-stage-2
@@ -398,11 +399,9 @@ module.exports = {
   },
   plugins: [
     new ExtractTextPlugin('css/styles.css'),
-    new webpack.optimize.OccurrenceOrderPlugin(),
+    new ImageminPlugin({ test: 'assets/**' }),
     new webpack.DefinePlugin({
-      'process.env': {
-        'NODE_ENV': 'production',
-      }
+      'process.env.NODE_ENV': JSON.stringify('production'),
     }),
     new webpack.optimize.UglifyJsPlugin({
       compressor: {
@@ -645,11 +644,13 @@ echo -e "{
   ],
   \"env\": {
     \"production\": {
-      \"presets\": [\"react-optimize\"]
+      \"presets\": []
     }
   },
   \"plugins\": [
     \"babel-plugin-transform-class-properties\",
+    \"transform-react-constant-elements\",
+    \"transform-react-inline-elements\",
     \"syntax-async-functions\",
     \"transform-runtime\",
     \"add-module-exports\",
