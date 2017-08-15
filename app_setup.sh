@@ -493,17 +493,17 @@ app.listen(port, 'localhost', (err) => {
 });">devServer.js
 
 echo -e "{
-  \"extends\": \"airbnb\",
-  \"ecmaFeatures\": {
-    \"jsx\": true,
-    \"modules\": true
+  \"extends\": [\"eslint:recommended\", \"plugin:react/recommended\", \"airbnb\"],
+  \"parserOptions\": {
+    \"ecmaVersion\": 8,
+    \"ecmaFeatures\": {
+      \"jsx\": true,
+      \"modules\": true
+    }
   },
   \"env\": {
     \"browser\": true,
     \"node\": true
-  },
-  \"parserOptions\": {
-    \"ecmaVersion\": 6
   },
   \"rules\": {
     \"quotes\": [
@@ -520,14 +520,22 @@ echo -e "{
     \"babel/arrow-parens\": 1,
     \"babel/no-await-in-loop\": 1,
     \"react/jsx-uses-react\": 2,
+    \"react/prop-types\": 0,
     \"react/jsx-uses-vars\": 2,
-    \"react/react-in-jsx-scope\": 2
+    \"react/react-in-jsx-scope\": 2,
+    \"react/prefer-stateless-function\": 2,
+    \"import/no-extraneous-dependencies\": 0,
+    \"jsx-a11y/href-no-hash\": \"off\",
+    \"import/no-unresolved\": 0,
+    \"import/extensions\": [\"error\", \"never\"]
   },
   \"plugins\": [
     \"babel\",
-    \"react\"
+    \"react\",
+    \"jsx-a11y\"
   ]
-}">./.eslintrc
+}
+">./.eslintrc
 
 ################################
 # Create the action creators   #
@@ -634,6 +642,38 @@ export const patch = (basePath, request, config) => {
   return httpRequest('patch', \`\${host}\${basePath}\`, request, config);
 };">./src/api/index.js
 
+
+echo -e "const completeFetchSuccessfully = (message) => {
+  return {
+    type: 'SUCCESSUFLLY_FETCHED_DATA',
+    payload: {
+      data: message,
+    },
+  };
+};
+
+const failedToCompleteFetch = (err) => {
+  return {
+    type: 'FAILED_TO_RETRIEVE_DATA',
+    err: err.message,
+  };
+};
+
+const config = {
+  url: '/',
+  timeout: 4000,
+  onSuccess: completeFetchSuccessfully,
+  onError: failedToCompleteFetch,
+  headers: {
+    'Accept': 'application/json',
+    'Accept-Language': 'en_US',
+    'Content-Type': 'application/json',
+  },
+};
+
+export default config;
+">./src/api/serviceConfig.js
+
 echo -e "{
   \"sourceMaps\": \"inline\",
   \"presets\": [
@@ -646,13 +686,14 @@ echo -e "{
   ],
   \"env\": {
     \"production\": {
-      \"presets\": []
+      \"plugins\": [
+         \"transform-react-constant-elements\",
+         \"transform-react-inline-elements\"
+      ]
     }
   },
   \"plugins\": [
     \"babel-plugin-transform-class-properties\",
-    \"transform-react-constant-elements\",
-    \"transform-react-inline-elements\",
     \"syntax-async-functions\",
     \"transform-runtime\",
     \"add-module-exports\",
