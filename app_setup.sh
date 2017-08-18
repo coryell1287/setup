@@ -84,8 +84,7 @@ mkdir -p ./{public/styles,src/{store,actions,router,reducers,components,containe
 ####################
 
 
-echo -e "import React from 'react';
-import { createStore, applyMiddleware, compose } from 'redux';
+echo -e "import { createStore, applyMiddleware, compose } from 'redux';
 import createHistory from 'history/createBrowserHistory';
 import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
