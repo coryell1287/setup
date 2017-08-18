@@ -260,24 +260,6 @@ export function mapDispatchToProps(dispatch) {
   return bindActionCreators(action, dispatch);
 }">./src/containers/propConfig.js
 
-
-################################
-#  Create the entry point      #
-################################
-echo -e "import React from 'react';
-import { render } from 'react-dom';
-import { Provider } from 'react-redux';
-import { store } from 'store/configureStore';
-import Routes from 'router/router';
-
-render(
-  <Provider store={store}>
-    {Routes}
-  </Provider>,
-  document.getElementById('root'),
-);">./src/index.jsx
-
-
 #Create the index.html file
 
 echo -e "<!doctype html>
