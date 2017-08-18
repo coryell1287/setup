@@ -31,7 +31,6 @@ sudo npm i -D babel-plugin-add-module-exports
 sudo npm i -D babel-plugin-transform-regenerator
 
 
-sudo npm i -S aphrodite
 # Redux dependencies
 
 sudo npm i -S redux
