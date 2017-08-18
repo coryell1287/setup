@@ -65,7 +65,6 @@ sudo npm i -D node-sass
 sudo npm i -D extract-text-webpack-plugin
 
 sudo npm i -D lodash
-sudo npm i -D classnames
 sudo npm i -D rimraf
 
 sudo npm i -D deep-freeze-strict
@@ -78,11 +77,6 @@ sudo npm i -S webpack-hot-middleware
 sudo npm i -S axios
 
 mkdir -p ./{public/styles,src/{store,actions,router,reducers,components,containers,api}}
-
-
-
-#Add bootstrap to the public directory
-sudo npm i -S bootstrap-css@4.0.0-alpha.5
 
 
 ####################
