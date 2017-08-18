@@ -69,12 +69,12 @@ sudo npm i -D rimraf
 
 sudo npm i -D deep-freeze-strict
 
+#Install packages needed for the server
 sudo npm i -S webpack
 sudo npm i -S webpack-dev-middleware
 sudo npm i -S webpack-hot-middleware
-
-#Install server setup
 sudo npm i -S axios
+sudo npm i -S express
 
 mkdir -p ./{public/styles,src/{store,actions,router,reducers,components,containers,api}}
 
@@ -542,7 +542,7 @@ echo -e "{
 ################################
 
 echo -e "import { get } from 'api';
-import config from 'actions/serviceConfig';
+import config from 'api/serviceConfig';
 
 export const asyncGet = () => (dispatch) => {
   const options = {
