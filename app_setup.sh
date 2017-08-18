@@ -158,34 +158,41 @@ export default rootReducer;
 
 echo -e "import { combineReducers } from 'redux';
 
-const serviceTestReducer = (state = '', action) => {
+const serviceTest = (state = '', action) => {
   switch (action.type) {
-    case 'SUCCESSUFLLY_FETCHED_DATA':
+    case 'SUCCESSUFLLY_FETCHED_DATA': {
       const { message } = action.payload.data;
       return message;
-    case 'FAILED_TO_RETRIEVE_DATA':
+    }
+    case 'FAILED_TO_RETRIEVE_DATA': {
       return action.err;
-    default:
+    }
+    default: {
       return state;
+    }
   }
 };
 
 const progressIndicator = (state = false, action) => {
   switch (action.type) {
-    case 'START_FETCHING':
+    case 'START_FETCHING': {
       return true;
-    case 'STOP_FETCHING':
+    }
+    case 'STOP_FETCHING': {
       return false;
-    default:
+    }
+    default: {
       return state;
+    }
   }
 };
 
 
 export default combineReducers({
-  serviceTestReducer,
+  serviceTest,
   progressIndicator,
-});">>./src/reducers/serviceReducers.jsx
+});
+">>./src/reducers/serviceReducers.jsx
 
 ################################
 #      Create the routes       #
@@ -541,55 +548,18 @@ echo -e "{
 # Create the action creators   #
 ################################
 
-echo -e "import { get, post } from 'api';
+echo -e "import { get } from 'api';
+import config from 'actions/serviceConfig';
 
-export const asyncGet = () => dispatch => {
-  const config = {
-    url: '/',
-    timeout: 4000,
-    onSuccess: completeFetchSuccessfully,
-    onError: failedToCompleteFetch,
-    headers: {
-      'accept': 'application/json',
-      'accept-language': 'en_US',
-      'content-type': 'application/json',
-    }
+export const asyncGet = () => (dispatch) => {
+  const options = {
+    ...config,
+    url: 'options',
   };
-
-  dispatch(get(config.url, config));
-
+  dispatch(get(options.url, config));
 };
 
-
-export const completeFetchSuccessfully = message => {
-  return {
-    type: 'SUCCESSUFLLY_FETCHED_DATA',
-    payload: {
-      data: message,
-    }
-  }
-};
-
-export const failedToCompleteFetch = err => {
-  return {
-    type: 'FAILED_TO_RETRIEVE_DATA',
-    err: err.message,
-  }
-};
-
-export const loadFetchIndicator = () => {
-  return {
-    type: 'START_FETCHING',
-    isFetching: true,
-  }
-};
-
-export const cancelFetchIndicator = () => {
-  return {
-    type: 'STOP_FETCHING',
-    isFetching: false,
-  }
-};">./src/actions/index.jsx
+">./src/actions/index.jsx
 
 
 
@@ -608,12 +578,14 @@ let host;
 if (hostname !== 'localhost') {
   host = \`\${origin}/rest/\`;
 }
-host = 'http://localhost:4000/rest';
+host = 'http://localhost:4000/rest/';
 
 async function httpRequest(method, url, config) {
   try {
     dispatch({ type: 'START_FETCHING' });
-    const { data } = await axios[method](url, config);
+    const { data } = method === 'get'
+      ? await axios[method](url, config)
+      : await axios[method](url, config.body, config);
     return await dispatch(config.onSuccess(data));
   } catch (err) {
     return await dispatch(config.onError(err));
@@ -626,26 +598,15 @@ export const get = (basePath, config) => {
   return httpRequest('get', \`\${host}\${basePath}\`, config);
 };
 
-export const post = (basePath, request, config) => {
-  return httpRequest('post', \`\${host}\${basePath}\`, request, config);
+export const post = (basePath, body, config) => {
+  return httpRequest('post', \`\${host}\${basePath}\`, body, config);
 };
-
-export const remove = (basePath, request, config) => {
-  return httpRequest('delete', \`\${host}\${basePath}\`, request, config);
-};
-
-export const put = (basePath, request, config) => {
-  return httpRequest('put', \`\${host}\${basePath}\`, request, config);
-};
-
-export const patch = (basePath, request, config) => {
-  return httpRequest('patch', \`\${host}\${basePath}\`, request, config);
-};">./src/api/index.js
+">./src/api/index.js
 
 
-echo -e "const completeFetchSuccessfully = (message) => {
+echo -e "const completeFetchSuccessfully = (message, type) => {
   return {
-    type: 'SUCCESSUFLLY_FETCHED_DATA',
+    type,
     payload: {
       data: message,
     },

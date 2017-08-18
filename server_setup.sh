@@ -23,12 +23,12 @@ sed -i '/"test":/i \\t"server": "nodemon lib\/server.js --exec babel-node --pres
 sed -i '/"server":/i \\t"build:sever": "babel lib -d dist --presets env,stage-2",' package.json
 sed -i '/"build:sever":/a \\t"server": "node dist\/server.js",' package.json
 
-echo -e "export default app => {
+echo -e "export default (app) => {
   app.get('/rest', (req, res) => {
-   res.setHeader('Content-Type', 'application/json');
-   res.send({ message: 'Service is properly working.' });
+    res.setHeader('Content-Type', 'application/json');
+    res.send({ message: 'Service is properly working.', type: 'SUCCESSUFLLY_FETCHED_DATA' });
   });
-}">./lib/router.js
+">./lib/router.js
 
 echo "import express from 'express';
 import path from 'path';
