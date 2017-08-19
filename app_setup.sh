@@ -12,6 +12,7 @@ sudo npm i -S object-assign
 sudo npm i -S es6-promise
 sudo npm i -S es6-shim
 sudo npm i -S babel-plugin-transform-runtime
+sudo npm i -S core-decorators
 
 # Development dependencies
 sudo npm i -D babelify babel-core babel-loader
@@ -22,6 +23,7 @@ sudo npm i -D babel-plugin-transform-react-constant-elements
 sudo npm i -D babel-plugin-transform-react-inline-elements
 sudo npm i -D babel-preset-env
 sudo npm i -D babel-preset-es2017
+sudo npm i -D babel-plugin-transform-decorators-legacy
 sudo npm i -D babel-es6-polyfill
 sudo npm i -D babel-preset-stage-0
 sudo npm i -D babel-preset-stage-2
@@ -629,7 +631,7 @@ echo -e "{
     }
   },
   \"plugins\": [
-    \"babel-plugin-transform-class-properties\",
+    \"transform-class-properties\",
     \"syntax-async-functions\",
     \"transform-runtime\",
     \"add-module-exports\",
