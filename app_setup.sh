@@ -631,11 +631,12 @@ echo -e "{
     }
   },
   \"plugins\": [
-    \"transform-class-properties\",
-    \"syntax-async-functions\",
     \"transform-runtime\",
+    \"syntax-async-functions\",
     \"add-module-exports\",
-    \"transform-regenerator\"
+    \"transform-regenerator\",
+    \"transform-decorators-legacy\",
+    \"transform-class-properties\"
   ]
 }
 ">./.babelrc
