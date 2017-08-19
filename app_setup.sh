@@ -381,10 +381,12 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
     publicPath: '/public/',
+    vendor: ['react', 'react-dom', 'react-router'],
   },
   plugins: [
     new ExtractTextPlugin('css/styles.css'),
     new ImageminPlugin({ test: 'assets/**' }),
+    new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
