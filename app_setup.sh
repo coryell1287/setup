@@ -508,7 +508,8 @@ echo -e "{
     \"import/no-extraneous-dependencies\": 0,
     \"jsx-a11y/href-no-hash\": \"off\",
     \"import/no-unresolved\": 0,
-    \"import/extensions\": [\"error\", \"never\"]
+    \"import/extensions\": [\"error\", \"never\"],
+    \"no-underscore-dangle\": [\"error\", { \"allowAfterThis\": true }]
   },
   \"plugins\": [
     \"babel\",
