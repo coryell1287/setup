@@ -371,6 +371,7 @@ module.exports = {
 echo -e "const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ImageminPlugin = require('imagemin-webpack-plugin').default;
 
 module.exports = {
   devtool: 'source-map',
