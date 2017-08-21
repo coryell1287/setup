@@ -328,14 +328,14 @@ module.exports = {
       containers: path.join(__dirname, 'src/containers/'),
       api: path.join(__dirname, 'src/api/'),
       devTools: path.join(__dirname, 'src/devTools/'),
-      assets: path.join(__dirname, 'src/assets/')
+      assets: path.join(__dirname, 'src/assets/'),
     },
   },
   module: {
     rules: [{
       use: 'babel-loader',
       test: /\.jsx?$/,
-      include: [path.resolve(__dirname, './src')]
+      include: [path.resolve(__dirname, './src')],
     }, {
       test: /\.(sass|scss|css)$/,
       use: ExtractTextPlugin.extract({
@@ -346,7 +346,7 @@ module.exports = {
             options: { importLoaders: 1, sourceMap: true, modules: true, url: true },
           },
           { loader: 'postcss-loader' },
-          { loader: 'sass-loader' }
+          { loader: 'sass-loader' },
         ],
       }),
     }, {
@@ -356,14 +356,15 @@ module.exports = {
         options: {
           limit: 40000,
           name: 'assets/[name].[ext]',
-          context: './images'
-        }
+          context: './images',
+        },
       },
-        'image-webpack-loader?{}'
-      ]
-    }]
+        'image-webpack-loader?{}',
+      ],
+    }],
   },
-};">./webpack.config.dev.js
+};
+">./webpack.config.dev.js
 
 
 # Create the webpack production file
@@ -382,12 +383,10 @@ module.exports = {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
     publicPath: '/public/',
-    vendor: ['react', 'react-dom', 'react-router'],
   },
   plugins: [
     new ExtractTextPlugin('css/styles.css'),
     new ImageminPlugin({ test: 'assets/**' }),
-    new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
@@ -408,14 +407,14 @@ module.exports = {
       containers: path.join(__dirname, 'src/containers/'),
       api: path.join(__dirname, 'src/api/'),
       devTools: path.join(__dirname, 'src/devTools/'),
-      assets: path.join(__dirname, 'src/assets/')
+      assets: path.join(__dirname, 'src/assets/'),
     },
   },
   module: {
     rules: [{
       use: 'babel-loader',
       test: /\.jsx?$/,
-      include: [path.resolve(__dirname, './src')]
+      include: [path.resolve(__dirname, './src')],
     }, {
       test: /\.(sass|scss|css)$/,
       use: ExtractTextPlugin.extract({
@@ -426,24 +425,25 @@ module.exports = {
             options: { importLoaders: 1, sourceMap: true, modules: true, url: true },
           },
           { loader: 'postcss-loader' },
-          { loader: 'sass-loader' }
+          { loader: 'sass-loader' },
         ],
       }),
-    },{
+    }, {
       test: /\.(jpe?g|png|gif|svg)$/,
       use: [{
         loader: 'url-loader',
         options: {
           limit: 40000,
           name: 'assets/[name].[ext]',
-          context: './images'
-        }
+          context: './images',
+        },
       },
-        'image-webpack-loader?{}'
-      ]
-    }]
+        'image-webpack-loader?{}',
+      ],
+    }],
   },
-};">./webpack.config.prod.js
+};
+">./webpack.config.prod.js
 
 
 
