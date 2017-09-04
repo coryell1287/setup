@@ -51,6 +51,7 @@ sudo npm i -D eslint-plugin-react
 sudo npm i -D eslint-plugin-babel
 sudo npm i -D eslint-config-default
 sudo npm i -D eslint-plugin-standard
+sudo npm i -g eslint-plugin-babel
 
 sudo npm i -D copyfiles
 sudo npm i -D sass-loader
@@ -65,18 +66,20 @@ sudo npm i -D file-loader
 sudo npm i -D url-loader
 sudo npm i -D node-sass
 sudo npm i -D extract-text-webpack-plugin
-
+sudo npm i -D webpack-dev-server
+sudo npm i -D copy-webpack-plugin
 sudo npm i -D lodash
 sudo npm i -D rimraf
 
 sudo npm i -D deep-freeze-strict
 
 #Install packages needed for the server
-sudo npm i -S webpack
-sudo npm i -S webpack-dev-middleware
-sudo npm i -S webpack-hot-middleware
 sudo npm i -S axios
 sudo npm i -S express
+sudo npm i -S webpack-dev-middleware
+sudo npm i -S webpack-hot-middleware
+sudo npm i -D clean-webpack-plugin
+sudo npm i -S webpack
 
 mkdir -p ./{public/styles,src/{store,actions,router,reducers,components,containers,api}}
 
@@ -307,7 +310,7 @@ module.exports = {
     'webpack-hot-middleware/client',
     './src/index.jsx',
   ],
-  output: {
+a  output: {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
     publicPath: '/public/',
@@ -366,6 +369,157 @@ module.exports = {
 };
 ">./webpack.config.dev.js
 
+
+ecoh -e "const { resolve } = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const BabiliPlugin = require('babili-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
+const identity = i => i;
+
+const vendor = [
+  'react',
+  'react-dom',
+  'react-router-dom',
+  'react-redux',
+];
+
+module.exports = (env) => {
+  console.log(\`Env is \${env}\`);
+  const isDev = env === 'dev';
+
+  const ifDev = then => (isDev ? then : null);
+  const ifProd = then => (env === 'prod' ? then : null);
+  const app = [
+    ifDev('react-hot-loader/patch'),
+    ifDev('webpack-dev-server/client?http://localhost:3000'),
+    './appLoader']
+  .filter(identity)
+
+  return {
+    target: 'web',
+    profile: true,
+    stats: {
+      children: false,
+    },
+    entry: { vendor, app },
+    performance: { maxEntrypointSize: 400000 },
+    context: resolve(__dirname, './src'),
+    devtool: isDev ? 'cheap-module-eval-source-map' : 'cheap-module-source-map',
+    resolve: {
+      modules: [
+        resolve(__dirname, './src'),
+        resolve(__dirname, './assets'), 'node_modules',
+      ],
+      alias: {
+        components: resolve(__dirname, './src/components/'),
+        reducers: resolve(__dirname, './src/reducers/'),
+        store: resolve(__dirname, 'src/store/'),
+        router: resolve(__dirname, 'src/router/'),
+        containers: resolve(__dirname, 'src/containers/'),
+        api: resolve(__dirname, 'src/api/'),
+        devTools: resolve(__dirname, 'src/devTools/'),
+        assets: resolve(__dirname, 'src/assets/'),
+      },
+    },
+    output: {
+      publicPath: '/',
+      path: resolve(__dirname, './dist'),
+      filename: isDev ? '[name].bundle.js' : '[name].bundle.[chunkhash].js',
+    },
+    plugins: [
+      new webpack.optimize.CommonsChunkPlugin({
+        name: ['vendor'],
+        minChunks: Infinity,
+      }),
+      ifProd(new CleanWebpackPlugin(['dist'], { verbose: true })),
+      ifProd(new CopyWebpackPlugin([{ from: 'fonts/', to: 'fonts' }, { from: 'images/', to: 'images' }])),
+      new webpack.EnvironmentPlugin({
+        DEBUG: isDev,
+        NODE_ENV: isDev ? 'development' : 'production',
+      }),
+      new HtmlWebpackPlugin({
+        template: 'index.html',
+        inject: true,
+        minify: {
+          collapseWhitespace: true,
+        },
+      }),
+      ifDev(new webpack.HotModuleReplacementPlugin()),
+      ifDev(new webpack.NamedModulesPlugin()),
+      new ExtractTextPlugin({
+        filename: 'app.bundle.[contenthash].css',
+        disable: isDev,
+      }),
+      ifProd(new BabiliPlugin({}, { comments: false })),
+    ].filter(identity),
+    devServer: {
+      port: 3000,
+      host: 'localhost',
+      stats: 'errors-only',
+      hot: true,
+      compress: true,
+      historyApiFallback: true,
+      disableHostCheck: true,
+      contentBase: resolve(__dirname, './dist'),
+      overlay: { warnings: true, errors: true },
+    },
+    module: {
+      rules: [{
+        use: 'babel-loader',
+        test: /\.jsx?$/,
+        include: [resolve(__dirname, './src')],
+      }, {
+        test: /\.(sass|scss|css)$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            {
+              loader: 'css-loader',
+              options: {
+                sourceMap: isDev,
+                importLoaders: 1,
+                modules: true,
+                url: true,
+                minimize: isDev ? false : { discardComments: { removeAll: true } },
+              },
+            },
+            {
+              loader: 'sass-loader',
+              options: {
+                sourceMap: isDev,
+                paths: [resolve(__dirname, 'node_modules'), resolve(__dirname, 'src')],
+              },
+            },
+          ],
+        }),
+      }, {
+        test: /\.(jpe?g|png|gif|svg)$/,
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 40000,
+            name: isDev ? '[name].[ext]' : '[name].[hash:8].[ext]',
+          },
+        },
+        ],
+      }, {
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
+        use: [{
+          loader: 'url-loader',
+          options: {
+            limit: 20000,
+            name: isDev ? '[name].[ext]' : '[name].[hash:8].[ext]',
+          },
+        },
+        ],
+      }],
+    },
+  };
+};">./webpack.config.js
 
 # Create the webpack production file
 
@@ -617,29 +771,35 @@ export default config;
 
 echo -e "{
   \"sourceMaps\": \"inline\",
+    \"plugins\": [
+      \"transform-runtime\",
+      \"transform-decorators-legacy\",
+      [\"transform-object-rest-spread\", { \"useBuiltIns\": true }],
+      [\"transform-class-properties\", { \"spec\": true }]
+    ],
   \"presets\": [
     \"react\",
     \"airbnb\",
-    \"env\",
     \"es2017\",
     \"stage-0\",
-    \"stage-2\"
-  ],
-  \"env\": {
-    \"production\": {
-      \"plugins\": [
-         \"transform-react-constant-elements\",
-         \"transform-react-inline-elements\"
-      ]
-    }
-  },
-  \"plugins\": [
-    \"transform-runtime\",
-    \"syntax-async-functions\",
-    \"add-module-exports\",
-    \"transform-regenerator\",
-    \"transform-decorators-legacy\",
-    \"transform-class-properties\"
+    \"stage-1\",
+    \"stage-2\",
+    \"stage-3\",
+    [\"env\", {
+      \"debug\": true,
+      \"loose\": true,
+      \"modules\": false,
+      \"useBuiltIns\": true,
+      \"targets\": {
+        \"browsers\": [\"> 5%\", \"last 2 versions\"]
+      },
+      \"production\":{
+        \"presets\":[
+          \"transform-react-constant-elements\",
+          \"transform-react-inline-elements\"
+        ]
+      }
+    }]
   ]
 }
 ">./.babelrc
