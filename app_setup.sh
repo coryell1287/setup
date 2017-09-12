@@ -374,30 +374,43 @@ ecoh -e "const { resolve } = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const BabiliPlugin = require('babili-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
 
 const identity = i => i;
 
-const vendor = [
-  'react',
-  'react-dom',
-  'react-router-dom',
-  'react-redux',
-];
 
 module.exports = (env) => {
-  console.log(\`Env is \${env}\`);
+  console.log(`Env is ${env}`);
+
   const isDev = env === 'dev';
+  const isProd = env !== 'dev';
+
+  const ifEnv = (file1, file2) => (isDev ? file1 : file2);
 
   const ifDev = then => (isDev ? then : null);
   const ifProd = then => (env === 'prod' ? then : null);
+  const vendor = ['d3',
+      'react',
+      'redux',
+      'lodash',
+      'es5-shim',
+      'es6-shim',
+      'react-dom',
+      'd3-hexbin',
+      'material-ui',
+      'react-redux',
+      'redux-thunk',
+      'react-scroll',
+      'react-helmet',
+      'react-d3-components',
+];
   const app = [
     ifDev('react-hot-loader/patch'),
-    ifDev('webpack-dev-server/client?http://localhost:3000'),
-    './appLoader']
-  .filter(identity)
+    ifDev('webpack-dev-server/client?http://localhost:8000'),
+    ifDev('webpack/hot/only-dev-server'),
+    './appLoader'].filter(identity);
 
   return {
     target: 'web',
@@ -408,56 +421,9 @@ module.exports = (env) => {
     entry: { vendor, app },
     performance: { maxEntrypointSize: 400000 },
     context: resolve(__dirname, './src'),
-    devtool: isDev ? 'cheap-module-eval-source-map' : 'cheap-module-source-map',
-    resolve: {
-      modules: [
-        resolve(__dirname, './src'),
-        resolve(__dirname, './assets'), 'node_modules',
-      ],
-      alias: {
-        components: resolve(__dirname, './src/components/'),
-        reducers: resolve(__dirname, './src/reducers/'),
-        store: resolve(__dirname, 'src/store/'),
-        router: resolve(__dirname, 'src/router/'),
-        containers: resolve(__dirname, 'src/containers/'),
-        api: resolve(__dirname, 'src/api/'),
-        devTools: resolve(__dirname, 'src/devTools/'),
-        assets: resolve(__dirname, 'src/assets/'),
-      },
-    },
-    output: {
-      publicPath: '/',
-      path: resolve(__dirname, './dist'),
-      filename: isDev ? '[name].bundle.js' : '[name].bundle.[chunkhash].js',
-    },
-    plugins: [
-      new webpack.optimize.CommonsChunkPlugin({
-        name: ['vendor'],
-        minChunks: Infinity,
-      }),
-      ifProd(new CleanWebpackPlugin(['dist'], { verbose: true })),
-      ifProd(new CopyWebpackPlugin([{ from: 'fonts/', to: 'fonts' }, { from: 'images/', to: 'images' }])),
-      new webpack.EnvironmentPlugin({
-        DEBUG: isDev,
-        NODE_ENV: isDev ? 'development' : 'production',
-      }),
-      new HtmlWebpackPlugin({
-        template: 'index.html',
-        inject: true,
-        minify: {
-          collapseWhitespace: true,
-        },
-      }),
-      ifDev(new webpack.HotModuleReplacementPlugin()),
-      ifDev(new webpack.NamedModulesPlugin()),
-      new ExtractTextPlugin({
-        filename: 'app.bundle.[contenthash].css',
-        disable: isDev,
-      }),
-      ifProd(new BabiliPlugin({}, { comments: false })),
-    ].filter(identity),
+    devtool: ifEnv('eval-source-map', 'source-map'),
     devServer: {
-      port: 3000,
+      port: 8000,
       host: 'localhost',
       stats: 'errors-only',
       hot: true,
@@ -467,6 +433,66 @@ module.exports = (env) => {
       contentBase: resolve(__dirname, './dist'),
       overlay: { warnings: true, errors: true },
     },
+    resolve: {
+      modules: [
+        resolve(__dirname, './src'),
+        'node_modules',
+      ],
+      alias: {
+        actions: resolve(__dirname, './src/actions/'),
+        API: resolve(__dirname, 'src/API/'),
+        assets: resolve(__dirname, 'src/assets/'),
+        components: resolve(__dirname, './src/components/'),
+        containers: resolve(__dirname, 'src/containers/'),
+        dataservices: resolve(__dirname, './src/dataservices/'),
+        devTools: resolve(__dirname, 'src/devTools/'),
+        reducers: resolve(__dirname, './src/reducers/'),
+        images: resolve(__dirname, './src/images/'),
+        fonts: resolve(__dirname, './src/fonts/'),
+        router: resolve(__dirname, 'src/router/'),
+        stores: resolve(__dirname, 'src/stores/'),
+        styles: resolve(__dirname, './src/styles/'),
+        themes: resolve(__dirname, './src/themes/'),
+        utils: resolve(__dirname, './src/utils/'),
+      },
+    },
+    output: {
+      publicPath: '',
+      path: resolve(__dirname, './dist'),
+      filename: ifEnv('[name].bundle.js', '[name].[chunkhash].js'),
+    },
+    plugins: [
+      new webpack.optimize.CommonsChunkPlugin({
+        name: ['vendor'],
+        minChunks: Infinity,
+      }),
+      ifProd(new webpack.optimize.UglifyJsPlugin()),
+      ifProd(new CleanWebpackPlugin(['dist'], { verbose: true })),
+      ifProd(new CopyWebpackPlugin([
+        { from: 'fonts/', to: 'fonts' },
+        { from: 'images/', to: 'images' },
+      ])),
+      new webpack.EnvironmentPlugin({
+        DEBUG: isDev,
+        NODE_ENV: ifEnv('development', 'production'),
+      }),
+      ifProd(new ManifestPlugin({
+        fileName: 'manifest.json',
+        seed: {
+          name: 'Manifest',
+        },
+      })),
+      new HtmlWebpackPlugin({
+        template: 'index.html',
+        inject: true,
+      }),
+      ifDev(new webpack.HotModuleReplacementPlugin()),
+      ifDev(new webpack.NamedModulesPlugin()),
+      new ExtractTextPlugin({
+        filename: ifEnv('[name].bundle.[contenthash].css', 'styles/[name].bundle.[contenthash].css'),
+        disable: isDev,
+      }),
+    ].filter(identity),
     module: {
       rules: [{
         use: 'babel-loader',
@@ -482,7 +508,6 @@ module.exports = (env) => {
               options: {
                 sourceMap: isDev,
                 importLoaders: 1,
-                modules: true,
                 url: true,
                 minimize: isDev ? false : { discardComments: { removeAll: true } },
               },
@@ -493,30 +518,33 @@ module.exports = (env) => {
                 sourceMap: isDev,
                 paths: [resolve(__dirname, 'node_modules'), resolve(__dirname, 'src')],
               },
+
             },
+            { loader: 'postcss-loader' },
           ],
         }),
       }, {
-        test: /\.(jpe?g|png|gif|svg)$/,
+        test: /\.(jpe?g|png|gif|svg|ico)$/,
         use: [{
-          loader: 'url-loader',
+          loader: 'file-loader',
           options: {
-            limit: 40000,
-            name: isDev ? '[name].[ext]' : '[name].[hash:8].[ext]',
+            name: '[name].[ext]',
+            useRelativePath: isProd,
           },
         },
         ],
       }, {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
         use: [{
-          loader: 'url-loader',
+          loader: 'file-loader',
           options: {
-            limit: 20000,
-            name: isDev ? '[name].[ext]' : '[name].[hash:8].[ext]',
+            name: '[name].[ext]',
+            useRelativePath: isProd,
           },
         },
         ],
-      }],
+      },
+      ],
     },
   };
 };">./webpack.config.js
@@ -633,11 +661,11 @@ app.listen(port, 'localhost', (err) => {
 });">devServer.js
 
 echo -e "{
-  \"extends\": [\"eslint:recommended\", \"plugin:react/recommended\", \"airbnb\"],
+  \"parser\": \"babel-eslint\",
+  \"extends\": [\"eslint:recommended\", \"plugin:react/recommended\", \"eslint-config-airbnb\"],
   \"parserOptions\": {
     \"ecmaVersion\": 8,
     \"ecmaFeatures\": {
-      \"jsx\": true,
       \"modules\": true
     }
   },
@@ -663,6 +691,7 @@ echo -e "{
     \"react/prop-types\": 0,
     \"react/jsx-uses-vars\": 2,
     \"react/react-in-jsx-scope\": 2,
+    \"react/jsx-filename-extension\": 0,
     \"react/prefer-stateless-function\": 2,
     \"import/no-extraneous-dependencies\": 0,
     \"jsx-a11y/href-no-hash\": \"off\",
