@@ -286,6 +286,8 @@ echo -e "<!doctype html>
 
 
 
+
+echo -e "">
 #Create the postcss.config file
 
 echo -e "module.exports = {
@@ -382,12 +384,12 @@ const identity = i => i;
 
 
 module.exports = (env) => {
-  console.log(`Env is ${env}`);
+  console.log(\`Env is \${env}\`);
 
   const isDev = env === 'dev';
   const isProd = env !== 'dev';
 
-  const ifEnv = (file1, file2) => (isDev ? file1 : file2);
+  const ifEnv = (condition1, condition2) => (isDev ? condition1 : condition2);
 
   const ifDev = then => (isDev ? then : null);
   const ifProd = then => (env === 'prod' ? then : null);
