@@ -1,6 +1,91 @@
 #!/usr/bin/env bash
 
 
+
+echo -e "\n\n\t\e[1;35mBeginning application setup...\n\n\e[0m"
+#Install npm packages
+
+# react dependencies
+sudo npm i -S react
+sudo npm i -S react-dom
+sudo npm i -S react-helmet
+sudo npm i -S react-addons-test-utils
+sudo npm i -S react-addons-transition-group
+sudo npm i -S object-assign
+sudo npm i -S es6-promise
+sudo npm i -S es5-shim
+sudo npm i -S es6-shim
+sudo npm i -S babel-plugin-transform-runtime
+sudo npm i -S core-decorators
+sudo npm i -S compression
+sudo npm i -S babel-runtime
+
+# Development dependencies
+sudo npm i -D babelify babel-core babel-loader
+sudo npm i -D babel-preset-react
+sudo npm i -D babel-plugin-transform-class-properties
+sudo npm i -D babel-plugin-transform-runtime
+sudo npm i -D babel-plugin-transform-react-constant-elements
+sudo npm i -D babel-plugin-transform-react-inline-elements
+sudo npm i -D babel-preset-env
+sudo npm i -D babel-eslint
+sudo npm i -D babel-preset-es2017
+sudo npm i -D babel-preset-es2016
+sudo npm i -D babel-plugin-transform-decorators-legacy
+sudo npm i -D babel-es6-polyfill
+sudo npm i -D babel-preset-stage-0
+sudo npm i -D babel-preset-stage-2
+sudo npm i -D babel-plugin-syntax-async-function
+sudo npm i -D babel-preset-airbnb
+sudo npm i -D babel-plugin-add-module-exports
+sudo npm i -D babel-plugin-transform-regenerator
+# Redux dependencies
+
+sudo npm i -S redux
+sudo npm i -S react-redux
+sudo npm i -S react-router
+sudo npm i -S redux-async-await
+sudo npm i -S redux-thunk redux-logger
+sudo npm i -S webpack-manifest-plugin
+
+
+# ESLint development dependencies
+sudo npm i -D eslint
+sudo npm i -D eslint-config-airbnb
+sudo npm i -D eslint-plugin-import
+sudo npm i -D eslint-plugin-jsx-a11y
+sudo npm i -D eslint-plugin-react
+sudo npm i -D eslint-plugin-babel
+sudo npm i -D eslint-config-default
+sudo npm i -D eslint-plugin-standard
+sudo npm i -g eslint-plugin-babel
+
+sudo npm i -D sass-loader
+sudo npm i -D css-loader
+sudo npm i -D postcss
+sudo npm i -D postcss-loader
+sudo npm i -D postcss-cssnext
+sudo npm i -D postcss-import
+sudo npm i -D style-loader
+sudo npm i -D file-loader
+sudo npm i -D url-loader
+sudo npm i -D node-sass
+sudo npm i -D extract-text-webpack-plugin
+sudo npm i -D webpack-dev-server
+sudo npm i -D copy-webpack-plugin
+sudo npm i -D clean-webpack-plugin
+sudo npm i -D html-webpack-plugin
+sudo npm i -D lodash
+
+sudo npm i -D deep-freeze-strict
+
+#Install packages needed for the server
+sudo npm i -S axios
+sudo npm i -S express
+sudo npm i -S webpack
+
+mkdir -p ./{public/styles,src/{store,actions,router,reducers,components,containers,api}}
+
 echo -e "module.exports = process.env.NODE_ENV === 'production'
   ? require('react-hot-loader/lib/AppContainer.prod')
   : require('react-hot-loader/lib/AppContainer.dev’);">./src/reactHotLoader.js
