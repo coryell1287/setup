@@ -26,9 +26,9 @@ sed -i '/"build:sever":/a \\t"server": "node dist\/server.js",' package.json
 echo -e "export default (app) => {
   app.get('/rest', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
-    res.send({ message: 'Service is properly working.', type: 'SUCCESSUFLLY_FETCHED_DATA' });
+    res.send({ message: 'Service is properly working.' });
   });
-">./lib/router.js
+}">./lib/router.js
 
 echo "import express from 'express';
 import path from 'path';
@@ -41,7 +41,7 @@ import router from './router';
 
 const port = process.env.PORT || 4000;
 const app = express();
-const publicPath = path.join(__dirname, '../public');
+const publicPath = path.join(__dirname, '../dist');
 const server = http.createServer(app);
 
 app.use(cors());
@@ -56,7 +56,6 @@ app.use(express.static(publicPath));
 app.get('*', (request, response) => {
   response.sendFile(path.resolve(publicPath, 'index.html'));
 });
-
 
 server.listen(port, () => {
   console.log(\`Server has started and is listening on \${port}\`);

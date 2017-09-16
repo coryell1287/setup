@@ -78,17 +78,18 @@ sudo npm i -D html-webpack-plugin
 sudo npm i -D lodash
 
 sudo npm i -D deep-freeze-strict
+sudo npm i -D react-hot-loader@3.0.0-beta.7
 
 #Install packages needed for the server
 sudo npm i -S axios
 sudo npm i -S express
 sudo npm i -S webpack
 
-mkdir -p ./{public/styles,src/{store,actions,router,reducers,components,containers,api}}
+mkdir -p ./src/{styles,store,actions,routes,reducers,components,containers,api}
 
 echo -e "module.exports = process.env.NODE_ENV === 'production'
   ? require('react-hot-loader/lib/AppContainer.prod')
-  : require('react-hot-loader/lib/AppContainer.dev’);">./src/reactHotLoader.js
+  : require('react-hot-loader/lib/AppContainer.dev');">./src/reactHotLoader.js
 
 #########################################
 #  Create the entry point for the app   #
@@ -96,8 +97,9 @@ echo -e "module.exports = process.env.NODE_ENV === 'production'
 echo -e "import React from 'react';
 import { render } from 'react-dom';
 import { store, history } from 'store/configureStore';
-import ReactHelmet from 'container/ReactHelmet';
-import Routes from 'components/Routes';
+import ReactHelmet from 'containers/ReactHelmet';
+import Routes from 'routes';
+import { Provider } from 'react-redux';
 import { Router } from 'react-router';
 import rootReducer from 'reducers';
 import HotLoader from './reactHotLoader';
@@ -121,7 +123,7 @@ const renderUI = () => {
 renderUI(Routes);
 
 if (module.hot) {
-  module.hot.accept('components/Routes', () => renderUI(Routes));
+  module.hot.accept('routes', () => renderUI(Routes));
   module.hot.accept('reducers', () => store.replaceReducer(rootReducer));
 }">./src/appLoader.js
 
@@ -135,11 +137,11 @@ import { Route, IndexRoute } from 'react-router';
 import Application from 'containers/Application';
 
 const Routes = (
-  <Route path=\"/\">
-    <IndexRoute component={Application} />
+  <Route>
+    <Route path=\"/\" component={Application} />
   </Route>
 );
-export default Routes;">./src/Routes/index.js
+export default Routes;">./src/routes/index.js
 
 
 ################################
@@ -179,7 +181,7 @@ export default class ReactHelmet extends PureComponent {
       </div>
     );
   }
-}">./src/container/ReactHelmet.js
+}">./src/containers/ReactHelmet.js
 
 #######################################
 #     Create the Application file     #
@@ -200,7 +202,7 @@ class Application extends Component {
 
 
   render() {
-    const { fetchState, serviceState } = this.props;
+    const { fetchState, serviceState: { message } } = this.props;
     return (
       <div>
         {
@@ -209,7 +211,7 @@ class Application extends Component {
             <div>
               <h1>Service test</h1>
               <div>
-                <span>{serviceState}</span>
+                <span>{message}</span>
               </div>
             </div>
         }
@@ -218,8 +220,7 @@ class Application extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Application)
-">./src/containers/Application.js
+export default connect(mapStateToProps, mapDispatchToProps)(Application)">./src/containers/Application.js
 
 ################################
 #     Create the propConfig    #
@@ -230,21 +231,22 @@ import * as action from 'actions';
 
 export function mapStateToProps(state) {
   return {
-    serviceState: state.serviceState.serviceTestReducer,
+    serviceState: state.serviceState.serviceTest,
     fetchState: state.serviceState.progressIndicator,
   }
 }
 
 export function mapDispatchToProps(dispatch) {
   return bindActionCreators(action, dispatch);
-}">./src/containers/propConfig.js
+}
+">./src/containers/propConfig.js
 
-echo -e "const completeFetchSuccessfully = (message, type) => {
+echo -e "const completeFetchSuccessfully = (message) => {
   return {
-    type,
+    type: 'SUCCESSUFLLY_FETCHED_DATA',
     payload: {
-      data: message,
-    },
+      message,
+    }
   };
 };
 
@@ -279,14 +281,13 @@ echo -e "import { get } from 'api';
 import config from 'api/serviceConfig';
 
 export const asyncGet = () => (dispatch) => {
+
   const options = {
     ...config,
-    url: 'options',
+      url: '',
   };
   dispatch(get(options.url, config));
-};
-
-">./src/actions/index.js
+};">./src/actions/index.js
 
 
 ####################################
@@ -382,11 +383,11 @@ echo -e "import { combineReducers } from 'redux';
 const serviceTest = (state = '', action) => {
   switch (action.type) {
     case 'SUCCESSUFLLY_FETCHED_DATA': {
-      const { message } = action.payload.data;
+      const { message } = action.payload;
       return message;
     }
     case 'FAILED_TO_RETRIEVE_DATA': {
-      return action.err;
+      return 'Sorry. Your request failed';
     }
     default: {
       return state;
@@ -511,7 +512,6 @@ module.exports = (env) => {
     'react-redux',
     'redux-thunk',
     'react-router',
-    'react-scroll',
     'react-helmet',
   ];
   const app = [
@@ -557,7 +557,7 @@ module.exports = (env) => {
         reducers: resolve(__dirname, './src/reducers/'),
         images: resolve(__dirname, './src/images/'),
         fonts: resolve(__dirname, './src/fonts/'),
-        router: resolve(__dirname, 'src/router/'),
+        routes: resolve(__dirname, 'src/routes/'),
         stores: resolve(__dirname, 'src/stores/'),
         styles: resolve(__dirname, './src/styles/'),
         themes: resolve(__dirname, './src/themes/'),
@@ -659,6 +659,43 @@ module.exports = (env) => {
     },
   };
 };">./webpack.config.js
+
+
+
+echo -e "{
+  \"sourceMaps\": \"inline\",
+    \"plugins\": [
+      \"transform-runtime\",
+      \"transform-decorators-legacy\",
+      [\"transform-object-rest-spread\", { \"useBuiltIns\": true }],
+      [\"transform-class-properties\", { \"spec\": true }]
+    ],
+  \"presets\": [
+    \"react\",
+    \"airbnb\",
+    \"es2017\",
+    \"stage-0\",
+    \"stage-1\",
+    \"stage-2\",
+    \"stage-3\",
+    [\"env\", {
+      \"debug\": true,
+      \"loose\": true,
+      \"modules\": false,
+      \"useBuiltIns\": true,
+      \"targets\": {
+        \"browsers\": [\"> 5%\", \"last 2 versions\"]
+      },
+      \"production\":{
+        \"presets\":[
+          \"transform-react-constant-elements\",
+          \"transform-react-inline-elements\"
+        ]
+      }
+    }]
+  ]
+}
+">./.babelrc
 
 #sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers PhantomJS",' package.json
 sed -i '/"test":/i \\t"start":"webpack-dev-server --env=dev --compress",' package.json
