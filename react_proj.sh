@@ -548,20 +548,16 @@ module.exports = (env) => {
       ],
       alias: {
         actions: resolve(__dirname, './src/actions/'),
-        API: resolve(__dirname, 'src/API/'),
-        assets: resolve(__dirname, 'src/assets/'),
+        api: resolve(__dirname, 'src/api/'),
         components: resolve(__dirname, './src/components/'),
         containers: resolve(__dirname, 'src/containers/'),
         dataservices: resolve(__dirname, './src/dataservices/'),
-        devTools: resolve(__dirname, 'src/devTools/'),
         reducers: resolve(__dirname, './src/reducers/'),
         images: resolve(__dirname, './src/images/'),
         fonts: resolve(__dirname, './src/fonts/'),
         routes: resolve(__dirname, 'src/routes/'),
         stores: resolve(__dirname, 'src/stores/'),
         styles: resolve(__dirname, './src/styles/'),
-        themes: resolve(__dirname, './src/themes/'),
-        utils: resolve(__dirname, './src/utils/'),
       },
     },
     output: {
@@ -635,17 +631,18 @@ module.exports = (env) => {
           ],
         }),
       }, {
-        test: /\.(jpe?g|png|gif|svg|ico)$/,
-        use: [{
-          loader: isDev ? 'url-loader' : 'file-loader',
-          options: {
-            name: '[name].[ext]',
-            useRelativePath: isProd,
+          test: /\.(jpe?g|png|gif|svg|ico)$/,
+          use: [{
+            loader: 'url-loader',
+            options: {
+              name: 'images/[name].[ext]',
+              limit: 40000,
+              context: './images',
+            },
           },
-        },
-        ],
-      }, {
-        test: /\.(woff|woff2|eot|ttf|otf)$/,
+          ],
+        }, {
+       test: /\.(woff|woff2|eot|ttf|otf)$/,
         use: [{
           loader: 'file-loader',
           options: {
