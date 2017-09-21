@@ -665,7 +665,7 @@ echo -e "{
       \"transform-runtime\",
       \"transform-decorators-legacy\",
       [\"transform-object-rest-spread\", { \"useBuiltIns\": true }],
-      [\"transform-class-properties\", { \"spec\": true }]
+      [\"transform-class-properties\", { \"spec\": true }],
       [\"add-module-exports\"]
     ],
   \"presets\": [
