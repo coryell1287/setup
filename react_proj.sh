@@ -546,6 +546,7 @@ module.exports = (env) => {
         resolve(__dirname, './src'),
         'node_modules',
       ],
+      extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
       alias: {
         actions: resolve(__dirname, './src/actions/'),
         api: resolve(__dirname, 'src/api/'),
@@ -615,6 +616,7 @@ module.exports = (env) => {
               options: {
                 sourceMap: isDev,
                 importLoaders: 1,
+                modules: true,
                 url: true,
                 minimize: isDev ? false : { discardComments: { removeAll: true } },
               },
@@ -660,7 +662,7 @@ module.exports = (env) => {
 
 
 echo -e "{
-  \"sourceMaps\": \"inline\",
+  \"sourceMaps\": true,
     \"plugins\": [
       \"transform-runtime\",
       \"transform-decorators-legacy\",
