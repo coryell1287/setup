@@ -105,14 +105,12 @@ import rootReducer from 'reducers';
 import HotLoader from './reactHotLoader';
 
 
-const renderUI = () => {
+const renderUI = (App) => {
   render(
     <HotLoader>
         <ReactHelmet>
           <Provider store={store}>
-            <Router history={history}>
-              {Routes}
-            </Router>
+            <App/>
           </Provider>
         </ReactHelmet>
     </HotLoader>,
@@ -133,7 +131,7 @@ if (module.hot) {
 
 
 echo -e "import React from 'react';
-import { Router as BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Application from 'containers/Application';
 
 const Routes = () => {
@@ -687,6 +685,7 @@ echo -e "{
       \"modules\": false,
       \"useBuiltIns\": true,
       \"targets\": {
+        \"browsers\": [\"> 5%\", \"last 2 versions\"],
         \"browsers\": [\"> 5%\", \"last 2 versions\"],
         \"node\": \"8.2.0\"
       },
