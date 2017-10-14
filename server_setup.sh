@@ -26,7 +26,7 @@ sed -i '/"build:sever":/a \\t"server": "node dist\/server.js",' package.json
 echo -e "export default (app) => {
   app.get('/rest', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
-    res.send({ message: 'Service is properly working.' });
+    res.send({ message: 'Service is properly working.', type: 'SUCCESSFUL_SERVICE_REQUEST' });
   });
 }">./lib/router.js
 

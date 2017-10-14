@@ -244,11 +244,11 @@ export function mapDispatchToProps(dispatch) {
 }
 ">./src/containers/propConfig.js
 
-echo -e "const successfulServiceRequest = (message) => {
+echo -e "const successfulServiceRequest = (service) => {
   return {
-    type: 'SUCCESSFUL_SERVICE_REQUEST',
+    type: service.type,
     payload: {
-      message,
+      message: service.message,
     }
   };
 };
