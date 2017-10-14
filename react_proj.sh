@@ -19,6 +19,7 @@ sudo npm i -S babel-plugin-transform-runtime
 sudo npm i -S core-decorators
 sudo npm i -S compression
 sudo npm i -S babel-runtime
+sudo npm i  -S autobind-decorator
 
 # Development dependencies
 sudo npm i -D babelify babel-core babel-loader
@@ -227,27 +228,12 @@ export default connect(mapStateToProps, mapDispatchToProps)(Application)">./src/
 #     Create the propConfig    #
 ################################
 
-echo -e "import { bindActionCreators } from 'redux'
-import * as action from 'actions';
-
-export function mapStateToProps(state) {
-  return {
-    serviceState: state.serviceState.serviceTest,
-    fetchState: state.serviceState.progressIndicator,
-  }
-}
-
-export function mapDispatchToProps(dispatch) {
-  return bindActionCreators(action, dispatch);
-}
-">./src/containers/propConfig.js
-
 echo -e "const successfulServiceRequest = (service) => {
   return {
     type: service.type,
     payload: {
       message: service.message,
-    }
+    },
   };
 };
 
@@ -257,6 +243,19 @@ const failedServiceRequest = (err) => {
     err: err.message,
   };
 };
+
+const getBaseUrl = () => {
+  let baseUrl;
+  const { location: { hostname, origin } } = window;
+  if (hostname !== 'localhost') {
+    baseUrl = \`\${origin}/rest/\`;
+    return baseUrl;
+  }
+  baseUrl = 'http://localhost:4000/rest/';
+  return baseUrl;
+};
+
+const host = getBaseUrl();
 
 const config = {
   url: '/',
@@ -270,8 +269,10 @@ const config = {
   },
 };
 
-export default config;
-">./src/api/serviceConfig.js
+export {
+  config,
+  host,
+};">./src/api/serviceConfig.js
 
 
 ################################
@@ -279,13 +280,13 @@ export default config;
 ################################
 
 echo -e "import { get } from 'api';
-import config from 'api/serviceConfig';
+import { config } from 'api/serviceConfig';
 
 export const asyncGet = () => (dispatch) => {
 
   const options = {
     ...config,
-      url: '',
+    url: '',
   };
   dispatch(get(options.url, config));
 };">./src/actions/index.js
@@ -369,7 +370,7 @@ echo -e "import { combineReducers } from 'redux';
 import serviceReducer from 'reducers/serviceReducers';
 
 const rootReducer = combineReducers({
-  serviceState: serviceReducer
+  serviceState: serviceReducer,
 });
 
 export default rootReducer;
@@ -383,11 +384,11 @@ echo -e "import { combineReducers } from 'redux';
 
 const serviceTest = (state = '', action) => {
   switch (action.type) {
-    case 'SUCCESSUFLLY_FETCHED_DATA': {
+    case 'SUCCESSFUL_SERVICE_REQUEST': {
       const { message } = action.payload;
       return message;
     }
-    case 'FAILED_TO_RETRIEVE_DATA': {
+    case 'FAILED_SERVICE_REQUEST': {
       return 'Sorry. Your request failed';
     }
     default: {
