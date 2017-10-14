@@ -44,6 +44,7 @@ sudo npm i -D babel-plugin-transform-regenerator
 sudo npm i -S redux
 sudo npm i -S react-redux
 sudo npm i -S react-router
+sudo npm i -s react-router-dom
 sudo npm i -S redux-async-await
 sudo npm i -S redux-thunk redux-logger
 sudo npm i -S webpack-manifest-plugin
@@ -100,7 +101,6 @@ import { store, history } from 'store/configureStore';
 import ReactHelmet from 'containers/ReactHelmet';
 import Routes from 'routes';
 import { Provider } from 'react-redux';
-import { Router } from 'react-router';
 import rootReducer from 'reducers';
 import HotLoader from './reactHotLoader';
 
@@ -133,14 +133,17 @@ if (module.hot) {
 
 
 echo -e "import React from 'react';
-import { Route, IndexRoute } from 'react-router';
+import { Router as BrowserRouter, Route } from 'react-router-dom';
 import Application from 'containers/Application';
 
-const Routes = (
-  <Route>
-    <Route path=\"/\" component={Application} />
-  </Route>
-);
+const Routes = () => {
+   return (
+     <Router>
+        <Route path=\"/\" component={Application} />
+     </Router>
+   );
+};
+
 export default Routes;">./src/routes/index.js
 
 
@@ -241,18 +244,18 @@ export function mapDispatchToProps(dispatch) {
 }
 ">./src/containers/propConfig.js
 
-echo -e "const completeFetchSuccessfully = (message) => {
+echo -e "const successfulServiceRequest = (message) => {
   return {
-    type: 'SUCCESSUFLLY_FETCHED_DATA',
+    type: 'SUCCESSFUL_SERVICE_REQUEST',
     payload: {
       message,
     }
   };
 };
 
-const failedToCompleteFetch = (err) => {
+const failedServiceRequest = (err) => {
   return {
-    type: 'FAILED_TO_RETRIEVE_DATA',
+    type: 'FAILED_SERVICE_REQUEST',
     err: err.message,
   };
 };
@@ -260,8 +263,8 @@ const failedToCompleteFetch = (err) => {
 const config = {
   url: '/',
   timeout: 4000,
-  onSuccess: completeFetchSuccessfully,
-  onError: failedToCompleteFetch,
+  onSuccess: successfulServiceRequest,
+  onError: failedServiceRequest,
   headers: {
     'Accept': 'application/json',
     'Accept-Language': 'en_US',
