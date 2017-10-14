@@ -687,7 +687,8 @@ echo -e "{
       \"modules\": false,
       \"useBuiltIns\": true,
       \"targets\": {
-        \"browsers\": [\"> 5%\", \"last 2 versions\"]
+        \"browsers\": [\"> 5%\", \"last 2 versions\"],
+        \"node\": \"8.2.0\"
       },
       \"production\":{
         \"presets\":[
