@@ -132,15 +132,17 @@ if (module.hot) {
 
 
 echo -e "import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import Application from 'containers/Application';
 
 const Routes = () => {
-   return (
-     <Router>
-        <Route path=\"/\" component={Application} />
-     </Router>
-   );
+  return (
+    <Router>
+      <Switch>
+        <Route exact path=\"/\" component={Application} />
+      </Switch>
+    </Router>
+  );
 };
 
 export default Routes;">./src/routes/index.js
