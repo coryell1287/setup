@@ -139,9 +139,7 @@ describe('<MyComponent />', () => {
 });
 "> ./tests/Foo.test.js
 
-sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers PhantomJS",' package.json
-sed -i 's/"test":/a \\t"test:watch": ".\/node_modules\/karma\/bin\/karma start --auto-watch"' package.json
-
+sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/"test": ".\/node_modules\/karma\/bin\/karma start"/' package.json
 echo -e "\n\n\t\e[1;32mLaunching testing suite.\n\n\e[0m"
 npm test
 
