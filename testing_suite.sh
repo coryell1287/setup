@@ -8,11 +8,13 @@ sudo npm i -D sinon
 sudo npm i -D react-addons-test-utils
 sudo npm i -D chai
 sudo npm i -D enzyme chai-enzyme
+sudo npm i -D enzyme-adapter-react-16
 sudo npm i -D karma-webpack
 sudo npm i -D karma-sourcemap-loader
 sudo npm i -D karma-phantomjs-launcher
 sudo npm i -D karma-nyan-reporter
 sudo npm i -D babel-cli
+sudo npm i -D babel-polyfill
 sudo npm i -D babel-register
 sudo npm i -D json-loader
 sudo npm i -D karma
@@ -32,6 +34,7 @@ module.exports = (config) => {
     browsers: ['PhantomJS'],
     frameworks: ['mocha'],
     files: [
+      'node_modules/babel-polyfill/dist/polyfill.js',
       'tests/**/*.js',
     ],
 
@@ -101,45 +104,51 @@ touch src/Foo.js tests/Foo.test.js
 
 echo -e "tests/**/*.js">.eslintignore
 
-echo "import React from 'react';
+echo -e "import React from 'react';
 import { shallow } from 'enzyme';
-import chai from 'chai';
+import { configure } from 'enzyme';
+import Adapter from 'enzyme-adapter-react-16';
+import { expect } from 'chai';
 
-import MyComponent from './MyComponent';
+import MyComponent from './MyComponent'
 import Foo from './Foo';
 
-describe('<MyComponent />', () => {
+configure({ adapter: new Adapter() });
+
+describe('<MyComponent/>', () => {
   it('renders three <Foo /> components', () => {
     const wrapper = shallow(<MyComponent />);
     expect(wrapper.find(Foo)).to.have.length(3);
   });
+});"> ./tests/Foo.test.js
 
-  it('renders an `.icon-star`', () => {
-    const wrapper = shallow(<MyComponent />);
-    expect(wrapper.find('.icon-star')).to.have.length(1);
-  });
 
-  it('renders children when passed in', () => {
-    const wrapper = shallow(
-      <MyComponent>
-        <div className=\"unique\" />
-      </MyComponent>
-    );
-    expect(wrapper.contains(<div className=\"unique\" />)).to.equal(true);
-  });
+echo -e "import React, { Component } from 'react';
+import Foo from './Foo'
 
-  it('simulates click events', () => {
-    const onButtonClick = sinon.spy();
-    const wrapper = shallow(
-      <Foo onButtonClick={onButtonClick} />
-    );
-    wrapper.find('button').simulate('click');
-    expect(onButtonClick).to.have.property('callCount', 1);
-  });
-});
-"> ./tests/Foo.test.js
+export default class MyComponent extends Component {
+   render(){
+     return (
+       <div>
+         <Foo/>
+         <Foo/>
+         <Foo/>
+       </div>
+     );
+   }
+}">./tests/MyComponent.js
+
+
+echo -e "import React from 'react';
+
+export const Foo = () => {
+  return (
+    <h1>Hello</h1>
+  );
+};
+
+export default Foo;">./tests/Foo.js
 
 sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/"test": ".\/node_modules\/karma\/bin\/karma start"/' package.json
 echo -e "\n\n\t\e[1;32mLaunching testing suite.\n\n\e[0m"
 npm test
-
