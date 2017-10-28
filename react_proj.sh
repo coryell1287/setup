@@ -703,10 +703,12 @@ echo -e "{
 }
 ">./.babelrc
 
-#sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers PhantomJS",' package.json
+sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers PhantomJS",' package.json
 sed -i '/"test":/i \\t"start":"webpack-dev-server --env=dev --compress",' package.json
 sed -i '/"start":/i \\t"build": "webpack --env=prod",' package.json
 
 echo -e "\n\n\t\e[1;32mCompleted application setup.\n\n\e[0m"
 
 npm start
+
+sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/\t"test": ".\/node_modules\/karma\/bin\/karma start --single-run --browsers PhantomJS",' package.json
