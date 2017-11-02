@@ -294,7 +294,7 @@ export function mapDispatchToProps(dispatch) {
   return bindActionCreators(action, dispatch);
 }
 
-">./src/container/propConfig.js
+">./src/containers/propConfig.js
 
 
 ################################
