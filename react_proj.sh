@@ -723,6 +723,8 @@ echo -e "{
 }
 ">./.babelrc
 
+echo -e "node_modules\n.idea">.gitignore
+
 sed -i '/"test":/i \\t"start":"webpack-dev-server --env=dev --compress",' package.json
 sed -i '/"start":/i \\t"build": "webpack --env=prod",' package.json
 
