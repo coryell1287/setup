@@ -227,7 +227,7 @@ class Application extends Component {
 export default connect(mapStateToProps, mapDispatchToProps)(Application)">./src/containers/Application.js
 
 ################################
-#     Create the propConfig    #
+#  Create the serviceConfig    #
 ################################
 
 echo -e "const successfulServiceRequest = (service) => {
@@ -275,6 +275,26 @@ export {
   config,
   host,
 };">./src/api/serviceConfig.js
+
+################################
+#     Create the propConfig    #
+################################
+
+echo -e "import { bindActionCreators } from 'redux';
+import * as action from 'actions';
+
+export function mapStateToProps(state) {
+  return {
+    serviceState: state.serviceState.serviceTest,
+    fetchState: state.serviceState.progressIndicator,
+  };
+}
+
+export function mapDispatchToProps(dispatch) {
+  return bindActionCreators(action, dispatch);
+}
+
+">./src/container/propConfig.js
 
 
 ################################
