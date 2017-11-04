@@ -206,7 +206,7 @@ class Application extends Component {
 
 
   render() {
-    const { fetchState, serviceState: { message } } = this.props;
+    const { fetchState, serviceState } = this.props;
     return (
       <div>
         {
@@ -215,12 +215,12 @@ class Application extends Component {
             <div>
               <h1>Service test</h1>
               <div>
-                <span>{message}</span>
+                <span>{serviceState}</span>
               </div>
             </div>
         }
       </div>
-    )
+    );
   }
 }
 
@@ -234,7 +234,7 @@ echo -e "const successfulServiceRequest = (service) => {
   return {
     type: service.type,
     payload: {
-      message: service.message,
+      data: service.data,
     },
   };
 };
@@ -260,7 +260,6 @@ const getBaseUrl = () => {
 const host = getBaseUrl();
 
 const config = {
-  url: '/',
   timeout: 4000,
   onSuccess: successfulServiceRequest,
   onError: failedServiceRequest,
@@ -321,15 +320,9 @@ export const asyncGet = () => (dispatch) => {
 
 echo -e "import axios from 'axios';
 import { store } from 'store/configureStore';
+import { host } from 'api/serviceConfig';
 
-const { location: { hostname, origin } } = window;
 const { dispatch } = store;
-
-let host;
-if (hostname !== 'localhost') {
-  host = \`\${origin}/rest/\`;
-}
-host = 'http://localhost:4000/rest/';
 
 async function httpRequest(method, url, config) {
   try {
@@ -351,8 +344,7 @@ export const get = (basePath, config) => {
 
 export const post = (basePath, body, config) => {
   return httpRequest('post', \`\${host}\${basePath}\`, body, config);
-};
-">./src/api/index.js
+};">./src/api/index.js
 
 
 ################################
@@ -407,8 +399,8 @@ echo -e "import { combineReducers } from 'redux';
 const serviceTest = (state = '', action) => {
   switch (action.type) {
     case 'SUCCESSFUL_SERVICE_REQUEST': {
-      const { message } = action.payload;
-      return message;
+      const { data } = action.payload;
+      return data;
     }
     case 'FAILED_SERVICE_REQUEST': {
       return 'Sorry. Your request failed';
@@ -432,7 +424,6 @@ const progressIndicator = (state = false, action) => {
     }
   }
 };
-
 
 export default combineReducers({
   serviceTest,

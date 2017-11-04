@@ -5,6 +5,7 @@ echo -e "\n\n\t\e[1;35mBeginning Karma setup.\n\n\e[0m"
 
 sudo npm i -D mocha
 sudo npm i -D sinon
+sudo npm i -D supertest
 sudo npm i -D react-addons-test-utils
 sudo npm i -D chai
 sudo npm i -D enzyme chai-enzyme

@@ -28,7 +28,7 @@ echo -e "export default (app) => {
     res.setHeader('Content-Type', 'application/json');
     res.send({ message: 'Service is properly working.', type: 'SUCCESSFUL_SERVICE_REQUEST' });
   });
-}">./lib/router.js
+};">./lib/router.js
 
 echo "import express from 'express';
 import path from 'path';
