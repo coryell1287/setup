@@ -9,7 +9,6 @@ echo -e "\n\n\t\e[1;35mBeginning application setup...\n\n\e[0m"
 sudo npm i -S react
 sudo npm i -S react-dom
 sudo npm i -S react-helmet
-sudo npm i -S react-addons-test-utils
 sudo npm i -S react-addons-transition-group
 sudo npm i -S object-assign
 sudo npm i -S es6-promise
@@ -19,9 +18,12 @@ sudo npm i -S babel-plugin-transform-runtime
 sudo npm i -S core-decorators
 sudo npm i -S compression
 sudo npm i -S babel-runtime
-sudo npm i  -S autobind-decorator
+sudo npm i -S autobind-decorator
+
 
 # Development dependencies
+sudo npm i -D react-addons-test-utils
+sudo npm i -D redux-logger
 sudo npm i -D babelify babel-core babel-loader
 sudo npm i -D babel-preset-react
 sudo npm i -D babel-plugin-transform-class-properties
@@ -47,8 +49,9 @@ sudo npm i -S react-redux
 sudo npm i -S react-router
 sudo npm i -s react-router-dom
 sudo npm i -S redux-async-await
-sudo npm i -S redux-thunk redux-logger
+sudo npm i -S redux-thunk
 sudo npm i -S webpack-manifest-plugin
+sudo npm i -S connected-react-router
 
 
 # ESLint development dependencies
@@ -78,6 +81,7 @@ sudo npm i -D copy-webpack-plugin
 sudo npm i -D clean-webpack-plugin
 sudo npm i -D html-webpack-plugin
 sudo npm i -D lodash
+sudo npm i -D webpack
 
 sudo npm i -D deep-freeze-strict
 sudo npm i -D react-hot-loader@3.0.0-beta.7
@@ -85,7 +89,6 @@ sudo npm i -D react-hot-loader@3.0.0-beta.7
 #Install packages needed for the server
 sudo npm i -S axios
 sudo npm i -S express
-sudo npm i -S webpack
 
 mkdir -p ./src/{styles,store,actions,routes,reducers,components,containers,api}
 
@@ -98,7 +101,7 @@ echo -e "module.exports = process.env.NODE_ENV === 'production'
 #########################################
 echo -e "import React from 'react';
 import { render } from 'react-dom';
-import { store, history } from 'store/configureStore';
+import { store } from 'store/configureStore';
 import ReactHelmet from 'containers/ReactHelmet';
 import Routes from 'routes';
 import { Provider } from 'react-redux';
@@ -132,16 +135,19 @@ if (module.hot) {
 
 
 echo -e "import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
+import { ConnectedRouter } from 'connected-react-router';
+
+import { history } from 'store/configureStore';
 import Application from 'containers/Application';
 
 const Routes = () => {
   return (
-    <Router>
+    <ConnectedRouter history={history}>
       <Switch>
-        <Route exact path=\"/\" component={Application} />
+        <Route exact path="/" component={Application}/>
       </Switch>
-    </Router>
+    </ConnectedRouter>
   );
 };
 
@@ -356,8 +362,10 @@ import createHistory from 'history/createBrowserHistory';
 import { createLogger } from 'redux-logger';
 import rootReducer from 'reducers';
 import asyncAwait from 'redux-async-await';
+import { connectRouter, routerMiddleware } from 'connected-react-router';
 
 const middleware = [thunk];
+const history = createHistory();
 
 if (process.env.NODE_ENV === 'development') {
   middleware.push(createLogger());
@@ -367,14 +375,14 @@ const enhancers = compose(
   window.devToolsExtension ? window.devToolsExtension() : f => f,
 );
 
-const store = createStore(rootReducer, enhancers, compose(
-  applyMiddleware(...middleware, asyncAwait)));
+const store = createStore(connectRouter(history)(rootReducer), enhancers, compose(
+  applyMiddleware(...middleware, routerMiddleware(history), asyncAwait)));
 
-const history = createHistory();
 export {
   store,
-  history
-};">./src/store/configureStore.js
+  history,
+};
+">./src/store/configureStore.js
 
 
 ################################
@@ -508,7 +516,6 @@ const ManifestPlugin = require('webpack-manifest-plugin');
 const identity = i => i;
 
 module.exports = (env) => {
-  console.log(\`Env is \${env}\`);
 
   const isDev = env === 'dev';
   const isProd = env !== 'dev';
@@ -518,6 +525,7 @@ module.exports = (env) => {
   const ifDev = then => (isDev ? then : null);
   const ifProd = then => (env === 'prod' ? then : null);
   const vendor = [
+    'axios',
     'react',
     'redux',
     'lodash',
@@ -528,6 +536,12 @@ module.exports = (env) => {
     'redux-thunk',
     'react-router',
     'react-helmet',
+    'core-decorators',
+    'react-router-dom',
+    'redux-async-await',
+    'autobind-decorator',
+    'connected-react-router',
+    'react-addons-transition-group',
   ];
   const app = [
     ifDev('react-hot-loader/patch'),
