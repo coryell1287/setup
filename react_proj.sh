@@ -100,8 +100,9 @@ echo -e "module.exports = process.env.NODE_ENV === 'production'
 #  Create the entry point for the app   #
 #########################################
 echo -e "import React from 'react';
+import { connectRouter } from 'connected-react-router';
 import { render } from 'react-dom';
-import { store } from 'store/configureStore';
+import { store, history } from 'store/configureStore';
 import ReactHelmet from 'containers/ReactHelmet';
 import Routes from 'routes';
 import { Provider } from 'react-redux';
@@ -126,7 +127,7 @@ renderUI(Routes);
 
 if (module.hot) {
   module.hot.accept('routes', () => renderUI(Routes));
-  module.hot.accept('reducers', () => store.replaceReducer(rootReducer));
+  module.hot.accept('reducers', () => store.replaceReducer(connectRouter(history)(rootReducer)));
 }">./src/appLoader.js
 
 ################################
@@ -713,7 +714,6 @@ echo -e "{
       \"modules\": false,
       \"useBuiltIns\": true,
       \"targets\": {
-        \"browsers\": [\"> 5%\", \"last 2 versions\"],
         \"browsers\": [\"> 5%\", \"last 2 versions\"],
         \"node\": \"8.2.0\"
       },

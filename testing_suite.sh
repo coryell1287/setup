@@ -150,7 +150,7 @@ export const Foo = () => {
 
 export default Foo;">./tests/Foo.js
 
-sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/"test": "npm run test:client \& npm run test:server",/' package.json
+sed -i 's/"test": "echo \\"Error: no test specified\\" && exit 1"/"test": "npm run test:client \& npm run test:server"\,/' package.json
 sed -i '/"test":/a \\t"test:client": ".\/node_modules\/karma\/bin\/karma start",' package.json
 sed -i '/"test:client":/a \\t"test:server": "nodemon .\/node_modules\/mocha\/bin\/mocha tests\/server\/**\/*.test.js"' package.json
 echo -e "\n\n\t\e[1;32mLaunching testing suite.\n\n\e[0m"
