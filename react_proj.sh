@@ -47,11 +47,13 @@ sudo npm i -D babel-plugin-transform-regenerator
 sudo npm i -S redux
 sudo npm i -S react-redux
 sudo npm i -S react-router
-sudo npm i -s react-router-dom
+sudo npm i -S react-router-dom
+sudo npm i -S react-router-transition
 sudo npm i -S redux-async-await
 sudo npm i -S redux-thunk
 sudo npm i -S webpack-manifest-plugin
 sudo npm i -S connected-react-router
+sudo npm i -S classnames
 
 
 # ESLint development dependencies
@@ -146,7 +148,7 @@ const Routes = () => {
   return (
     <ConnectedRouter history={history}>
       <Switch>
-        <Route exact path="/" component={Application}/>
+        <Route exact path=\"/\" component={Application}/>
       </Switch>
     </ConnectedRouter>
   );
