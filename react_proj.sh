@@ -42,6 +42,7 @@ sudo npm i -D babel-plugin-syntax-async-function
 sudo npm i -D babel-preset-airbnb
 sudo npm i -D babel-plugin-add-module-exports
 sudo npm i -D babel-plugin-transform-regenerator
+npm install --save-dev babel-plugin-transform-react-jsx-source
 # Redux dependencies
 
 sudo npm i -S redux
@@ -700,7 +701,8 @@ echo -e "{
       \"transform-decorators-legacy\",
       [\"transform-object-rest-spread\", { \"useBuiltIns\": true }],
       [\"transform-class-properties\", { \"spec\": true }],
-      [\"add-module-exports\"]
+      [\"add-module-exports\"],
+      [\"transform-react-jsx-source\"]
     ],
   \"presets\": [
     \"react\",
