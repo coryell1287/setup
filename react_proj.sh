@@ -145,15 +145,11 @@ import { ConnectedRouter } from 'connected-react-router';
 import { history } from 'store/configureStore';
 import Application from 'containers/Application';
 
-const Routes = () => {
-  return (
-    <ConnectedRouter history={history}>
-      <Switch>
-        <Route exact path=\"/\" component={Application}/>
-      </Switch>
-    </ConnectedRouter>
-  );
-};
+const Routes = () => (
+  <ConnectedRouter history={history}>
+    <Application />
+  </ConnectedRouter>
+);
 
 export default Routes;">./src/routes/index.js
 
@@ -260,10 +256,10 @@ const getBaseUrl = () => {
   let baseUrl;
   const { location: { hostname, origin } } = window;
   if (hostname !== 'localhost') {
-    baseUrl = \`\${origin}/rest/\`;
+    baseUrl = \`\${origin}/api/\`;
     return baseUrl;
   }
-  baseUrl = 'http://localhost:4000/rest/';
+  baseUrl = 'http://localhost:4000/api/';
   return baseUrl;
 };
 
@@ -334,9 +330,9 @@ import { host } from 'api/serviceConfig';
 
 const { dispatch } = store;
 
-async function httpRequest(method, url, config) {
+const httpRequest = async (method, url, config) => {
   try {
-    dispatch({ type: 'START_FETCHING' });
+    dispatch({ type: 'START_FETCHING', fetching: true });
     const { data } = method === 'get'
       ? await axios[method](url, config)
       : await axios[method](url, config.body, config);
@@ -344,17 +340,16 @@ async function httpRequest(method, url, config) {
   } catch (err) {
     return await dispatch(config.onError(err));
   } finally {
-    dispatch({ type: 'STOP_FETCHING' });
+    dispatch({ type: 'STOP_FETCHING', fetching: false });
   }
-}
-
-export const get = (basePath, config) => {
-  return httpRequest('get', \`\${host}\${basePath}\`, config);
 };
 
-export const post = (basePath, body, config) => {
-  return httpRequest('post', \`\${host}\${basePath}\`, body, config);
-};">./src/api/index.js
+export const get = (basePath, config) =>
+  httpRequest('get', \`\${host}\${basePath}\`, config);
+
+export const post = (basePath, body, config) =>
+  httpRequest('post', \`\${host}\${basePath}\`, body, config);
+">./src/api/index.js
 
 
 ################################
@@ -585,7 +580,6 @@ module.exports = (env) => {
         api: resolve(__dirname, 'src/api/'),
         components: resolve(__dirname, './src/components/'),
         containers: resolve(__dirname, 'src/containers/'),
-        dataservices: resolve(__dirname, './src/dataservices/'),
         reducers: resolve(__dirname, './src/reducers/'),
         images: resolve(__dirname, './src/images/'),
         fonts: resolve(__dirname, './src/fonts/'),

@@ -23,7 +23,7 @@ sed -i '/"start":/i \\t"server": "nodemon lib\/server.js --exec babel-node --pre
 sed -i '/"build":/a \\t"build:sever": "babel lib -d dist --presets env,stage-2",' package.json
 
 echo -e "export default (app) => {
-  app.get('/rest', (req, res) => {
+  app.get('/api', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
     res.send({ message: 'Service is properly working.', type: 'SUCCESSFUL_SERVICE_REQUEST' });
   });
