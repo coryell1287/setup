@@ -9,6 +9,7 @@ npm i -D enzyme-adapter-react-16
 npm i -D jest
 npm i -D react-test-renderer
 npm i -D core-js
+npm i -D enzyme-to-json
 
 #mkdir src
 mkdir src/tests
