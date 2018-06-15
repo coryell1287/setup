@@ -6,98 +6,92 @@ echo -e "\n\n\t\e[1;35mBeginning application setup...\n\n\e[0m"
 #Install npm packages
 
 # react dependencies
-sudo npm i -S react
-sudo npm i -S react-dom
-sudo npm i -S react-helmet
-sudo npm i -S react-addons-transition-group
-sudo npm i -S object-assign
-sudo npm i -S es6-promise
-sudo npm i -S es5-shim
-sudo npm i -S es6-shim
-sudo npm i -S babel-plugin-transform-runtime
-sudo npm i -S core-decorators
-sudo npm i -S compression
-sudo npm i -S babel-runtime
-sudo npm i -S autobind-decorator
+npm i -S react
+npm i -S react-dom
+npm i -S react-helmet
+npm i -S react-addons-transition-group
+npm i -S object-assign
+npm i -S es6-promise
+npm i -S es5-shim
+npm i -S core-decorators
+npm i -S compression
+npm i -S babel-runtime
+npm i -S autobind-decorator
 
 
 # Development dependencies
-sudo npm i -D react-addons-test-utils
-sudo npm i -D redux-logger
-sudo npm i -D babelify babel-core babel-loader
-sudo npm i -D babel-preset-react
-sudo npm i -D babel-plugin-transform-class-properties
-sudo npm i -D babel-plugin-transform-runtime
-sudo npm i -D babel-plugin-transform-react-constant-elements
-sudo npm i -D babel-plugin-transform-react-inline-elements
-sudo npm i -D babel-preset-env
-sudo npm i -D babel-eslint
-sudo npm i -D babel-preset-es2017
-sudo npm i -D babel-preset-es2016
-sudo npm i -D babel-plugin-transform-decorators-legacy
-sudo npm i -D babel-es6-polyfill
-sudo npm i -D babel-preset-stage-0
-sudo npm i -D babel-preset-stage-2
-sudo npm i -D babel-plugin-syntax-async-function
-sudo npm i -D babel-preset-airbnb
-sudo npm i -D babel-plugin-add-module-exports
-sudo npm i -D babel-plugin-transform-regenerator
-npm install --save-dev babel-plugin-transform-react-jsx-source
+npm i -D react-addons-test-utils
+npm i -D redux-logger
+npm i -D babelify babel-core babel-loader
+npm i -D babel-preset-react
+npm i -D babel-plugin-transform-class-properties
+npm i -D babel-plugin-transform-runtime
+npm i -D babel-plugin-transform-react-constant-elements
+npm i -D babel-plugin-transform-react-inline-elements
+npm i -D babel-preset-env
+npm i -D babel-eslint
+npm i -D babel-plugin-transform-decorators-legacy
+npm i -D babel-polyfill
+npm i -D babel-preset-stage-0
+npm i -D babel-preset-stage-2
+npm i -D babel-plugin-syntax-async-function
+npm i -D babel-preset-airbnb
+npm i -D babel-plugin-add-module-exports
+npm i -D babel-plugin-transform-regenerator
+npm i -D babel-plugin-transform-react-jsx-source
+npm i -D mini-css-extract-plugin
+npm i -D optimize-css-assets-webpack-plugin
+npm i -D uglifyjs-webpack-plugin
 # Redux dependencies
 
-sudo npm i -S redux
-sudo npm i -S react-redux
-sudo npm i -S react-router
-sudo npm i -S react-router-dom
-sudo npm i -S react-router-transition
-sudo npm i -S redux-async-await
-sudo npm i -S redux-thunk
-sudo npm i -S webpack-manifest-plugin
-sudo npm i -S connected-react-router
-sudo npm i -S classnames
-
+npm i -S redux
+npm i -S react-redux
+npm i -S react-router
+npm i -S react-router-dom
+npm i -S redux-async-await
+npm i -S redux-thunk
+npm i -S webpack-manifest-plugin
+npm i -S connected-react-router
+npm i -S classnames
 
 # ESLint development dependencies
-sudo npm i -D eslint
-sudo npm i -D eslint-config-airbnb
-sudo npm i -D eslint-plugin-import
-sudo npm i -D eslint-plugin-jsx-a11y
-sudo npm i -D eslint-plugin-react
-sudo npm i -D eslint-plugin-babel
-sudo npm i -D eslint-config-default
-sudo npm i -D eslint-plugin-standard
-sudo npm i -g eslint-plugin-babel
+npm i -D eslint
+npm i -D eslint-config-airbnb
+npm i -D eslint-plugin-import
+npm i -D eslint-plugin-jsx-a11y
+npm i -D eslint-plugin-react
+npm i -D eslint-plugin-babel
+npm i -D eslint-config-default
+npm i -D eslint-plugin-standard
+npm i -g eslint-plugin-babel
+npm i -D eslint-plugin-compat
 
-sudo npm i -D sass-loader
-sudo npm i -D css-loader
-sudo npm i -D postcss
-sudo npm i -D postcss-loader
-sudo npm i -D postcss-cssnext
-sudo npm i -D postcss-import
-sudo npm i -D style-loader
-sudo npm i -D file-loader
-sudo npm i -D url-loader
-sudo npm i -D node-sass
-sudo npm i -D extract-text-webpack-plugin
-sudo npm i -D webpack-dev-server
-sudo npm i -D copy-webpack-plugin
-sudo npm i -D clean-webpack-plugin
-sudo npm i -D html-webpack-plugin
-sudo npm i -D lodash
-sudo npm i -D webpack
+npm i -D css-loader
+npm i -D postcss
+npm i -D postcss-loader
+npm i -D postcss-preset-env
+npm i -D postcss-import
+npm i -D style-loader
+npm i -D file-loader
+npm i -D url-loader
+npm i -D node-sass
+npm i -D extract-text-webpack-plugin
+npm i -D webpack-dev-server
+npm i -D copy-webpack-plugin
+npm i -D clean-webpack-plugin
+npm i -D html-webpack-plugin
+npm i -D lodash
+npm i -D webpack
+npm i -D yargs
 
-sudo npm i -D deep-freeze-strict
-sudo npm i -D react-hot-loader@3.0.0-beta.7
+npm i -D deep-freeze-strict
+npm i -D react-hot-loader@3.0.0-beta.7
 
 #Install packages needed for the server
-sudo npm i -S axios
-sudo npm i -S express
+npm i -S axios
+npm i -S express
 
 mkdir -p ./src/{styles,store,actions,routes,reducers,components,containers,api}
-
-echo -e "module.exports = process.env.NODE_ENV === 'production'
-  ? require('react-hot-loader/lib/AppContainer.prod')
-  : require('react-hot-loader/lib/AppContainer.dev');">./src/reactHotLoader.js
 
 #########################################
 #  Create the entry point for the app   #
@@ -110,18 +104,18 @@ import ReactHelmet from 'containers/ReactHelmet';
 import Routes from 'routes';
 import { Provider } from 'react-redux';
 import rootReducer from 'reducers';
-import HotLoader from './reactHotLoader';
-
+import { AppContainer } from 'react-hot-loader'
+import 'api/serviceConfig';
 
 const renderUI = (App) => {
   render(
-    <HotLoader>
+    <AppContainer>
         <ReactHelmet>
           <Provider store={store}>
             <App/>
           </Provider>
         </ReactHelmet>
-    </HotLoader>,
+    </AppContainer>,
     document.getElementById('app'),
   );
 };
@@ -253,33 +247,27 @@ const failedServiceRequest = (err) => {
 };
 
 const getBaseUrl = () => {
-  let baseUrl;
-  const { location: { hostname, origin } } = window;
-  if (hostname !== 'localhost') {
-    baseUrl = \`\${origin}/api/\`;
-    return baseUrl;
+  const { origin, hostname, protocol } = window.location;
+  let url;
+
+  if (hostname === 'localhost') {
+    url = 'http://localhost:8080/api/';
+    return url;
   }
-  baseUrl = 'http://localhost:4000/api/';
-  return baseUrl;
+
+  url = !origin
+    ? \`\${protocol}//\${hostname}/api/\`
+    : \`\${origin}/api/\`;
+  return url;
 };
 
 const host = getBaseUrl();
 
-const config = {
-  timeout: 4000,
-  onSuccess: successfulServiceRequest,
-  onError: failedServiceRequest,
-  headers: {
-    'Accept': 'application/json',
-    'Accept-Language': 'en_US',
-    'Content-Type': 'application/json',
-  },
-};
-
-export {
-  config,
-  host,
-};">./src/api/serviceConfig.js
+axios.defaults.baseURL = host;
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+axios.defaults.headers.common['Accept'] = 'application/json';
+axios.defaults.headers.post['Content-Type'] = 'application/json';
+axios.interceptors.request.use(request => request);">./src/api/serviceConfig.js
 
 ################################
 #     Create the propConfig    #
@@ -326,16 +314,15 @@ export const asyncGet = () => (dispatch) => {
 
 echo -e "import axios from 'axios';
 import { store } from 'store/configureStore';
-import { host } from 'api/serviceConfig';
 
 const { dispatch } = store;
 
-const httpRequest = async (method, url, config) => {
+const httpRequest = (method, config) => async (dispatch) {
   try {
     dispatch({ type: 'START_FETCHING', fetching: true });
     const { data } = method === 'get'
-      ? await axios[method](url, config)
-      : await axios[method](url, config.body, config);
+      ? await axios[method](config.url)
+      : await axios[method](config.url, config.body);
     return await dispatch(config.onSuccess(data));
   } catch (err) {
     return await dispatch(config.onError(err));
@@ -344,11 +331,8 @@ const httpRequest = async (method, url, config) => {
   }
 };
 
-export const get = (basePath, config) =>
-  httpRequest('get', \`\${host}\${basePath}\`, config);
-
-export const post = (basePath, body, config) =>
-  httpRequest('post', \`\${host}\${basePath}\`, body, config);
+export const get = (config) => httpRequest('get', config);
+export const post = (config) => httpRequest('post', config);
 ">./src/api/index.js
 
 
@@ -456,7 +440,7 @@ echo -e "module.exports = {
 ################################
 echo -e "{
   \"parser\": \"babel-eslint\",
-  \"extends\": [\"eslint:recommended\", \"plugin:react/recommended\", \"eslint-config-airbnb\"],
+  \"extends\": [\"plugin:compat/recommended\", \"eslint:recommended\", \"plugin:react/recommended\", \"eslint-config-airbnb\"],
   \"parserOptions\": {
     \"ecmaVersion\": 8,
     \"ecmaFeatures\": {
@@ -504,232 +488,229 @@ echo -e "{
 ################################
 #  Create the Webpack config   #
 ################################
-echo -e "const { resolve } = require('path');
-const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+echo -e "const webpack = require('webpack');
+const HtmlWebPackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
+const yargs = require('yargs');
+const { resolve } = require('path');
+
+const args = yargs.argv;
+
+console.log(args.mode);
+const isDev = args.mode === 'development';
+const environment = args.mode;
 
 const identity = i => i;
+const ifDev = then => (isDev ? then : null);
+const ifProd = then => (isDev ? null : then);
 
-module.exports = (env) => {
-
-  const isDev = env === 'dev';
-  const isProd = env !== 'dev';
-
-  const ifEnv = (condition1, condition2) => (isDev ? condition1 : condition2);
-
-  const ifDev = then => (isDev ? then : null);
-  const ifProd = then => (env === 'prod' ? then : null);
-  const vendor = [
-    'axios',
-    'react',
-    'redux',
-    'lodash',
-    'es5-shim',
-    'es6-shim',
-    'react-dom',
-    'react-redux',
-    'redux-thunk',
-    'react-router',
-    'react-helmet',
-    'core-decorators',
-    'react-router-dom',
-    'redux-async-await',
-    'autobind-decorator',
-    'connected-react-router',
-    'react-addons-transition-group',
-  ];
-  const app = [
-    ifDev('react-hot-loader/patch'),
-    ifDev('webpack-dev-server/client?http://localhost:8000'),
-    ifDev('webpack/hot/only-dev-server'),
-    './appLoader'].filter(identity);
-
-  return {
-    target: 'web',
-    profile: true,
-    stats: {
-      children: false,
+module.exports = {
+  target: 'web',
+  profile: true,
+  stats: {
+    children: false,
+  },
+  entry: { app: './appLoader.js' },
+  performance: { maxEntrypointSize: 400000 },
+  context: resolve(__dirname, './src'),
+  devtool: 'source-map',
+  devServer: {
+    port: 8000,
+    host: 'localhost',
+    stats: 'errors-only',
+    hot: true,
+    compress: true,
+    historyApiFallback: true,
+    disableHostCheck: true,
+    contentBase: resolve(__dirname, './dist'),
+    overlay: { warnings: true, errors: true },
+  },
+  resolve: {
+    modules: [
+      resolve(__dirname, './src'),
+      'node_modules',
+    ],
+    extensions: ['.js', '.json', '.css'],
+    alias: {
+      actions: resolve(__dirname, './src/actions/'),
+      api: resolve(__dirname, 'src/api/'),
+      components: resolve(__dirname, './src/components/'),
+      containers: resolve(__dirname, 'src/containers/'),
+      fonts: resolve(__dirname, './src/fonts/'),
+      images: resolve(__dirname, './src/images/'),
+      reducers: resolve(__dirname, './src/reducers/'),
+      routes: resolve(__dirname, 'src/routes/'),
+      store: resolve(__dirname, 'src/store/'),
+      styles: resolve(__dirname, './src/styles/'),
+      utils: resolve(__dirname, './src/utils/'),
     },
-    entry: { vendor, app },
-    performance: { maxEntrypointSize: 400000 },
-    context: resolve(__dirname, './src'),
-    devtool: 'source-map',
-    devServer: {
-      port: 8000,
-      host: 'localhost',
-      stats: 'errors-only',
-      hot: true,
-      compress: true,
-      historyApiFallback: true,
-      disableHostCheck: true,
-      contentBase: resolve(__dirname, './dist'),
-      overlay: { warnings: true, errors: true },
-    },
-    resolve: {
-      modules: [
-        resolve(__dirname, './src'),
-        'node_modules',
-      ],
-      extensions: ['.ts', '.tsx', '.js', '.jsx', '.json'],
-      alias: {
-        actions: resolve(__dirname, './src/actions/'),
-        api: resolve(__dirname, 'src/api/'),
-        components: resolve(__dirname, './src/components/'),
-        containers: resolve(__dirname, 'src/containers/'),
-        reducers: resolve(__dirname, './src/reducers/'),
-        images: resolve(__dirname, './src/images/'),
-        fonts: resolve(__dirname, './src/fonts/'),
-        routes: resolve(__dirname, 'src/routes/'),
-        stores: resolve(__dirname, 'src/stores/'),
-        styles: resolve(__dirname, './src/styles/'),
-      },
-    },
-    output: {
-      publicPath: '',
-      path: resolve(__dirname, './dist'),
-      filename: ifEnv('[name].bundle.js', '[name].[chunkhash].js'),
-    },
-    plugins: [
-      new webpack.optimize.CommonsChunkPlugin({
-        name: ['vendor'],
-        minChunks: Infinity,
-      }),
-      ifProd(new webpack.optimize.UglifyJsPlugin()),
-      ifProd(new CleanWebpackPlugin(['dist'], { verbose: true })),
-      ifProd(new CopyWebpackPlugin([
-        { from: 'fonts/', to: './fonts' },
-        { from: 'images/', to: './images' },
-      ])),
-      new webpack.EnvironmentPlugin({
-        DEBUG: isDev,
-        NODE_ENV: ifEnv('development', 'production'),
-      }),
-      ifProd(new ManifestPlugin({
-        fileName: 'manifest.json',
-        seed: {
-          name: 'Assets Manifest file',
-        },
+  },
+  output: {
+    path: resolve(__dirname, './dist'),
+    publicPath: isDev ? '/' : '',
+    filename: isDev ? '[name].bundle.js' : '[name].[hash].js',
+  },
+  optimization: {
+    nodeEnv: environment,
+    namedModules: true,
+    minimizer: [
+      ifProd(new UglifyJsPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: true,
       })),
-      new HtmlWebpackPlugin({
-        template: 'index.html',
-        inject: true,
-        minify: {
-          collapseWhitespace: true,
-        },
-      }),
-      ifDev(new webpack.HotModuleReplacementPlugin()),
-      ifDev(new webpack.NamedModulesPlugin()),
-      new ExtractTextPlugin({
-        filename: ifEnv('[name].bundle.[contenthash].css', 'styles/[name].bundle.[contenthash].css'),
-        disable: isDev,
-      }),
+      ifProd(new OptimizeCSSAssetsPlugin({})),
     ].filter(identity),
-    module: {
-      rules: [{
-        use: 'babel-loader',
-        test: /\.jsx?$/,
-        include: [resolve(__dirname, './src')],
-      }, {
-        test: /\.(sass|scss|css)$/,
-        use: ExtractTextPlugin.extract({
-          fallback: 'style-loader',
-          use: [
-            {
-              loader: 'css-loader',
-              options: {
-                sourceMap: isDev,
-                importLoaders: 1,
-                modules: true,
-                url: true,
-                minimize: isDev ? false : { discardComments: { removeAll: true } },
-              },
-            },
-            {
-              loader: 'sass-loader',
-              options: {
-                sourceMap: isDev,
-                paths: [resolve(__dirname, 'node_modules'), resolve(__dirname, 'src')],
-              },
-
-            },
-            { loader: 'postcss-loader' },
-          ],
-        }),
-      }, {
-          test: /\.(jpe?g|png|gif|svg|ico)$/,
-          use: [{
-            loader: 'url-loader',
-            options: {
-              name: 'images/[name].[ext]',
-              limit: 40000,
-              context: './images',
-            },
-          },
-          ],
-        }, {
-       test: /\.(woff|woff2|eot|ttf|otf)$/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]',
-            useRelativePath: isProd,
-          },
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          name: 'common',
+          chunks: 'initial',
+          minChunks: 2,
+          maxInitialRequests: 5,
+          minSize: 0,
         },
-        ],
+        vendor: {
+          test: /node_modules/,
+          chunks: 'initial',
+          name: 'vendor',
+          priority: 10,
+          enforce: true,
+        },
+        styles: {
+          name: 'styles',
+          test: /\.css$/,
+          chunks: 'all',
+          enforce: true,
+        },
+      },
+    },
+  },
+  module: {
+    rules: [{
+      test: /\.js$/,
+      exclude: /node_modules/,
+      use: {
+        loader: 'babel-loader',
+      },
+    }, {
+      test: /\.html$/,
+      use: [
+        {
+          loader: 'html-loader',
+          options: { minimize: true },
+        },
+      ],
+    }, {
+      test: /\.css$/,
+      use: [
+        isDev ? 'style-loader' : MiniCssExtractPlugin.loader,
+        'css-loader',
+        'postcss-loader',
+      ],
+    }, {
+      test: /\.(jpe?g|png|gif|svg|ico)$/,
+      use: [{
+        loader: 'url-loader',
+        options: {
+          name: 'images/[name].[ext]',
+          limit: 40000,
+          context: './images',
+        },
+      },
+      ],
+    }, {
+      test: /\.(woff|woff2|eot|ttf|otf)$/,
+      use: [{
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',
+          useRelativePath: !isDev,
+        },
       },
       ],
     },
-  };
-};">./webpack.config.js
+    ],
+  },
+  plugins: [
+    ifProd(new ManifestPlugin({
+      fileName: 'manifest.json',
+      seed: {
+        name: 'Assets Manifest file',
+      },
+    })),
+    ifProd(new CopyWebpackPlugin([
+      { from: 'fonts/', to: './fonts' },
+      { from: 'images/', to: './images' },
+    ])),
+    ifProd(new CleanWebpackPlugin(['dist'], { verbose: true })),
+    ifDev(new webpack.HotModuleReplacementPlugin()),
+    new HtmlWebPackPlugin({
+      template: 'index.html',
+    }),
+    new MiniCssExtractPlugin({
+      filename: isDev ? '[name].css' : '[name].[hash].css',
+      chunkFilename: isDev ? '[name].css' : '[name].[chunkhash].css',
+    }),
+  ].filter(identity),
+};
+
+">./webpack.config.js
 
 
 
 echo -e "{
   \"sourceMaps\": true,
-    \"plugins\": [
-      \"transform-runtime\",
-      \"transform-decorators-legacy\",
-      [\"transform-object-rest-spread\", { \"useBuiltIns\": true }],
-      [\"transform-class-properties\", { \"spec\": true }],
-      [\"add-module-exports\"],
-      [\"transform-react-jsx-source\"]
-    ],
+  \"plugins\": [
+	\"transform-runtime\",
+	\"transform-decorators-legacy\",
+	[\"transform-object-rest-spread\", {\"useBuiltIns\": true}],
+	[\"transform-class-properties\", {\"spec\": true}],
+	[\"transform-react-jsx-source\"],
+	[\"add-module-exports\"]
+  ],
   \"presets\": [
-    \"react\",
-    \"airbnb\",
-    \"es2017\",
-    \"stage-0\",
-    \"stage-1\",
-    \"stage-2\",
-    \"stage-3\",
-    [\"env\", {
-      \"debug\": true,
-      \"loose\": true,
-      \"modules\": false,
-      \"useBuiltIns\": true,
-      \"targets\": {
-        \"browsers\": [\"> 5%\", \"last 2 versions\"],
-        \"node\": \"8.2.0\"
-      },
-      \"production\":{
-        \"presets\":[
-          \"transform-react-constant-elements\",
-          \"transform-react-inline-elements\"
-        ]
-      }
-    }]
+	\"react\",
+	\"airbnb\",
+	\"stage-0\",
+	\"stage-1\",
+	\"stage-2\",
+	\"stage-3\",
+	[\"env\", {
+		\"debug\": true,
+		\"loose\": true,
+		\"modules\": false,
+		\"useBuiltIns\": true,
+		\"targets\": {
+		  \"browsers\": [
+			\"last 2 Chrome versions\",
+			\"last 2 FireFox versions\",
+			\"last 2 ie versions\"
+		  ]
+		},
+		\"production\": {
+		  \"presets\": [
+			\"transform-react-constant-elements\",
+			\"transform-react-inline-elements\"
+		  ]
+		}
+	  }
+	]
   ]
 }
+
 ">./.babelrc
 
 echo -e "node_modules\n.idea">.gitignore
 
-sed -i '/"test":/i \\t"start":"webpack-dev-server --env=dev --compress",' package.json
-sed -i '/"start":/i \\t"build": "webpack --env=prod",' package.json
+sed -i '/"test":/i \\t"start":"webpack-dev-server --mode development",' package.json
+sed -i '/"start":/i \\t"build": "webpack --mode production",' package.json
 
 echo -e "\n\n\t\e[1;32mCompleted application setup.\n\n\e[0m"
 
