@@ -32,10 +32,9 @@ npm i -D babel-preset-env
 npm i -D babel-eslint
 npm i -D babel-plugin-transform-decorators-legacy
 npm i -D babel-polyfill
-npm i -D babel-preset-stage-0
 npm i -D babel-preset-stage-2
+npm i -D babel-preset-stage-3
 npm i -D babel-plugin-syntax-async-function
-npm i -D babel-preset-airbnb
 npm i -D babel-plugin-add-module-exports
 npm i -D babel-plugin-transform-regenerator
 npm i -D babel-plugin-transform-react-jsx-source
@@ -56,14 +55,10 @@ npm i -S classnames
 
 # ESLint development dependencies
 npm i -D eslint
-npm i -D eslint-config-airbnb
 npm i -D eslint-plugin-import
 npm i -D eslint-plugin-jsx-a11y
 npm i -D eslint-plugin-react
 npm i -D eslint-plugin-babel
-npm i -D eslint-config-default
-npm i -D eslint-plugin-standard
-npm i -g eslint-plugin-babel
 npm i -D eslint-plugin-compat
 
 npm i -D css-loader
@@ -313,9 +308,6 @@ export const asyncGet = () => (dispatch) => {
 ####################################
 
 echo -e "import axios from 'axios';
-import { store } from 'store/configureStore';
-
-const { dispatch } = store;
 
 const httpRequest = (method, config) => async (dispatch) {
   try {
@@ -440,7 +432,7 @@ echo -e "module.exports = {
 ################################
 echo -e "{
   \"parser\": \"babel-eslint\",
-  \"extends\": [\"plugin:compat/recommended\", \"eslint:recommended\", \"plugin:react/recommended\", \"eslint-config-airbnb\"],
+  \"extends\": [\"plugin:compat/recommended\", \"plugin:import/errors\", \"eslint:recommended",\"plugin:react/recommended\"],
   \"parserOptions\": {
     \"ecmaVersion\": 8,
     \"ecmaFeatures\": {
@@ -488,24 +480,25 @@ echo -e "{
 ################################
 #  Create the Webpack config   #
 ################################
-echo -e "const webpack = require('webpack');
+echo -e "
+
+const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-
-const yargs = require('yargs');
 const { resolve } = require('path');
+const yargs = require('yargs');
+const postcssPresetEnv = require('postcss-preset-env');
+const autoprefixer = require('autoprefixer');
+const application = require('./package');
 
 const args = yargs.argv;
-
-console.log(args.mode);
 const isDev = args.mode === 'development';
+const isProd = args.mode !== 'development';
 const environment = args.mode;
-
 const identity = i => i;
 const ifDev = then => (isDev ? then : null);
 const ifProd = then => (isDev ? null : then);
@@ -516,7 +509,7 @@ module.exports = {
   stats: {
     children: false,
   },
-  entry: { app: './appLoader.js' },
+  entry: { app: './appLoader.js', feedback: './fbLoader.js' },
   performance: { maxEntrypointSize: 400000 },
   context: resolve(__dirname, './src'),
   devtool: 'source-map',
@@ -532,10 +525,7 @@ module.exports = {
     overlay: { warnings: true, errors: true },
   },
   resolve: {
-    modules: [
-      resolve(__dirname, './src'),
-      'node_modules',
-    ],
+    modules: [resolve(__dirname, './src'), 'node_modules'],
     extensions: ['.js', '.json', '.css'],
     alias: {
       actions: resolve(__dirname, './src/actions/'),
@@ -554,18 +544,20 @@ module.exports = {
   output: {
     path: resolve(__dirname, './dist'),
     publicPath: isDev ? '/' : '',
-    filename: isDev ? '[name].bundle.js' : '[name].[hash].js',
+    filename: isDev ? '[name].bundle.js' : '[name].[chunkhash].js',
   },
   optimization: {
     nodeEnv: environment,
     namedModules: true,
     minimizer: [
-      ifProd(new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: true,
-      })),
-      ifProd(new OptimizeCSSAssetsPlugin({})),
+      ifProd(
+        new UglifyJsPlugin({
+          cache: true,
+          parallel: true,
+          sourceMap: true,
+        }),
+      ),
+     ifProd(new OptimizeCSSAssetsPlugin({})),
     ].filter(identity),
     splitChunks: {
       cacheGroups: {
@@ -583,85 +575,109 @@ module.exports = {
           priority: 10,
           enforce: true,
         },
-        styles: {
-          name: 'styles',
-          test: /\.css$/,
-          chunks: 'all',
-          enforce: true,
-        },
       },
     },
   },
   module: {
-    rules: [{
-      test: /\.js$/,
-      exclude: /node_modules/,
-      use: {
-        loader: 'babel-loader',
-      },
-    }, {
-      test: /\.html$/,
-      use: [
-        {
-          loader: 'html-loader',
-          options: { minimize: true },
-        },
-      ],
-    }, {
-      test: /\.css$/,
-      use: [
-        isDev ? 'style-loader' : MiniCssExtractPlugin.loader,
-        'css-loader',
-        'postcss-loader',
-      ],
-    }, {
-      test: /\.(jpe?g|png|gif|svg|ico)$/,
-      use: [{
-        loader: 'url-loader',
-        options: {
-          name: 'images/[name].[ext]',
-          limit: 40000,
-          context: './images',
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
         },
       },
-      ],
-    }, {
-      test: /\.(woff|woff2|eot|ttf|otf)$/,
-      use: [{
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]',
-          useRelativePath: !isDev,
-        },
+      {
+        test: /\.html$/,
+        use: [
+          {
+            loader: 'html-loader',
+            options: { minimize: true },
+          },
+        ],
       },
-      ],
-    },
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          {
+            loader: 'css-loader',
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: () => [
+                postcssPresetEnv({ browsers: 'last 2 versions' }, autoprefixer({ grid: true })),
+              ],
+            },
+          },
+        ],
+      },
+      {
+        test: /\.(jpe?g|png|gif|svg|ico)$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              name: 'images/[name].[hash].[ext]',
+              limit: 40000,
+              context: './images',
+            },
+          },
+        ],
+      },
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: isDev ? '[name].[hash].[ext]' : 'fonts/[name].[hash].[ext]',
+              limit: 40000,
+              useRelativePath: isDev,
+            },
+          },
+        ],
+      },
     ],
   },
   plugins: [
-    ifProd(new ManifestPlugin({
-      fileName: 'manifest.json',
-      seed: {
-        name: 'Assets Manifest file',
+    ifProd(
+      new ManifestPlugin({
+        fileName: 'manifest.json',
+        seed: {
+          name: 'Assets Manifest file',
+        },
+      }),
+    ),
+    ifProd(
+      new CopyWebpackPlugin([
+        { from: 'fonts/', to: './fonts' },
+        { from: 'images/', to: './images' },
+      ]),
+    ),
+    new webpack.DefinePlugin({
+      PRODUCTION: JSON.stringify(isProd),
+      'process.env.NODE_ENV': JSON.stringify(environment),
+      'process.env': {
+        NODE_ENV: JSON.stringify(environment),
+        application_version: JSON.stringify(application.version),
       },
-    })),
-    ifProd(new CopyWebpackPlugin([
-      { from: 'fonts/', to: './fonts' },
-      { from: 'images/', to: './images' },
-    ])),
+    }),
     ifProd(new CleanWebpackPlugin(['dist'], { verbose: true })),
     ifDev(new webpack.HotModuleReplacementPlugin()),
     new HtmlWebPackPlugin({
       template: 'index.html',
+      chunks: ['vendor', 'common', 'app'],
     }),
-    new MiniCssExtractPlugin({
-      filename: isDev ? '[name].css' : '[name].[hash].css',
-      chunkFilename: isDev ? '[name].css' : '[name].[chunkhash].css',
+    new HtmlWebPackPlugin({
+      template: 'index.html',
+      filename: 'feedback.html',
+      chunks: ['vendor', 'common', 'feedback'],
     }),
   ].filter(identity),
-};
-
-">./webpack.config.js
+};">./webpack.config.js
 
 
 
@@ -678,8 +694,6 @@ echo -e "{
   \"presets\": [
 	\"react\",
 	\"airbnb\",
-	\"stage-0\",
-	\"stage-1\",
 	\"stage-2\",
 	\"stage-3\",
 	[\"env\", {
@@ -691,6 +705,7 @@ echo -e "{
 		  \"browsers\": [
 			\"last 2 Chrome versions\",
 			\"last 2 FireFox versions\",
+			\"last 2 edge versions\",
 			\"last 2 ie versions\"
 		  ]
 		},
