@@ -30,24 +30,26 @@ npm i -S redux-thunk
 ########################
 ## Babel dependencies ##
 ########################
-npm i -S babel-runtime
-npm i -D eslint-plugin-babel
-npm i -D babelify babel-core babel-loader
-npm i -D babel-preset-react
-npm i -D babel-plugin-transform-class-properties
-npm i -D babel-plugin-transform-runtime
-npm i -D babel-plugin-transform-react-constant-elements
-npm i -D babel-plugin-transform-react-inline-elements
-npm i -D babel-preset-env
+npm i -S @babel/runtime
+npm i -D @babel/plugin-transform-runtime
+npm i -D @babel/preset-env
+npm i -D @babel/plugin-transform-react-jsx
+npm i -D @babel/core
+npm i -D @babel/cli
+npm i -D babel-loader@7
+npm i -D @babel/preset-react
+npm i -D @babel/preset-stage-2
+npm i -D @babel/preset-stage-3
+npm i -D @babel/plugin-proposal-class-properties
+npm i -D @babel/plugin-proposal-object-rest-spread
+npm i -D @babel/plugin-transform-react-jsx-source
+npm i -D @babel/plugin-transform-react-constant-elements
+npm i -D @babel/plugin-transform-react-inline-elements
 npm i -D babel-eslint
-npm i -D babel-plugin-transform-decorators-legacy
-npm i -D babel-polyfill
-npm i -D babel-preset-stage-2
-npm i -D babel-preset-stage-3
-npm i -D babel-plugin-syntax-async-function
-npm i -D babel-plugin-add-module-exports
-npm i -D babel-plugin-transform-regenerator
-npm i -D babel-plugin-transform-react-jsx-source
+npm i -D @babel/plugin-proposal-decorators
+npm i -D @babel/polyfill
+npm i -D @babel/plugin-syntax-async-generators
+npm i -D @babel/plugin-transform-regenerator
 
 ##########################
 ## Eslint dependencies ##
@@ -92,7 +94,6 @@ npm i -D uglifyjs-webpack-plugin
 ## Other dependencies ##
 #########################
 npm i -D lodash
-npm i -S object-assign
 npm i -S es6-promise
 npm i -S es5-shim
 npm i -S core-decorators
@@ -104,6 +105,55 @@ npm i -S axios
 npm i -S classnames
 
 mkdir -p ./src/{styles,store,actions,routes,reducers,components,containers,api}
+
+##########################
+## Create babelrc file  ##
+##########################
+
+echo -e "{
+  \"sourceMaps\": true,
+  \"plugins\": [
+	\"transform-runtime\",
+	 [\"@babel/plugin-proposal-decorators\", { \"legacy\": true }],
+	\"@babel/plugin-proposal-object-rest-spread\",
+	[\"@babel/plugin-proposal-class-properties\", { \"loose\": true }],
+	\"@babel/plugin-transform-react-jsx-source\",
+	\"@babel/plugin-syntax-async-generators\",
+	\"@babel/plugin-transform-regenerator\",
+	[\"@babel/plugin-transform-runtime\", {
+      \"corejs\": false,
+      \"helpers\": true,
+      \"regenerator\": true,
+      \"useESModules\": false
+    }],
+  ],
+  \"presets\": [
+	\"@babel/preset-react\",
+	\"@babel/stage-2\",
+	\"@babel/stage-3\",
+	[\"env\", {
+		\"debug\": true,
+		\"loose\": true,
+		\"modules\": false,
+		\"useBuiltIns\": true,
+		\"targets\": {
+		  \"browsers\": [
+			\"last 2 Chrome versions\",
+			\"last 2 FireFox versions\",
+			\"last 2 edge versions\",
+			\"last 2 ie versions\"
+		  ]
+		},
+		\"production\": {
+		  \"presets\": [
+			\"@babel/plugin-transform-react-constant-elements\",
+			\"@babel/plugin-transform-react-inline-elements\"
+		  ]
+		}
+	  }
+	]
+  ]
+}">./.babelrc
 
 #########################################
 #  Create the entry point for the app   #
@@ -526,7 +576,7 @@ module.exports = {
   stats: {
     children: false,
   },
-  entry: { app: './appLoader.js', feedback: './fbLoader.js' },
+  entry: { babel: '@babel/polyfill', app: './appLoader.js', feedback: './fbLoader.js' },
   performance: { maxEntrypointSize: 400000 },
   context: resolve(__dirname, './src'),
   devtool: 'source-map',
@@ -698,46 +748,7 @@ module.exports = {
 
 
 
-echo -e "{
-  \"sourceMaps\": true,
-  \"plugins\": [
-	\"transform-runtime\",
-	\"transform-decorators-legacy\",
-	[\"transform-object-rest-spread\", {\"useBuiltIns\": true}],
-	[\"transform-class-properties\", {\"spec\": true}],
-	[\"transform-react-jsx-source\"],
-	[\"add-module-exports\"]
-  ],
-  \"presets\": [
-	\"react\",
-	\"airbnb\",
-	\"stage-2\",
-	\"stage-3\",
-	[\"env\", {
-		\"debug\": true,
-		\"loose\": true,
-		\"modules\": false,
-		\"useBuiltIns\": true,
-		\"targets\": {
-		  \"browsers\": [
-			\"last 2 Chrome versions\",
-			\"last 2 FireFox versions\",
-			\"last 2 edge versions\",
-			\"last 2 ie versions\"
-		  ]
-		},
-		\"production\": {
-		  \"presets\": [
-			\"transform-react-constant-elements\",
-			\"transform-react-inline-elements\"
-		  ]
-		}
-	  }
-	]
-  ]
-}
 
-">./.babelrc
 
 echo -e "node_modules\n.idea">.gitignore
 
