@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-echo -e "\n\n\t\e[1;35mBeginning application setup...\n\n\e[0m"
+echo -e "\n\n\t\033[1;35mBeginning application setup...\n\n\033[0m"
 #Install npm packages
 
 ########################
@@ -46,6 +46,13 @@ npm i -D @babel/plugin-proposal-decorators
 npm i -D @babel/polyfill
 npm i -D @babel/plugin-syntax-async-generators
 npm i -D @babel/plugin-transform-regenerator
+npm i -D @babel/plugin-proposal-function-sent
+npm i -D @babel/plugin-proposal-numeric-separator
+npm i -D @babel/plugin-proposal-export-namespace-from
+npm i -D @babel/plugin-proposal-throw-expressions
+npm i -D @babel/plugin-syntax-dynamic-import
+npm i -D @babel/plugin-syntax-import-meta
+npm i -D @babel/plugin-proposal-json-strings
 
 ##########################
 ## Eslint dependencies ##
@@ -99,6 +106,7 @@ npm i -D yargs
 npm i -D deep-freeze-strict
 npm i -S axios
 npm i -S classnames
+npm i -D core-js
 
 mkdir -p ./src/{styles,store,actions,routes,reducers,components,containers,api}
 
@@ -112,14 +120,16 @@ echo -e "{
     \"@babel/plugin-syntax-async-generators\",
     \"@babel/plugin-transform-regenerator\",
     \"@babel/plugin-proposal-object-rest-spread\",
-	 \"@babel/plugin-proposal-function-sent\",
-     \"@babel/plugin-proposal-export-namespace-from\",
-     \"@babel/plugin-proposal-numeric-separator\",
-     \"@babel/plugin-proposal-throw-expressions\",
-     \"@babel/plugin-syntax-dynamic-import\",
-     \"@babel/plugin-syntax-import-meta\",
+	\"@babel/plugin-proposal-function-sent\",
+    \"@babel/plugin-proposal-export-namespace-from\",
+    \"@babel/plugin-proposal-numeric-separator\",
+    \"@babel/plugin-proposal-throw-expressions\",
+    \"@babel/plugin-syntax-dynamic-import\",
+    \"@babel/plugin-syntax-import-meta\",
+    \"@babel/plugin-transform-react-constant-elements\",
+    \"@babel/plugin-transform-react-inline-elements\",
      [\"@babel/plugin-proposal-class-properties\", { \"loose\": false }],
-     \"@babel/plugin-proposal-json-strings\"
+    \"@babel/plugin-proposal-json-strings\",
 	 [\"@babel/plugin-transform-runtime\", {
       \"corejs\": false,
       \"helpers\": true,
@@ -133,7 +143,7 @@ echo -e "{
 		\"debug\": true,
 		\"loose\": true,
 		\"modules\": false,
-		\"useBuiltIns\": true,
+		\"useBuiltIns\": \"entry\",
 		\"targets\": {
 		  \"browsers\": [
 			\"last 2 Chrome versions\",
@@ -166,6 +176,7 @@ import { Provider } from 'react-redux';
 import rootReducer from 'reducers';
 import { AppContainer } from 'react-hot-loader'
 import 'api/serviceConfig';
+import '@babel/polyfill';
 
 const renderUI = (App) => {
   render(
@@ -290,7 +301,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(Application)">./src/
 #  Create the serviceConfig    #
 ################################
 
-echo -e "const successfulServiceRequest = (service) => {
+echo -e "import axios from 'axios';
+const successfulServiceRequest = (service) => {
   return {
     type: service.type,
     payload: {
@@ -307,17 +319,12 @@ const failedServiceRequest = (err) => {
 };
 
 const getBaseUrl = () => {
-  const { origin, hostname, protocol } = window.location;
+  const { origin, hostname, protocol, port } = window.location;
   let url;
 
-  if (hostname === 'localhost') {
-    url = 'http://localhost:8080/api/';
-    return url;
-  }
-
   url = !origin
-    ? \`\${protocol}//\${hostname}/api/\`
-    : \`\${origin}/api/\`;
+    ? `${protocol}//${hostname}${port}/api/`
+    : `${origin}/api/`;
   return url;
 };
 
@@ -355,15 +362,13 @@ export function mapDispatchToProps(dispatch) {
 ################################
 
 echo -e "import { get } from 'api';
-import { config } from 'api/serviceConfig';
 
 export const asyncGet = () => (dispatch) => {
 
   const options = {
-    ...config,
     url: '',
   };
-  dispatch(get(options.url, config));
+  dispatch(get(options.url));
 };">./src/actions/index.js
 
 
@@ -374,7 +379,7 @@ export const asyncGet = () => (dispatch) => {
 
 echo -e "import axios from 'axios';
 
-const httpRequest = (method, config) => async (dispatch) {
+const httpRequest = (method, config) => async (dispatch) => {
   try {
     dispatch({ type: 'START_FETCHING', fetching: true });
     const { data } = method === 'get'
@@ -566,13 +571,14 @@ const identity = i => i;
 const ifDev = then => (isDev ? then : null);
 const ifProd = then => (isDev ? null : then);
 
+const app = ['@babel/polyfill', './appLoader.js'].filter(identity);
 module.exports = {
   target: 'web',
   profile: true,
   stats: {
     children: false,
   },
-  entry: { app: './appLoader.js' },
+  entry: { app },
   performance: { maxEntrypointSize: 400000 },
   context: resolve(__dirname, './src'),
   devtool: 'source-map',
@@ -737,15 +743,11 @@ module.exports = {
   ].filter(identity),
 };">./webpack.config.js
 
-
-
-
-
 echo -e "node_modules\n.idea">.gitignore
 
 sed -i '/"test":/i \\t"start":"webpack-dev-server --mode development",' package.json
 sed -i '/"start":/i \\t"build": "webpack --mode production",' package.json
 
-echo -e "\n\n\t\e[1;32mCompleted application setup.\n\n\e[0m"
+echo -e "\n\n\t\033[1;32mCompleted application setup.\n\n\033[0m"
 
 npm start
