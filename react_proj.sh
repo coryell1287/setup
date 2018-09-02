@@ -5,23 +5,33 @@
 echo -e "\n\n\t\e[1;35mBeginning application setup...\n\n\e[0m"
 #Install npm packages
 
-# react dependencies
+########################
+## React dependencies ##
+########################
 npm i -S react
 npm i -S react-dom
+npm i -S react-router-dom
 npm i -S react-helmet
 npm i -S react-addons-transition-group
-npm i -S object-assign
-npm i -S es6-promise
-npm i -S es5-shim
-npm i -S core-decorators
-npm i -S compression
-npm i -S babel-runtime
-npm i -S autobind-decorator
-
-
-# Development dependencies
 npm i -D react-addons-test-utils
+npm i -S connected-react-router
+npm i -D react-hot-loader@3.0.0-beta.7
+
+########################
+## Redux dependencies ##
+########################
+npm i -S redux
+npm i -S react-redux
+npm i -S react-router
 npm i -D redux-logger
+npm i -S redux-async-await
+npm i -S redux-thunk
+
+########################
+## Babel dependencies ##
+########################
+npm i -S babel-runtime
+npm i -D eslint-plugin-babel
 npm i -D babelify babel-core babel-loader
 npm i -D babel-preset-react
 npm i -D babel-plugin-transform-class-properties
@@ -38,28 +48,19 @@ npm i -D babel-plugin-syntax-async-function
 npm i -D babel-plugin-add-module-exports
 npm i -D babel-plugin-transform-regenerator
 npm i -D babel-plugin-transform-react-jsx-source
-npm i -D mini-css-extract-plugin
-npm i -D optimize-css-assets-webpack-plugin
-npm i -D uglifyjs-webpack-plugin
-# Redux dependencies
 
-npm i -S redux
-npm i -S react-redux
-npm i -S react-router
-npm i -S react-router-dom
-npm i -S redux-async-await
-npm i -S redux-thunk
-npm i -S connected-react-router
-npm i -S classnames
-
-# ESLint development dependencies
+##########################
+## Eslint dependencies ##
+#########################
 npm i -D eslint
 npm i -D eslint-plugin-import
 npm i -D eslint-plugin-jsx-a11y
 npm i -D eslint-plugin-react
-npm i -D eslint-plugin-babel
 npm i -D eslint-plugin-compat
 
+##########################
+## Loader dependencies ##
+#########################
 npm i -D css-loader
 npm i -D postcss
 npm i -D postcss-loader
@@ -68,7 +69,11 @@ npm i -D postcss-import
 npm i -D style-loader
 npm i -D file-loader
 npm i -D url-loader
-npm i -D node-sass
+npm i -D html-loader
+
+##########################
+## Webpack dependencies ##
+#########################
 npm i -D extract-text-webpack-plugin
 npm i -D webpack-dev-server
 npm i -D copy-webpack-plugin
@@ -76,17 +81,27 @@ npm i -D clean-webpack-plugin
 npm i -D html-webpack-plugin
 npm i -D webpack-manifest-plugin
 npm i -D mini-css-extract-plugin
-npm i -D lodash
 npm i -D webpack
 npm i -D webpack-cli
+npm i -D mini-css-extract-plugin
+npm i -D optimize-css-assets-webpack-plugin
+npm i -D uglifyjs-webpack-plugin
+
+
+##########################
+## Other dependencies ##
+#########################
+npm i -D lodash
+npm i -S object-assign
+npm i -S es6-promise
+npm i -S es5-shim
+npm i -S core-decorators
+npm i -S compression
+npm i -S autobind-decorator
 npm i -D yargs
-
 npm i -D deep-freeze-strict
-npm i -D react-hot-loader@3.0.0-beta.7
-
-#Install packages needed for the server
 npm i -S axios
-npm i -S express
+npm i -S classnames
 
 mkdir -p ./src/{styles,store,actions,routes,reducers,components,containers,api}
 
