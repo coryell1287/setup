@@ -49,7 +49,6 @@ npm i -S react-router
 npm i -S react-router-dom
 npm i -S redux-async-await
 npm i -S redux-thunk
-npm i -S webpack-manifest-plugin
 npm i -S connected-react-router
 npm i -S classnames
 
@@ -75,8 +74,11 @@ npm i -D webpack-dev-server
 npm i -D copy-webpack-plugin
 npm i -D clean-webpack-plugin
 npm i -D html-webpack-plugin
+npm i -D webpack-manifest-plugin
+npm i -D mini-css-extract-plugin
 npm i -D lodash
 npm i -D webpack
+npm i -D webpack-cli
 npm i -D yargs
 
 npm i -D deep-freeze-strict
@@ -432,7 +434,7 @@ echo -e "module.exports = {
 ################################
 echo -e "{
   \"parser\": \"babel-eslint\",
-  \"extends\": [\"plugin:compat/recommended\", \"plugin:import/errors\", \"eslint:recommended",\"plugin:react/recommended\"],
+  \"extends\": [\"plugin:compat/recommended\", \"eslint:recommended\", \"plugin:react/recommended\", \"plugin:import/errors\"],
   \"parserOptions\": {
     \"ecmaVersion\": 8,
     \"ecmaFeatures\": {

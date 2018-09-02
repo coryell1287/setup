@@ -31,7 +31,18 @@ echo -e "/**
  */
 global.requestAnimationFrame = (cb) => {
   setTimeout(cb, 0);
-};">src/tests/polyfills.js
+};
+
+const sessionStorageMock = {
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  clear: jest.fn()
+};
+
+global.sessionStorage = sessionStorageMock;
+global.window.location.reload = jest.fn();">src/tests/polyfills.js
+
+echo -e "module.exports = {}">./src/tests/CSSStub.js
 
 echo -e "import 'babel-polyfill';
 import Enzyme from 'enzyme';
