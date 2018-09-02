@@ -151,12 +151,6 @@ echo -e "{
 			\"last 2 edge versions\",
 			\"last 2 ie versions\"
 		  ]
-		},
-		\"production\": {
-		  \"presets\": [
-			\"@babel/plugin-transform-react-constant-elements\",
-			\"@babel/plugin-transform-react-inline-elements\"
-		  ]
 		}
 	  }
 	]
@@ -176,7 +170,6 @@ import { Provider } from 'react-redux';
 import rootReducer from 'reducers';
 import { AppContainer } from 'react-hot-loader'
 import 'api/serviceConfig';
-import '@babel/polyfill';
 
 const renderUI = (App) => {
   render(
@@ -323,8 +316,8 @@ const getBaseUrl = () => {
   let url;
 
   url = !origin
-    ? `${protocol}//${hostname}${port}/api/`
-    : `${origin}/api/`;
+    ? \`${protocol}//${hostname}${port}/api/\`
+    : \`${origin}/api/\`;
   return url;
 };
 
