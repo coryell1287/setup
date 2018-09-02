@@ -114,18 +114,18 @@ echo -e "{
   \"sourceMaps\": true,
   \"plugins\": [
 	\"transform-runtime\",
-	 [\"@babel/plugin-proposal-decorators\", { \"legacy\": true }],
-	\"@babel/plugin-proposal-object-rest-spread\",
-	[\"@babel/plugin-proposal-class-properties\", { \"loose\": true }],
 	\"@babel/plugin-transform-react-jsx-source\",
-	\"@babel/plugin-syntax-async-generators\",
-	\"@babel/plugin-transform-regenerator\",
-	[\"@babel/plugin-transform-runtime\", {
+    \"@babel/plugin-syntax-async-generators\",
+    \"@babel/plugin-transform-regenerator\",
+    \"@babel/plugin-proposal-object-rest-spread\",
+	 [\"@babel/plugin-proposal-decorators\", { \"legacy\": true }],
+	 [\"@babel/plugin-proposal-class-properties\", { \"loose\": true }],
+	 [\"@babel/plugin-transform-runtime\", {
       \"corejs\": false,
       \"helpers\": true,
       \"regenerator\": true,
       \"useESModules\": false
-    }],
+    }]
   ],
   \"presets\": [
 	\"@babel/preset-react\",
@@ -542,7 +542,7 @@ echo -e "{
     \"jsx-a11y\"
   ]
 }
-">./.eslintrc
+">./.eslintrc.json
 
 ################################
 #  Create the Webpack config   #
