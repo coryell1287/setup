@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-
-
 echo -e "\n\n\t\e[1;35mBeginning application setup...\n\n\e[0m"
 #Install npm packages
 
@@ -36,10 +34,8 @@ npm i -D @babel/preset-env
 npm i -D @babel/plugin-transform-react-jsx
 npm i -D @babel/core
 npm i -D @babel/cli
-npm i -D babel-loader@7
+npm i -D babel-loader@next
 npm i -D @babel/preset-react
-npm i -D @babel/preset-stage-2
-npm i -D @babel/preset-stage-3
 npm i -D @babel/plugin-proposal-class-properties
 npm i -D @babel/plugin-proposal-object-rest-spread
 npm i -D @babel/plugin-transform-react-jsx-source
@@ -109,17 +105,21 @@ mkdir -p ./src/{styles,store,actions,routes,reducers,components,containers,api}
 ##########################
 ## Create babelrc file  ##
 ##########################
-
 echo -e "{
   \"sourceMaps\": true,
   \"plugins\": [
-	\"transform-runtime\",
 	\"@babel/plugin-transform-react-jsx-source\",
     \"@babel/plugin-syntax-async-generators\",
     \"@babel/plugin-transform-regenerator\",
     \"@babel/plugin-proposal-object-rest-spread\",
-	 [\"@babel/plugin-proposal-decorators\", { \"legacy\": true }],
-	 [\"@babel/plugin-proposal-class-properties\", { \"loose\": true }],
+	 \"@babel/plugin-proposal-function-sent\",
+     \"@babel/plugin-proposal-export-namespace-from\",
+     \"@babel/plugin-proposal-numeric-separator\",
+     \"@babel/plugin-proposal-throw-expressions\",
+     \"@babel/plugin-syntax-dynamic-import\",
+     \"@babel/plugin-syntax-import-meta\",
+     [\"@babel/plugin-proposal-class-properties\", { \"loose\": false }],
+     \"@babel/plugin-proposal-json-strings\"
 	 [\"@babel/plugin-transform-runtime\", {
       \"corejs\": false,
       \"helpers\": true,
@@ -129,9 +129,7 @@ echo -e "{
   ],
   \"presets\": [
 	\"@babel/preset-react\",
-	\"@babel/stage-2\",
-	\"@babel/stage-3\",
-	[\"env\", {
+	[\"@babel/preset-env\", {
 		\"debug\": true,
 		\"loose\": true,
 		\"modules\": false,
@@ -547,9 +545,7 @@ echo -e "{
 ################################
 #  Create the Webpack config   #
 ################################
-echo -e "
-
-const webpack = require('webpack');
+echo -e "const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
@@ -576,7 +572,7 @@ module.exports = {
   stats: {
     children: false,
   },
-  entry: { babel: '@babel/polyfill', app: './appLoader.js', feedback: './fbLoader.js' },
+  entry: { app: './appLoader.js' },
   performance: { maxEntrypointSize: 400000 },
   context: resolve(__dirname, './src'),
   devtool: 'source-map',
@@ -737,11 +733,6 @@ module.exports = {
     new HtmlWebPackPlugin({
       template: 'index.html',
       chunks: ['vendor', 'common', 'app'],
-    }),
-    new HtmlWebPackPlugin({
-      template: 'index.html',
-      filename: 'feedback.html',
-      chunks: ['vendor', 'common', 'feedback'],
     }),
   ].filter(identity),
 };">./webpack.config.js
