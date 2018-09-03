@@ -13,7 +13,7 @@ npm i -S react-helmet
 npm i -S react-addons-transition-group
 npm i -D react-addons-test-utils
 npm i -S connected-react-router
-npm i -D react-hot-loader@3.0.0-beta.7
+npm i -D react-hot-loader
 
 ########################
 ## Redux dependencies ##
@@ -54,6 +54,7 @@ npm i -D @babel/plugin-syntax-dynamic-import
 npm i -D @babel/plugin-syntax-import-meta
 npm i -D @babel/plugin-proposal-json-strings
 npm i -D babel-preset-next
+npm i -D @babel/plugin-transform-regenerator
 
 ##########################
 ## Eslint dependencies ##
@@ -117,6 +118,7 @@ mkdir -p ./src/{styles,store,actions,routes,reducers,components,containers,api}
 echo -e "{
   \"sourceMaps\": true,
   \"plugins\": [
+    \"@babel/plugin-transform-regenerator\",
 	\"@babel/plugin-transform-react-jsx-source\",
     \"@babel/plugin-syntax-async-generators\",
     \"@babel/plugin-transform-regenerator\",
@@ -145,19 +147,26 @@ echo -e "{
 		\"debug\": false,
 		\"loose\": true,
 		\"modules\": false,
-		\"useBuiltIns\": \"entry\",
-		\"targets\": {
-		  \"browsers\": [
-			\"last 2 Chrome versions\",
-			\"last 2 FireFox versions\",
-			\"last 2 edge versions\",
-			\"last 2 ie versions\"
-		  ]
-		}
+		\"useBuiltIns\": false,
 	  }
 	]
   ]
 }">./.babelrc
+
+
+#################################
+#  Create browserslistrc file   #
+#################################
+echo -e "last 2 chrome version
+last 2 firefox version
+last 2 ie version
+last 2 safari version
+last 2 edge version">./.browserslistrc
+
+#################################
+#  Create eslintignore file     #
+#################################
+echo -e "src/tests/**/*.js">.eslintignore
 
 #########################################
 #  Create the entry point for the app   #
@@ -566,14 +575,13 @@ const identity = i => i;
 const ifDev = then => (isDev ? then : null);
 const ifProd = then => (isDev ? null : then);
 
-const app = ['@babel/polyfill', './appLoader.js'].filter(identity);
 module.exports = {
   target: 'web',
   profile: true,
   stats: {
     children: false,
   },
-  entry: { app },
+  entry: { app: './appLoader.js' },
   performance: { maxEntrypointSize: 400000 },
   context: resolve(__dirname, './src'),
   devtool: 'source-map',
