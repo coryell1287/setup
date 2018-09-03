@@ -53,6 +53,7 @@ npm i -D @babel/plugin-proposal-throw-expressions
 npm i -D @babel/plugin-syntax-dynamic-import
 npm i -D @babel/plugin-syntax-import-meta
 npm i -D @babel/plugin-proposal-json-strings
+npm i -D babel-preset-next
 
 ##########################
 ## Eslint dependencies ##
@@ -138,9 +139,10 @@ echo -e "{
     }]
   ],
   \"presets\": [
+     \"next\",
 	\"@babel/preset-react\",
 	[\"@babel/preset-env\", {
-		\"debug\": true,
+		\"debug\": false,
 		\"loose\": true,
 		\"modules\": false,
 		\"useBuiltIns\": \"entry\",
