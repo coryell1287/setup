@@ -54,7 +54,6 @@ npm i -D @babel/plugin-syntax-dynamic-import
 npm i -D @babel/plugin-syntax-import-meta
 npm i -D @babel/plugin-proposal-json-strings
 npm i -D babel-preset-next
-npm i -D @babel/plugin-transform-regenerator
 
 ##########################
 ## Eslint dependencies ##
@@ -118,7 +117,6 @@ mkdir -p ./src/{styles,store,actions,routes,reducers,components,containers,api}
 echo -e "{
   \"sourceMaps\": true,
   \"plugins\": [
-    \"@babel/plugin-transform-regenerator\",
 	\"@babel/plugin-transform-react-jsx-source\",
     \"@babel/plugin-syntax-async-generators\",
     \"@babel/plugin-transform-regenerator\",
@@ -144,10 +142,10 @@ echo -e "{
      \"next\",
 	\"@babel/preset-react\",
 	[\"@babel/preset-env\", {
-		\"debug\": false,
+		\"debug\": true,
 		\"loose\": true,
 		\"modules\": false,
-		\"useBuiltIns\": false,
+		\"useBuiltIns\": \"entry\",
 	  }
 	]
   ]
@@ -181,6 +179,7 @@ import { Provider } from 'react-redux';
 import rootReducer from 'reducers';
 import { AppContainer } from 'react-hot-loader'
 import 'api/serviceConfig';
+import '@babel/polyfill';
 
 const renderUI = (App) => {
   render(
