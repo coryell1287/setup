@@ -28,7 +28,7 @@ npm i -S redux-thunk
 ########################
 ## Babel dependencies ##
 ########################
-npm i -S @babel/runtime
+npm i -S @babel/runtime@7.0.0-beta.55
 npm i -D @babel/plugin-transform-runtime
 npm i -D @babel/preset-env
 npm i -D @babel/plugin-transform-react-jsx
@@ -63,6 +63,7 @@ npm i -D eslint-plugin-import
 npm i -D eslint-plugin-jsx-a11y
 npm i -D eslint-plugin-react
 npm i -D eslint-plugin-compat
+npm i -D eslint-plugin-babel
 
 ##########################
 ## Loader dependencies ##
@@ -129,8 +130,9 @@ echo -e "{
     \"@babel/plugin-syntax-import-meta\",
     \"@babel/plugin-transform-react-constant-elements\",
     \"@babel/plugin-transform-react-inline-elements\",
-     [\"@babel/plugin-proposal-class-properties\", { \"loose\": false }],
     \"@babel/plugin-proposal-json-strings\",
+     [\"@babel/plugin-proposal-class-properties\", { \"loose\": false }],
+     [\"@babel/plugin-proposal-decorators\", { \"legacy\": true }],
 	 [\"@babel/plugin-transform-runtime\", {
       \"corejs\": false,
       \"helpers\": true,
@@ -161,10 +163,6 @@ last 2 ie version
 last 2 safari version
 last 2 edge version">./.browserslistrc
 
-#################################
-#  Create eslintignore file     #
-#################################
-echo -e "src/tests/**/*.js">.eslintignore
 
 #########################################
 #  Create the entry point for the app   #
@@ -673,6 +671,7 @@ module.exports = {
           'style-loader',
           {
             loader: 'css-loader',
+            options: { importLoaders: 1, import: true },
           },
           {
             loader: 'postcss-loader',
