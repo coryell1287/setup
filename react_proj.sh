@@ -29,13 +29,14 @@ npm i -S redux-thunk
 ## Babel dependencies ##
 ########################
 npm i -S @babel/runtime@7.0.0-beta.55
+npm i -D babel-core@7.0.0-bridge.0
 npm i -D @babel/plugin-transform-runtime
 npm i -D @babel/preset-env
+npm i -D @babel/preset-react
 npm i -D @babel/plugin-transform-react-jsx
 npm i -D @babel/core
 npm i -D @babel/cli
-npm i -D babel-loader@next
-npm i -D @babel/preset-react
+npm i -D babel-loader@8.0.0
 npm i -D @babel/plugin-proposal-class-properties
 npm i -D @babel/plugin-proposal-object-rest-spread
 npm i -D @babel/plugin-transform-react-jsx-source
@@ -53,7 +54,6 @@ npm i -D @babel/plugin-proposal-throw-expressions
 npm i -D @babel/plugin-syntax-dynamic-import
 npm i -D @babel/plugin-syntax-import-meta
 npm i -D @babel/plugin-proposal-json-strings
-npm i -D babel-preset-next
 
 ##########################
 ## Eslint dependencies ##
@@ -182,11 +182,9 @@ import '@babel/polyfill';
 const renderUI = (App) => {
   render(
     <AppContainer>
-        <ReactHelmet>
-          <Provider store={store}>
-            <App/>
-          </Provider>
-        </ReactHelmet>
+      <Provider store={store}>
+        <App/>
+      </Provider>
     </AppContainer>,
     document.getElementById('app'),
   );
@@ -244,17 +242,12 @@ export default class ReactHelmet extends PureComponent {
 
   render() {
     return (
-      <div>
-        <Helmet>
-          <title>Project</title>
-          <html lang=\"en\" />
-          <meta name=\"description\" content=\"Add the project description here\" />
-          <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\" />
-        </Helmet>
-        <div>
-          {React.cloneElement(this.props.children, { ...this.props })}
-        </div>
-      </div>
+    <Helmet>
+      <title>Project</title>
+      <html lang=\"en\" />
+      <meta name=\"description\" content=\"Add the project description here\" />
+      <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\" />
+    </Helmet>
     );
   }
 }">./src/containers/ReactHelmet.js
@@ -281,6 +274,7 @@ class Application extends Component {
     const { fetchState, serviceState } = this.props;
     return (
       <div>
+      <ReactHelment />
         {
           fetchState ? 'Loading'
             :
@@ -324,8 +318,8 @@ const getBaseUrl = () => {
   let url;
 
   url = !origin
-    ? \`${protocol}//${hostname}${port}/api/\`
-    : \`${origin}/api/\`;
+    ? \`\${protocol}//\${hostname}\${port}/api/\`
+    : \`\${origin}/api/\`;
   return url;
 };
 
