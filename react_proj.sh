@@ -28,9 +28,7 @@ npm i -S redux-thunk
 ########################
 ## Babel dependencies ##
 ########################
-npm i -S @babel/runtime@7.0.0-beta.55
 npm i -D babel-core@7.0.0-bridge.0
-npm i -D @babel/plugin-transform-runtime
 npm i -D @babel/preset-env
 npm i -D @babel/preset-react
 npm i -D @babel/plugin-transform-react-jsx
@@ -46,14 +44,7 @@ npm i -D babel-eslint
 npm i -D @babel/plugin-proposal-decorators
 npm i -D @babel/polyfill
 npm i -D @babel/plugin-syntax-async-generators
-npm i -D @babel/plugin-transform-regenerator
-npm i -D @babel/plugin-proposal-function-sent
-npm i -D @babel/plugin-proposal-numeric-separator
-npm i -D @babel/plugin-proposal-export-namespace-from
-npm i -D @babel/plugin-proposal-throw-expressions
 npm i -D @babel/plugin-syntax-dynamic-import
-npm i -D @babel/plugin-syntax-import-meta
-npm i -D @babel/plugin-proposal-json-strings
 
 ##########################
 ## Eslint dependencies ##
@@ -117,41 +108,42 @@ mkdir -p ./src/{styles,store,actions,routes,reducers,components,containers,api}
 ##########################
 echo -e "{
   \"sourceMaps\": true,
-  \"plugins\": [
-	\"@babel/plugin-transform-react-jsx-source\",
-    \"@babel/plugin-syntax-async-generators\",
-    \"@babel/plugin-transform-regenerator\",
-    \"@babel/plugin-proposal-object-rest-spread\",
-	\"@babel/plugin-proposal-function-sent\",
-    \"@babel/plugin-proposal-export-namespace-from\",
-    \"@babel/plugin-proposal-numeric-separator\",
-    \"@babel/plugin-proposal-throw-expressions\",
-    \"@babel/plugin-syntax-dynamic-import\",
-    \"@babel/plugin-syntax-import-meta\",
-    \"@babel/plugin-transform-react-constant-elements\",
-    \"@babel/plugin-transform-react-inline-elements\",
-    \"@babel/plugin-proposal-json-strings\",
-     [\"@babel/plugin-proposal-class-properties\", { \"loose\": false }],
-     [\"@babel/plugin-proposal-decorators\", { \"legacy\": true }],
-	 [\"@babel/plugin-transform-runtime\", {
-      \"corejs\": false,
-      \"helpers\": true,
-      \"regenerator\": true,
-      \"useESModules\": false
-    }]
-  ],
   \"presets\": [
-     \"next\",
-	\"@babel/preset-react\",
 	[\"@babel/preset-env\", {
-		\"debug\": true,
-		\"loose\": true,
-		\"modules\": false,
-		\"useBuiltIns\": \"entry\",
-	  }
-	]
-  ]
-}">./.babelrc
+	  \"modules\": false,
+	  \"debug\": false,
+	  \"loose\": true,
+	  \"useBuiltIns\": \"entry\"
+	}],
+	\"@babel/preset-react\"
+  ],
+  \"plugins\": [
+	\"react-hot-loader/babel\",
+	\"@babel/plugin-syntax-async-generators\",
+	\"@babel/plugin-proposal-object-rest-spread\",
+	\"@babel/plugin-syntax-dynamic-import\",
+	\"@babel/plugin-transform-react-jsx\",
+	\"@babel/plugin-transform-react-jsx-source\",
+	[\"@babel/plugin-proposal-decorators\", { \"legacy\": true }],
+	[\"@babel/plugin-proposal-class-properties\", { \"loose\": false }]
+  ],
+  \"env\": {
+	\"production\":{
+	  \"presets\":[
+		\"@babel/plugin-transform-react-constant-elements\",
+	  	\"@babel/plugin-transform-react-inline-elements\"
+	  ]
+	},
+	\"test\": {
+	  \"presets\": [\"@babel/preset-env\", \"@babel/preset-react\"],
+	  \"plugins\":
+		[\"@babel/plugin-proposal-decorators\", { \"legacy\": true }],
+		[\"@babel/plugin-proposal-class-properties\", { \"loose\": false }],
+	  ]
+	}
+  }
+}
+">./.babelrc
 
 
 #################################
