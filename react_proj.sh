@@ -10,8 +10,6 @@ npm i -S react
 npm i -S react-dom
 npm i -S react-router-dom
 npm i -S react-helmet
-npm i -S react-addons-transition-group
-npm i -D react-addons-test-utils
 npm i -S connected-react-router
 npm i -D react-hot-loader
 
@@ -28,6 +26,7 @@ npm i -S redux-thunk
 ########################
 ## Babel dependencies ##
 ########################
+npm i -D @babel/node
 npm i -D babel-core@7.0.0-bridge.0
 npm i -D @babel/preset-env
 npm i -D @babel/preset-react
@@ -113,18 +112,20 @@ echo -e "{
 	  \"modules\": false,
 	  \"debug\": false,
 	  \"loose\": true,
-	  \"useBuiltIns\": \"entry\"
+	  \"useBuiltIns\": \"usage\"
 	}],
 	\"@babel/preset-react\"
   ],
   \"plugins\": [
 	\"react-hot-loader/babel\",
+	\"@babel/plugin-transform-modules-commonjs\",
 	\"@babel/plugin-syntax-async-generators\",
 	\"@babel/plugin-proposal-object-rest-spread\",
 	\"@babel/plugin-syntax-dynamic-import\",
 	\"@babel/plugin-transform-react-jsx\",
 	\"@babel/plugin-transform-react-jsx-source\",
 	[\"@babel/plugin-proposal-decorators\", { \"legacy\": true }],
+	[\"@babel/plugin-proposal-class-properties\", { \"loose\": false }]
 	[\"@babel/plugin-proposal-class-properties\", { \"loose\": false }]
   ],
   \"env\": {
@@ -137,6 +138,7 @@ echo -e "{
 	\"test\": {
 	  \"presets\": [\"@babel/preset-env\", \"@babel/preset-react\"],
 	  \"plugins\":
+	    \"@babel/plugin-transform-modules-commonjs\",
 		[\"@babel/plugin-proposal-decorators\", { \"legacy\": true }],
 		[\"@babel/plugin-proposal-class-properties\", { \"loose\": false }],
 	  ]
@@ -169,7 +171,6 @@ import { Provider } from 'react-redux';
 import rootReducer from 'reducers';
 import { AppContainer } from 'react-hot-loader'
 import 'api/serviceConfig';
-import '@babel/polyfill';
 
 const renderUI = (App) => {
   render(
@@ -396,25 +397,31 @@ import rootReducer from 'reducers';
 import asyncAwait from 'redux-async-await';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 
+const env = process.env.NODE_ENV;
 const middleware = [thunk];
-const history = createHistory();
+const basename = env === 'development' ? '' : '/oculus/';
+const history = createHistory({ basename: basename });
 
-if (process.env.NODE_ENV === 'development') {
-  middleware.push(createLogger());
+if (env === 'development') {
+  middleware.push(
+    createLogger({
+      collapsed: (getState, action) => true,
+    }),
+  );
 }
 
-const enhancers = compose(
-  window.devToolsExtension ? window.devToolsExtension() : f => f,
+const devTools = compose(window.devToolsExtension ? window.devToolsExtension() : f => f);
+const middlewareEnhancer = applyMiddleware(...middleware, routerMiddleware(history), asyncAwait);
+const enhancers = [middlewareEnhancer, devTools];
+const composedEnhancers = compose(...enhancers);
+
+const store = createStore(
+  connectRouter(history)(rootReducer),
+  undefined,
+  composedEnhancers
 );
 
-const store = createStore(connectRouter(history)(rootReducer), enhancers, compose(
-  applyMiddleware(...middleware, routerMiddleware(history), asyncAwait)));
-
-export {
-  store,
-  history,
-};
-">./src/store/configureStore.js
+export { env, store, history };">./src/store/configureStore.js
 
 
 ################################
