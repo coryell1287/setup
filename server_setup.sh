@@ -10,9 +10,6 @@ sudo npm i -S http-server
 sudo npm i -S nodemon
 sudo npm i -S helmet
 
-sudo npm i -S babel-cli babel-es6-polyfill
-sudo npm i -S babel-preset-env
-sudo npm i -S babel-preset-stage-0
 sudo npm i -S bcrypt-nodejs
 sudo npm i -S morgan
 sudo npm i -S body-parser
@@ -27,7 +24,7 @@ echo -e "export default (app) => {
     res.setHeader('Content-Type', 'application/json');
     res.send({ message: 'Service is properly working.', type: 'SUCCESSFUL_SERVICE_REQUEST' });
   });
-};">./lib/router.js
+};">./server/router.js
 
 echo "import express from 'express';
 import path from 'path';

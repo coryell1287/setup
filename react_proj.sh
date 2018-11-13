@@ -44,6 +44,7 @@ npm i -D @babel/plugin-proposal-decorators
 npm i -D @babel/polyfill
 npm i -D @babel/plugin-syntax-async-generators
 npm i -D @babel/plugin-syntax-dynamic-import
+npm i -D @babel/plugin-proposal-export-namespace-from
 
 ##########################
 ## Eslint dependencies ##
@@ -77,23 +78,17 @@ npm i -D copy-webpack-plugin
 npm i -D clean-webpack-plugin
 npm i -D html-webpack-plugin
 npm i -D webpack-manifest-plugin
-npm i -D mini-css-extract-plugin
 npm i -D webpack
 npm i -D webpack-cli
-npm i -D mini-css-extract-plugin
-npm i -D optimize-css-assets-webpack-plugin
 npm i -D uglifyjs-webpack-plugin
-
 
 ##########################
 ## Other dependencies ##
 #########################
 npm i -D lodash
-npm i -S es6-promise
-npm i -S es5-shim
 npm i -S core-decorators
 npm i -S compression
-npm i -S autobind-decorator
+npm i -S history
 npm i -D yargs
 npm i -D deep-freeze-strict
 npm i -S axios
@@ -123,9 +118,9 @@ echo -e "{
 	\"@babel/plugin-proposal-object-rest-spread\",
 	\"@babel/plugin-syntax-dynamic-import\",
 	\"@babel/plugin-transform-react-jsx\",
+	\"@babel/plugin-proposal-export-namespace-from\",
 	\"@babel/plugin-transform-react-jsx-source\",
 	[\"@babel/plugin-proposal-decorators\", { \"legacy\": true }],
-	[\"@babel/plugin-proposal-class-properties\", { \"loose\": false }]
 	[\"@babel/plugin-proposal-class-properties\", { \"loose\": false }]
   ],
   \"env\": {
@@ -137,7 +132,7 @@ echo -e "{
 	},
 	\"test\": {
 	  \"presets\": [\"@babel/preset-env\", \"@babel/preset-react\"],
-	  \"plugins\":
+	  \"plugins\":[
 	    \"@babel/plugin-transform-modules-commonjs\",
 		[\"@babel/plugin-proposal-decorators\", { \"legacy\": true }],
 		[\"@babel/plugin-proposal-class-properties\", { \"loose\": false }],
@@ -164,31 +159,35 @@ last 2 edge version">./.browserslistrc
 echo -e "import React from 'react';
 import { connectRouter } from 'connected-react-router';
 import { render } from 'react-dom';
-import { store, history } from 'store/configureStore';
-import ReactHelmet from 'containers/ReactHelmet';
-import Routes from 'routes';
+import { AppContainer } from 'react-hot-loader';
 import { Provider } from 'react-redux';
-import rootReducer from 'reducers';
-import { AppContainer } from 'react-hot-loader'
-import 'api/serviceConfig';
 
-const renderUI = (App) => {
+import 'api/serviceConfig';
+import { store, history } from 'store/configureStore';
+import App from 'routes';
+import rootReducer from 'reducers';
+
+
+const renderUI = () => {
   render(
-    <AppContainer>
-      <Provider store={store}>
-        <App/>
-      </Provider>
-    </AppContainer>,
+      <AppContainer>
+        <Provider store={store}>
+          <App/>
+        </Provider>
+      </AppContainer>,
     document.getElementById('app'),
   );
 };
 
-renderUI(Routes);
+renderUI();
 
 if (module.hot) {
-  module.hot.accept('routes', () => renderUI(Routes));
+  module.hot.accept('routes', () => renderUI());
   module.hot.accept('reducers', () => store.replaceReducer(connectRouter(history)(rootReducer)));
-}">./src/appLoader.js
+}
+
+renderUI();
+">./src/appLoader.js
 
 ################################
 #      Create the routes       #
@@ -196,19 +195,36 @@ if (module.hot) {
 
 
 echo -e "import React from 'react';
-import { Route, Switch } from 'react-router-dom';
 import { ConnectedRouter } from 'connected-react-router';
 
 import { history } from 'store/configureStore';
 import Application from 'containers/Application';
 
-const Routes = () => (
+const app = () => (
   <ConnectedRouter history={history}>
-    <Application />
+    <Application/>
   </ConnectedRouter>
 );
 
-export default Routes;">./src/routes/index.js
+export default app">./src/routes/index.js
+
+####################################
+#  Create the boilerplate routes   #
+#    with lazy load and Suspense   #
+####################################
+echo -e "import React, { Suspense, lazy } from 'react';
+import { Route, Switch } from 'react-router-dom';
+
+const Dashboard = lazy(() => import('../components/Dashboard'));
+
+const routes = (
+  <Suspense fallback={<h1>Loading...</h1>}>
+    <Switch>
+      <Route exact path=\"/\" component={Dashboard}/>
+    </Switch>
+  </Suspense>
+);
+export default routes;">./src/routes/routes.js
 
 
 ################################
@@ -228,22 +244,20 @@ echo -e "<!doctype html>
 ################################
 #  Create the React Helmet     #
 ################################
-echo -e "import React, { PureComponent } from 'react';
+echo -e "import React from 'react';
 import { Helmet } from 'react-helmet/es/Helmet';
 
-export default class ReactHelmet extends PureComponent {
-
-  render() {
-    return (
+export default function ReactHelmet() {
+  return (
     <Helmet>
       <title>Project</title>
-      <html lang=\"en\" />
-      <meta name=\"description\" content=\"Add the project description here\" />
-      <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\" />
+      <html lang=\"en\"/>
+      <meta name=\"description\" content=\"Add the project description here\"/>
+      <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\"/>
     </Helmet>
-    );
-  }
-}">./src/containers/ReactHelmet.js
+  );
+}
+">./src/containers/ReactHelmet.js
 
 #######################################
 #     Create the Application file     #
@@ -252,8 +266,9 @@ export default class ReactHelmet extends PureComponent {
 
 echo -e "import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { mapDispatchToProps, mapStateToProps } from 'containers/propConfig';
+import ReactHelment from 'containers/ReactHelmet';
 
+import { mapDispatchToProps, mapStateToProps } from 'containers/propConfig';
 
 class Application extends Component {
 
@@ -340,9 +355,7 @@ export function mapStateToProps(state) {
 
 export function mapDispatchToProps(dispatch) {
   return bindActionCreators(action, dispatch);
-}
-
-">./src/containers/propConfig.js
+}">./src/containers/propConfig.js
 
 
 ################################
@@ -367,40 +380,42 @@ export const asyncGet = () => (dispatch) => {
 
 echo -e "import axios from 'axios';
 
-const httpRequest = (method, config) => async (dispatch) => {
+const httpRequest = (method, options) => async (dispatch) => {
   try {
     dispatch({ type: 'START_FETCHING', fetching: true });
     const { data } = method === 'get'
-      ? await axios[method](config.url)
-      : await axios[method](config.url, config.body);
-    return await dispatch(config.onSuccess(data));
+      ? await axios[method](options.url)
+      : await axios[method](options.url, options.body);
+    return await dispatch(options.onSuccess(data));
   } catch (err) {
-    return await dispatch(config.onError(err));
+    return await dispatch(options.onError(err));
   } finally {
     dispatch({ type: 'STOP_FETCHING', fetching: false });
   }
 };
 
-export const get = (config) => httpRequest('get', config);
-export const post = (config) => httpRequest('post', config);
-">./src/api/index.js
+export const post = options => httpRequest('post', options);
+export const get = options => httpRequest('get', options);
+export const put = options => httpRequest('put', options);
+export const patch = options => httpRequest('patch', options);
+export const remove = options => httpRequest('delete', options);">./src/api/index.js
 
 
 ################################
 #      Create the store        #
 ################################
 echo -e "import thunk from 'redux-thunk';
+import { createBrowserHistory } from 'history';
 import { applyMiddleware, compose, createStore } from 'redux';
-import createHistory from 'history/createBrowserHistory';
+import { routerMiddleware } from 'connected-react-router';
 import { createLogger } from 'redux-logger';
-import rootReducer from 'reducers';
 import asyncAwait from 'redux-async-await';
-import { connectRouter, routerMiddleware } from 'connected-react-router';
+
+import createRootReducers from 'reducers';
 
 const env = process.env.NODE_ENV;
 const middleware = [thunk];
-const basename = env === 'development' ? '' : '/oculus/';
-const history = createHistory({ basename: basename });
+const history = createBrowserHistory();
 
 if (env === 'development') {
   middleware.push(
@@ -416,22 +431,22 @@ const enhancers = [middlewareEnhancer, devTools];
 const composedEnhancers = compose(...enhancers);
 
 const store = createStore(
-  connectRouter(history)(rootReducer),
-  undefined,
+  createRootReducers(history),
   composedEnhancers
 );
 
 export { env, store, history };">./src/store/configureStore.js
-
 
 ################################
 #      Create the reducer      #
 ################################
 echo -e "import { combineReducers } from 'redux';
 import serviceReducer from 'reducers/serviceReducers';
+import { connectRouter } from 'connected-react-router';
 
-const rootReducer = combineReducers({
+const rootReducer = (history) => combineReducers({
   serviceState: serviceReducer,
+  router: connectRouter(history)
 });
 
 export default rootReducer;
@@ -546,7 +561,6 @@ echo -e "{
 ################################
 echo -e "const webpack = require('webpack');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
@@ -590,17 +604,17 @@ module.exports = {
     modules: [resolve(__dirname, './src'), 'node_modules'],
     extensions: ['.js', '.json', '.css'],
     alias: {
-      actions: resolve(__dirname, './src/actions/'),
+      actions: resolve(__dirname, 'src/actions/'),
       api: resolve(__dirname, 'src/api/'),
-      components: resolve(__dirname, './src/components/'),
+      components: resolve(__dirname, 'src/components/'),
       containers: resolve(__dirname, 'src/containers/'),
-      fonts: resolve(__dirname, './src/fonts/'),
-      images: resolve(__dirname, './src/images/'),
-      reducers: resolve(__dirname, './src/reducers/'),
+      fonts: resolve(__dirname, 'src/fonts/'),
+      images: resolve(__dirname, 'src/images/'),
+      reducers: resolve(__dirname, 'src/reducers/'),
       routes: resolve(__dirname, 'src/routes/'),
       store: resolve(__dirname, 'src/store/'),
-      styles: resolve(__dirname, './src/styles/'),
-      utils: resolve(__dirname, './src/utils/'),
+      styles: resolve(__dirname, 'src/styles/'),
+      utils: resolve(__dirname, 'src/utils/'),
     },
   },
   output: {
@@ -619,7 +633,6 @@ module.exports = {
           sourceMap: true,
         }),
       ),
-     ifProd(new OptimizeCSSAssetsPlugin({})),
     ].filter(identity),
     splitChunks: {
       cacheGroups: {
