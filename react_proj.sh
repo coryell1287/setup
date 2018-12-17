@@ -39,6 +39,7 @@ npm i -D @babel/plugin-proposal-object-rest-spread
 npm i -D @babel/plugin-transform-react-jsx-source
 npm i -D @babel/plugin-transform-react-constant-elements
 npm i -D @babel/plugin-transform-react-inline-elements
+npm i -D babel-plugin-transform-imports
 npm i -D babel-eslint
 npm i -D @babel/plugin-proposal-decorators
 npm i -D @babel/polyfill
@@ -113,6 +114,7 @@ echo -e "{
   ],
   \"plugins\": [
 	\"react-hot-loader/babel\",
+	\"transform-imports\",
 	\"@babel/plugin-transform-modules-commonjs\",
 	\"@babel/plugin-syntax-async-generators\",
 	\"@babel/plugin-proposal-object-rest-spread\",
@@ -134,6 +136,7 @@ echo -e "{
 	  \"presets\": [\"@babel/preset-env\", \"@babel/preset-react\"],
 	  \"plugins\":[
 	    \"@babel/plugin-transform-modules-commonjs\",
+	    \"transform-imports\",
 		[\"@babel/plugin-proposal-decorators\", { \"legacy\": true }],
 		[\"@babel/plugin-proposal-class-properties\", { \"loose\": false }],
 	  ]
@@ -752,8 +755,8 @@ module.exports = {
 
 echo -e "node_modules\n.idea">.gitignore
 
-sed -i '/"test":/i \\t"start":"webpack-dev-server --mode development",' package.json
-sed -i '/"start":/i \\t"build": "webpack --mode production",' package.json
+sed -i '/"test":/i \\t"build": "webpack --mode production",' package.json
+sed -i '/"build":/a \\t"dev":"webpack-dev-server --mode development --hot",' package.json
 
 echo -e "\n\n\t\033[1;32mCompleted application setup.\n\n\033[0m"
 
