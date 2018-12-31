@@ -127,7 +127,7 @@ echo -e "{
   ],
   \"env\": {
 	\"production\":{
-	  \"presets\":[
+	  \"plugins\":[
 		\"@babel/plugin-transform-react-constant-elements\",
 	  	\"@babel/plugin-transform-react-inline-elements\"
 	  ]
@@ -605,7 +605,7 @@ module.exports = {
   },
   resolve: {
     modules: [resolve(__dirname, './src'), 'node_modules'],
-    extensions: ['.js', '.json', '.css'],
+    extensions: ['.js', '.json', '.css', '.mjs],
     alias: {
       actions: resolve(__dirname, 'src/actions/'),
       api: resolve(__dirname, 'src/api/'),
@@ -673,7 +673,11 @@ module.exports = {
             options: { minimize: true },
           },
         ],
-      },
+      }, {
+      test: /\.mjs$/,
+      include: /node_modules/,
+      type: 'javascript/auto',
+    },
       {
         test: /\.css$/,
         use: [

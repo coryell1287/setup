@@ -13,6 +13,8 @@ npm i bcrypt-nodejs
 npm i morgan
 npm i body-parser
 npm i compression
+npm i dotenv
+npm i @babel/node
 
 mkdir -p ./server/{controllers,config,models,routes/services}
 
@@ -48,13 +50,13 @@ module.exports = {
 };
 ">./server/controllers/demoProfile.controller.js
 
-echo "const path = require('path');
-const express = require('express');
-const cors = require('cors');
-const http = require('http');
-const bodyParser = require('body-parser');
-const helmet = require('helmet');
-const compression = require('compression');
+echo "import path from 'path';
+import express from 'express';
+import cors from 'cors';
+import http from 'http';
+import bodyParser from 'body-parser';
+import helmet from 'helmet';
+import compression from 'compression';
 
 const port = process.env.PORT || 5000;
 const app = express();
@@ -104,6 +106,7 @@ echo -e "module.exports = {
     log_type: 'txt',
     merge_logs: true,
     mode: 'cluster',
+    exec_interpreter : 'babel-node',
     instance: 4,
     env: {
       NODE_ENV: 'development',
@@ -115,7 +118,7 @@ echo -e "module.exports = {
 };
 ">./ecosystem.config.js
 
-sed -i '/"test":/i \\t"server": "nodemon server\/index.js",' package.json
+sed -i '/"test":/i \\t"server": "nodemon server\/index.js --exec babel-node",' package.json
 sed -i '/"server":/a \\t"start": "pm2-runtime start ecosystem.config.js --env production",' package.json
 
 
