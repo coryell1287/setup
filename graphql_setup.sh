@@ -19,6 +19,27 @@ npm i apollo-boost
 npm i react-apollo
 npm i graphql-tag
 
+
+echo -e "module.exports = {
+  apps: [{
+    name: 'ai-dashboard',
+    script: 'build/index.js',
+    output: './info.log',
+    error: './error.log',
+    log_type: 'txt',
+    merge_logs: true,
+    mode: 'cluster',
+    instance: 4,
+    env: {
+      NODE_ENV: 'development',
+    },
+    env_production: {
+      NODE_ENV: 'production',
+    },
+  }],
+};
+">./ecosystem.config.js
+
 echo -e "import path from 'path';
 import express from 'express';
 import cors from 'cors';

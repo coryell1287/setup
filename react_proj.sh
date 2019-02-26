@@ -408,17 +408,18 @@ export const remove = options => httpRequest('delete', options);">./src/api/inde
 #      Create the store        #
 ################################
 echo -e "import thunk from 'redux-thunk';
-import { createBrowserHistory } from 'history';
 import { applyMiddleware, compose, createStore } from 'redux';
-import { routerMiddleware } from 'connected-react-router';
+import createHistory from 'history/createBrowserHistory';
 import { createLogger } from 'redux-logger';
 import asyncAwait from 'redux-async-await';
+import { routerMiddleware } from 'connected-react-router';
+import createReducer from 'reducers';
 
-import createRootReducers from 'reducers';
 
 const env = process.env.NODE_ENV;
 const middleware = [thunk];
-const history = createBrowserHistory();
+const history = createHistory();
+
 
 if (env === 'development') {
   middleware.push(
@@ -428,13 +429,14 @@ if (env === 'development') {
   );
 }
 
-const devTools = compose(window.devToolsExtension ? window.devToolsExtension() : f => f);
+const devTools = compose(window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f);
 const middlewareEnhancer = applyMiddleware(...middleware, routerMiddleware(history), asyncAwait);
 const enhancers = [middlewareEnhancer, devTools];
 const composedEnhancers = compose(...enhancers);
 
+
 const store = createStore(
-  createRootReducers(history),
+  createReducer(history),
   composedEnhancers
 );
 
