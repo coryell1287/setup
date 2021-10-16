@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 ##########################################
 #  Create a directories for the server app
@@ -34,8 +34,7 @@ COPY . .
 
 EXPOSE 5000
 
-CMD [ \"npm\", \"run\", \"dev\" ]
-">./"${APP_NAME}"/Dockerfile
+CMD [ \"npm\", \"run\", \"dev\" ]">./"${APP_NAME}"/Dockerfile
 
 
 
@@ -343,9 +342,9 @@ echo "{
 # tsconfig.json
 echo "{
   \"\$schema\": \"https://json.schemastore.org/tsconfig\",
-  \"display\": \"Node 16\",
+  \"display\": \"Node ${NODE_VERSION}\",
     
-  \"extends\": \"@tsconfig/node16/tsconfig.json\",
+  \"extends\": \"@tsconfig/node${NODE_VERSION}/tsconfig.json\",
   \"compilerOptions\": {
     \"allowJs\": true,
     \"allowSyntheticDefaultImports\": true,
@@ -608,7 +607,7 @@ export function build() {
     await app.ready();
   });
 
-  afterEach(() => app.close());
+  afterAll(() => app.close());
 
   return app;
 }">./"${APP_NAME}"/src/config/build.ts
@@ -644,15 +643,25 @@ export { config };">./"${APP_NAME}"/src/config/config.ts
 
 # src/controller/customer.controller.ts
 echo "import { FastifyInstance } from 'fastify';
-import {
-  CustomerService
-} from '../services/customer.service';
-import CustomerResponseSchema from '../schemas/response.json';
+import { CustomerService } from '../services/customer.service';
+import CustomerResponseSchema from '../schemas/query-response.json';
+import Response from '../schemas/response.json'
 import SuccessStatusSchema from '../schemas/success.json';
 import ParamsSchema from '../schemas/params.json';
 import { IRequestBody, IParams } from '../types';
 
 export async function CustomerController(fastify: FastifyInstance): Promise<void> {
+  fastify.route<{ Body: IRequestBody }>({
+    method: 'POST',
+    url: '/customers/',
+    schema: {
+      response: Response,
+    },
+    handler: async function createCustomerController(request, reply) {
+      const customer = new CustomerService();
+      return reply.code(201).send(await customer.createCustomer(request.body));
+    },
+  });
 
   fastify.route({
     method: 'GET',
@@ -666,23 +675,12 @@ export async function CustomerController(fastify: FastifyInstance): Promise<void
     },
   });
 
-  fastify.route<{ Body: IRequestBody }>({
-    method: 'POST',
-    url: '/customers/',
-    schema: {
-      response: SuccessStatusSchema,
-    },
-    handler: async function createCustomerController(request, reply) {
-      const customer = new CustomerService();
-      return reply.code(201).send(await customer.createCustomer(request.body));
-    },
-  });
-
-  fastify.route<{ Params: IParams, Body: IRequestBody }>({
+  fastify.route<{ Params: IParams; Body: IRequestBody }>({
     method: 'PUT',
     url: '/customers/:id/',
     schema: {
       params: ParamsSchema,
+      response: Response
     },
     handler: async function updateCustomerController(request, reply) {
       const customer = new CustomerService();
@@ -712,25 +710,61 @@ export async function CustomerController(fastify: FastifyInstance): Promise<void
 echo "import { build } from '../config/build';
 import { FastifyInstance } from 'fastify';
 import { IRequestBody } from '../types';
-    
+
 const customers: IRequestBody[] = [
   { id: '1', name: 'Judy Hopps' },
   { id: '2', name: 'Nick Wilde' },
   { id: '3', name: 'Cheif Bogo' },
   { id: '4', name: 'Clawhauser' },
 ];
-    
-describe('Customer service', () => {
-  const app: FastifyInstance = build();
 
-  test('Customer service', async () => {
+describe('Customer controller', () => {
+  const app: FastifyInstance = build();
+  it('should fetch customers list', async () => {
+    expect.assertions(2);
+
+    const res = await app.inject({
+      url: '/api/v1/customers/',
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.json()).toStrictEqual(customers);
+  });
+
+  it('should create a single customer', async () => {
+    expect.assertions(2);
+
+    const res = await app.inject({
+      url: '/api/v1/customers/',
+      method: 'POST',
+      payload: { id: '5', name: 'Samantha' },
+    });
+
+    expect(res.statusCode).toBe(201);
+    expect(res.json()).toStrictEqual(JSON.parse(res.payload));
+  });
+
+  it('should update a single user', async () => {
+    expect.assertions(2);
+
+    const res = await app.inject({
+      url: '/api/v1/customers/1/',
+      method: 'PUT',
+      payload: { id: '4', name: 'Gregory' },
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.json()).toStrictEqual(JSON.parse(res.payload));
+  });
+
+  it('should delete a single customer', async () => {
     expect.assertions(1);
 
     const res = await app.inject({
-      url: '/api/v1/customers',
+      url: '/api/v1/customers/1/',
+      method: 'DELETE',
     });
-
-    expect(res.payload).toBe(JSON.stringify(customers));
+    expect(res.statusCode).toBe(204);
   });
 });">./"${APP_NAME}"/src/controller/customer.controller.spec.ts
 
@@ -838,7 +872,7 @@ const customers: Customers[] = [
 
 jest.mock('./customer.service');
 
-describe('fetchCustomers', () => {
+describe('Customer Service', () => {
   it('should return a list of customers', async () => {
     expect.assertions(2);
     const customer = new CustomerService();
@@ -891,7 +925,7 @@ describe('fetchCustomers', () => {
       return `Customer ${id} deleted.`;
     });
 
-    expect(customer.deleteCustomer('1')).toEqual('Customer 1 deleted.');
+    expect(customer.deleteCustomer('1')).toEqual(`Customer 1 deleted.`);
     expect(customer.deleteCustomer).toHaveBeenCalledTimes(1);
   });
 });">./"${APP_NAME}"/src/services/customer.service.spec.ts
@@ -926,17 +960,12 @@ echo "{
 
 # src/schemas/response.json
 echo "{
-  \"200\": {
-    \"type\": \"array\",
-    \"items\": {
-      \"type\": \"object\",
-      \"properties\": {
-        \"id\": { \"type\": \"string\" },
-        \"name\": { \"type\": \"string\" }
-      }
-    },
-    \"additionalProperties\": false,
-    \"required\": [\"id\", \"name\"]
+  \"2xx\": {
+    \"type\": \"object\",
+    \"properties\": {
+      \"id\": { \"type\": \"string\" },
+      \"name\": { \"type\": \"string\" }
+    }
   }
 }">./"${APP_NAME}"/src/schemas/response.json
 
@@ -950,6 +979,21 @@ echo "{
 }">./"${APP_NAME}"/src/schemas/success.json
 
 
+# query-response.json
+echo "{
+  \"200\": {
+    \"type\": \"array\",
+    \"items\": {
+      \"type\": \"object\",
+      \"properties\": {
+        \"id\": { \"type\": \"string\" },
+        \"name\": { \"type\": \"string\" }
+      }
+    },
+    \"additionalProperties\": false,
+    \"required\": [\"id\", \"name\"]
+  }
+}">./"${APP_NAME}"/src/schemas/query-response.json
 
 
 # src/types/index.ts
@@ -994,7 +1038,7 @@ npm i -D rimraf \
     license-checker \
     @types/node \
     @types/webgl2 \
-    @tsconfig/node14 \
+    @tsconfig/node${NODE_VERSION} \
     @types/jest \
     @typescript-eslint/eslint-plugin \
     @typescript-eslint/parser \
