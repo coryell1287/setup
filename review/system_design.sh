@@ -35,16 +35,248 @@ if [[ "$response" == "$answer" ]]; then
     Solution Requirement defines a function the solution will 
     perform, data it will manipulate, a quality it possses, 
     OR a constraint it must meet. 
+
+    (Providers need sense of direction in all four dimensions 
+    for each requirement to guide their decision-making process.)
     "
 else
     echo "
     
-    Wrong! There is no pass. Only fail.
+    Wrong! There is no tommorrow, so get this right right now!
     
     "
 fi
 
 increment_questions_count
+
+echo "
+ ########################################
+             Next Question 
+ ########################################
+"
+
+read -p "How should you name functional requirements?  Your answer: " response
+
+answer="You should name functional requirements using the verb object form."
+
+if [[ "$response" == "$answer" ]]; then
+    increment_correct_responses
+
+    echo "
+    Correct. 
+
+    * use an active verb (one that states the action)
+    * and direct objects (the things the action creates or affects)
+    (e.g., \"Calculate sales tax\", \"Verify Order\")
+    "
+else
+    echo "
+    
+    Wrong! There is no tommorrow, so get this right right now!
+    
+    "
+fi
+
+increment_questions_count
+
+echo "
+ ########################################
+             Next Question 
+ ########################################
+"
+
+read -p "
+    Read the following requirement and state the explicit functionality.
+
+    \"The application should calcuate the premium for safe drivers.\"
+
+
+Enter your answer: " response
+
+answer="The requirement states that the application needs to know the premium to calcuate premium discount."
+
+if [[ "$response" == "$answer" ]]; then
+    increment_correct_responses
+
+    echo "
+    Correct. 
+
+    "
+else
+    echo "
+    
+    Wrong! There is no tommorrow, so get this right right now!
+    
+    "
+fi
+
+increment_questions_count
+
+echo "
+ ########################################
+             Next Question 
+ ########################################
+"
+
+read -p "
+    Read the following requirement and state the IMPLICIT functionality.
+
+    \"The application should calcuate the premium for safe drivers.\"
+
+
+Enter your answer: " response
+
+answer="The requirement implies that the application needs a function to evaluate driving record to determine a safe driver."
+
+if [[ "$response" == "$answer" ]]; then
+    increment_correct_responses
+
+    echo "
+    Correct. 
+
+    Look for qualifiers in the requirements. In the example 
+    where the person is referred to as a safe driver, there has 
+    to be some details stored on the driver to evaluate whether the 
+    driver is safe. Revealing this specific uncovers hidden functionality.
+    "
+else
+    echo "
+    
+    Wrong! There is no tommorrow, so get this right right now!
+    
+    "
+fi
+
+increment_questions_count
+
+
+echo "
+ ########################################
+             Next Question 
+ ########################################
+"
+
+read -p "
+    Complete the following statement.   
+
+     Requirement decomposition or requirement drill-down generates...?
+
+
+Enter your answer: " response
+
+answer="functional requirements Informational requirements qualities and constraints"
+
+if [[ "$response" == "$answer" ]]; then
+    increment_correct_responses
+
+    echo "
+    Correct. 
+
+    Requirement decomposition or requirement drill-down generates functional,
+    informational, qualities and constraint requirements.
+    "
+else
+    echo "
+    
+    Wrong! There is no tommorrow, so get this right right now!
+    
+    "
+fi
+
+increment_questions_count
+
+
+echo "
+ ########################################
+             Next Question 
+ ########################################
+"
+
+read -p "What are informational Components? " response
+
+answer="user views or data elements"
+
+if [[ "$response" == "$answer" ]]; then
+    increment_correct_responses
+
+    echo "
+    Correct. 
+
+    "
+else
+    echo "
+    
+    Wrong! There is no tommorrow, so get this right right now!
+    
+    "
+fi
+
+increment_questions_count
+
+
+echo "
+ ########################################
+             Next Question 
+ ########################################
+"
+
+read -p "What is a user view? " response
+
+answer="a collection of data elements"
+
+if [[ "$response" == "$answer" ]]; then
+    increment_correct_responses
+
+    echo "
+    Correct. 
+
+    A user view would be a Customer Address.
+    "
+else
+    echo "
+    
+    Wrong! There is no tommorrow, so get this right right now!
+    
+    "
+fi
+
+increment_questions_count
+
+echo "
+ ########################################
+             Next Question 
+ ########################################
+"
+
+read -p "What are data elements?  " response
+
+answer="Are the attributes of the user view."
+
+if [[ "$response" == "$answer" ]]; then
+    increment_correct_responses
+
+    echo "
+    Correct. 
+
+    Data elements for a Customer Address are customer name, street address and zipcode.
+    "
+else
+    echo "
+    
+    Wrong! There is no tommorrow, so get this right right now!
+    
+    "
+fi
+
+increment_questions_count
+
+
+echo "
+   ########################################
+      Capacity Estimation and Constraints
+   ########################################
+"
+
 
 echo "
  ########################################
@@ -69,7 +301,7 @@ if [[ "$response" == "$answer" ]]; then
 else
     echo "
     
-    Wrong! There is no pass. Only fail.
+    Wrong! There is no tommorrow, so get this right right now!
     
     "
 fi
@@ -95,7 +327,7 @@ if [[ "$response" == "$answer" ]]; then
 else
     echo "
     
-    Wrong! There is no pass. Only fail.
+    Wrong! There is no tommorrow, so get this right right now!
     
     "
 fi
@@ -128,7 +360,42 @@ if [[ "$response" == "$answer" ]]; then
 else
     echo "
     
-    Wrong! There is no pass. Only fail.
+    Wrong! There is no tommorrow, so get this right right now!
+    
+    "
+fi
+
+increment_questions_count
+
+
+
+echo "
+ ########################################
+             Next Question 
+ ########################################
+"
+
+read -p "What would the ideal steps be in designing software? " response
+answer="iniation analysis design development testing delivery"
+
+if [[ "$response" == "$answer" ]]; then
+    increment_correct_responses
+
+    echo "
+    Correct. 
+
+
+        1). Iniation 
+        2). Analysis 
+        3). Design 
+        4). Development 
+        5). Testing 
+        6). Delivery
+    "
+else
+    echo "
+    
+    Wrong! There is no tommorrow, so get this right right now!
     
     "
 fi
@@ -151,26 +418,21 @@ else
     echo "    You scored $score% on system design."
 fi
 
-# PS3="Please enter your choice: "
-# options=("Option 1" "Option 2" "Option 3" "Quit")
-# select opt in "${options[@]}"
-# do
-#     case $opt in
-#         "Option 1")
-#             echo "you chose choice 1"
-#             break
-#             ;;
-#         "Option 2")
-#             echo "you chose choice 2"
-#             break
-#             ;;
-#         "Option 3")
-#             echo "you chose choice $REPLY which is $opt"
-#             break
-#             ;;
-#         "Quit")
-#             break
-#             ;;
-#         *) echo "invalid option $REPLY";;
-#     esac
-# done
+
+
+echo "
+        __________________________________________________
+        |                   TOPIC               | SCORE  |
+        |---------------------------------------|----------
+        |   Requirements and Goals Gathering    | 
+        |---------------------------------------|
+        |   Capacity Estimations and Constraints |
+        |   System APIs
+        |   Database Design 
+        |   Basic System Design and Algorithm
+        |   Data Partitioning and Replication
+        |   Caching
+        |   Loading Balancer
+        |   Purging or DB cleanup
+
+"
