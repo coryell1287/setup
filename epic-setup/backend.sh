@@ -44,16 +44,16 @@ CMD [ \"npm\", \"run\", \"dev\" ]">./"${APP_NAME}"/Dockerfile
 echo "version: '3'
 
 networks:
-  ${APP_NAME}:
+  ${APP_NAME}-net:
     external: false
-    name: '${APP_NAME}'
+    name: '${APP_NAME}-net'
 
 services:
   ${APP_NAME}-service:
     image: node:$NODE_VERSION-alpine
     restart: always
     networks:
-      - ${APP_NAME}
+      - ${APP_NAME}-net
     container_name: ${APP_NAME}-service
     build:
       context: .
@@ -69,7 +69,7 @@ services:
     image: haproxytech/haproxy-alpine:latest
     restart: always
     networks:
-      - ${APP_NAME}
+      - ${APP_NAME}-net
     links:
     - ${APP_NAME}-service
     depends_on:
