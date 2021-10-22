@@ -90,12 +90,15 @@ next_question
 read -p "Complete this sentence: 
          
          POST is idempotent because if called several times, it ____________.
+
 Enter your answer: " response
 answer="adds several rows"
 additional_feedback="
     Correct.
 
     POST is idempotent because if called several times, it adds several rows.
+
+    
 "
 evaluate_answer "$response" "$answer" "$additional_feedback"
 
