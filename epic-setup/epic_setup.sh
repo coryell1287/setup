@@ -8,7 +8,7 @@ echo GITHUB_URL
 NODE=$(node -v)
 NODE_VERSION="${NODE#?}" 
 # Ask whether frontend, backend or both
-# if both, ask whether mono repo, separate repo, no report
+# if both, ask whether mono repo, separate repo, no repo
 
 if [[ -x ./backend.sh ]]; then
     ./backend.sh
@@ -17,6 +17,29 @@ else
     ./backend.sh
 fi
 
+
+
+
+# http://www.freekb.net/Article?id=1140
+# example.sh -f client -b server
+# ARGS=$(getopt -a --options f:b: --long "frontend:,backend:" -- "$@")
+# eval set -- "$ARGS"
+
+# while true; do
+#   case "$1" in
+#     -n|--name)
+#       name="$2"
+#       shift 2;;
+#     -o|--occupation)
+#       occupation="$2"
+#       shift 2;;
+#     --)
+#       break;;
+#      *)
+#       printf "Unknown option %s\n" "$1"
+#       exit 1;;
+#   esac
+# done
 
 # PS3="Please enter your choice: "
 # options=("Option 1" "Option 2" "Option 3" "Quit")

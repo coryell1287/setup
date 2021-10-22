@@ -11,6 +11,8 @@ else
     ./system_design.sh
 fi
 
+
+# cat phone-numbers.txt | grep -P "[^\s.](?:[^?.]|\.(?! ))*\?"
 # if [[ CAPITAL -eq  'Austin' ]]; then
 #     ((correct=correct+1))
 # else

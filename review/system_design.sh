@@ -11,6 +11,41 @@ increment_questions_count() {
     ((questions = questions + 1))
 }
 
+affirm_answer() {
+    if [[ -z "$1" ]]; then
+        echo "
+    Correct. 
+
+    "
+    else
+        echo "$1"
+    fi
+}
+
+evaluate_answer() {
+    if [[ "$1" == "$2" ]]; then
+        increment_correct_responses
+        affirm_answer "$3"
+    else
+
+        echo "
+    
+    Wrong! There is no tommorrow, so get this right right now!
+    
+    "
+    fi
+
+    increment_questions_count
+}
+
+next_question() {
+    echo "
+ ########################################
+             Next Question 
+ ########################################
+"
+}
+
 echo "
    ########################################
               System Requirements
@@ -25,11 +60,7 @@ read -p "Complete this sentence:
 Enter your answer: " response
 
 answer="function data quality constraint"
-
-if [[ "$response" == "$answer" ]]; then
-    increment_correct_responses
-
-    echo "
+additional_feedback="
     Correct. 
 
     Solution Requirement defines a function the solution will 
@@ -39,51 +70,28 @@ if [[ "$response" == "$answer" ]]; then
     (Providers need sense of direction in all four dimensions 
     for each requirement to guide their decision-making process.)
     "
-else
-    echo "
-    
-    Wrong! There is no tommorrow, so get this right right now!
-    
-    "
-fi
+evaluate_answer "$response" "$answer" "$additional_feedback"
 
-increment_questions_count
 
-echo "
- ########################################
-             Next Question 
- ########################################
-"
+
+next_question
+
 
 read -p "How should you name functional requirements?  Your answer: " response
-
 answer="You should name functional requirements using the verb object form."
-
-if [[ "$response" == "$answer" ]]; then
-    increment_correct_responses
-
-    echo "
+additional_feedback="
     Correct. 
 
     * use an active verb (one that states the action)
     * and direct objects (the things the action creates or affects)
     (e.g., \"Calculate sales tax\", \"Verify Order\")
     "
-else
-    echo "
-    
-    Wrong! There is no tommorrow, so get this right right now!
-    
-    "
-fi
+evaluate_answer "$response" "$answer" "$additional_feedback"
 
-increment_questions_count
 
-echo "
- ########################################
-             Next Question 
- ########################################
-"
+
+next_question
+
 
 read -p "
     Read the following requirement and state the explicit functionality.
@@ -92,31 +100,14 @@ read -p "
 
 
 Enter your answer: " response
-
 answer="The requirement states that the application needs to know the premium to calcuate premium discount."
+evaluate_answer "$response" "$answer"
 
-if [[ "$response" == "$answer" ]]; then
-    increment_correct_responses
 
-    echo "
-    Correct. 
 
-    "
-else
-    echo "
-    
-    Wrong! There is no tommorrow, so get this right right now!
-    
-    "
-fi
+next_question
 
-increment_questions_count
 
-echo "
- ########################################
-             Next Question 
- ########################################
-"
 
 read -p "
     Read the following requirement and state the IMPLICIT functionality.
@@ -127,11 +118,7 @@ read -p "
 Enter your answer: " response
 
 answer="The requirement implies that the application needs a function to evaluate driving record to determine a safe driver."
-
-if [[ "$response" == "$answer" ]]; then
-    increment_correct_responses
-
-    echo "
+additional_feedback="
     Correct. 
 
     Look for qualifiers in the requirements. In the example 
@@ -139,22 +126,11 @@ if [[ "$response" == "$answer" ]]; then
     to be some details stored on the driver to evaluate whether the 
     driver is safe. Revealing this specific uncovers hidden functionality.
     "
-else
-    echo "
-    
-    Wrong! There is no tommorrow, so get this right right now!
-    
-    "
-fi
-
-increment_questions_count
+evaluate_answer "$response" "$answer" "$additional_feedback"
 
 
-echo "
- ########################################
-             Next Question 
- ########################################
-"
+next_question
+
 
 read -p "
     Complete the following statement.   
@@ -165,110 +141,53 @@ read -p "
 Enter your answer: " response
 
 answer="functional requirements Informational requirements qualities and constraints"
-
-if [[ "$response" == "$answer" ]]; then
-    increment_correct_responses
-
-    echo "
+additional_feedback="
     Correct. 
 
     Requirement decomposition or requirement drill-down generates functional,
     informational, qualities and constraint requirements.
     "
-else
-    echo "
-    
-    Wrong! There is no tommorrow, so get this right right now!
-    
-    "
-fi
-
-increment_questions_count
+evaluate_answer "$response" "$answer" "$additional_feedback"
 
 
-echo "
- ########################################
-             Next Question 
- ########################################
-"
+
+next_question
+
 
 read -p "What are informational Components? " response
 
 answer="user views or data elements"
-
-if [[ "$response" == "$answer" ]]; then
-    increment_correct_responses
-
-    echo "
-    Correct. 
-
-    "
-else
-    echo "
-    
-    Wrong! There is no tommorrow, so get this right right now!
-    
-    "
-fi
-
-increment_questions_count
+evaluate_answer "$response" "$answer"
 
 
-echo "
- ########################################
-             Next Question 
- ########################################
-"
+next_question
+
+
+
 
 read -p "What is a user view? " response
-
 answer="a collection of data elements"
-
-if [[ "$response" == "$answer" ]]; then
-    increment_correct_responses
-
-    echo "
+additional_feedback="
     Correct. 
 
     A user view would be a Customer Address.
     "
-else
-    echo "
-    
-    Wrong! There is no tommorrow, so get this right right now!
-    
-    "
-fi
+evaluate_answer "$response" "$answer" "$additional_feedback"
 
-increment_questions_count
 
-echo "
- ########################################
-             Next Question 
- ########################################
-"
+
+next_question
+
+
 
 read -p "What are data elements?  " response
-
 answer="Are the attributes of the user view."
-
-if [[ "$response" == "$answer" ]]; then
-    increment_correct_responses
-
-    echo "
+additional_feedback="
     Correct. 
 
     Data elements for a Customer Address are customer name, street address and zipcode.
     "
-else
-    echo "
-    
-    Wrong! There is no tommorrow, so get this right right now!
-    
-    "
-fi
-
-increment_questions_count
+evaluate_answer "$response" "$answer" "$additional_feedback"
 
 
 echo "
@@ -277,20 +196,12 @@ echo "
    ########################################
 "
 
+next_question
 
-echo "
- ########################################
-             Next Question 
- ########################################
-"
 
 read -p "What information do you need know first to determine traffic estimates? " response
 answer="read/write ratio"
-
-if [[ "$response" == "$answer" ]]; then
-    increment_correct_responses
-
-    echo "
+additional_feedback="
     Correct. 
 
     Once you know the read/write ratio, then multiple the estimates for the number of reads
@@ -298,55 +209,27 @@ if [[ "$response" == "$answer" ]]; then
     The read/write ratio is 100:1. Multiplying 500M by 100 comes to 50 billion requests every month.
 
     "
-else
-    echo "
-    
-    Wrong! There is no tommorrow, so get this right right now!
-    
-    "
-fi
-
-increment_questions_count
+evaluate_answer "$response" "$answer" "$additional_feedback"
 
 
-echo "
- ########################################
-             Next Question 
- ########################################
-"
+
+next_question
+
+
 
 read -p "How do you calcuate the queries per second? " response
 answer="Calcuate how many writes are process per second. Then multiple that by then read in read/write ratio."
+evaluate_answer "$response" "$answer"
 
-if [[ "$response" == "$answer" ]]; then
-    increment_correct_responses
 
-    echo "
-    Correct. 
-    "
-else
-    echo "
-    
-    Wrong! There is no tommorrow, so get this right right now!
-    
-    "
-fi
 
-increment_questions_count
+next_question
 
-echo "
- ########################################
-             Next Question 
- ########################################
-"
+
 
 read -p "What's the formula for calculating queries per second? " response
 answer="30 days * 24 hours * 3600 seconds"
-
-if [[ "$response" == "$answer" ]]; then
-    increment_correct_responses
-
-    echo "
+additional_feedback="
     Correct. 
 
     500 million new URLs created every month is ~200 URLs create per second
@@ -357,31 +240,17 @@ if [[ "$response" == "$answer" ]]; then
     
     100 * 200 URLs/s = 20K/s
     "
-else
-    echo "
-    
-    Wrong! There is no tommorrow, so get this right right now!
-    
-    "
-fi
-
-increment_questions_count
+evaluate_answer "$response" "$answer" "$additional_feedback"
 
 
 
-echo "
- ########################################
-             Next Question 
- ########################################
-"
+next_question
+
+
 
 read -p "What would the ideal steps be in designing software? " response
 answer="iniation analysis design development testing delivery"
-
-if [[ "$response" == "$answer" ]]; then
-    increment_correct_responses
-
-    echo "
+additional_feedback="
     Correct. 
 
 
@@ -392,15 +261,9 @@ if [[ "$response" == "$answer" ]]; then
         5). Testing 
         6). Delivery
     "
-else
-    echo "
-    
-    Wrong! There is no tommorrow, so get this right right now!
-    
-    "
-fi
+evaluate_answer "$response" "$answer" "$additional_feedback"
 
-increment_questions_count
+
 
 ########################################
 #         Calculate your score         #
@@ -418,15 +281,13 @@ else
     echo "    You scored $score% on system design."
 fi
 
-
-
 echo "
         __________________________________________________
         |                   TOPIC               | SCORE  |
         |---------------------------------------|----------
         |   Requirements and Goals Gathering    | 
         |---------------------------------------|
-        |   Capacity Estimations and Constraints |
+        |   Capacity Estimations and Constraints|
         |   System APIs
         |   Database Design 
         |   Basic System Design and Algorithm
