@@ -3,8 +3,10 @@
 ##########################################
 #  Create a directories for the server app
 ###########################################
-
-mkdir -p "${APP_NAME}"/src/{config,data-store,controller,routes,schemas,services,types}
+APP_NAME="$1"
+NODE_VERSION="$2"
+MAJOR_VERSION=${NODE_VERSION%%.*}
+mkdir -p "${APP_NAME}"/{src,haproxy}/{config,data-store,controller,routes,schemas,services,types}
 
 
 ###################################
@@ -57,7 +59,7 @@ services:
     container_name: ${APP_NAME}-service
     build:
       context: .
-      dockerfile: ./Dockerfile.dev
+      dockerfile: ./Dockerfile
     volumes:
       - '.:/app'
       - '/app/node_modules'
@@ -342,9 +344,9 @@ echo "{
 # tsconfig.json
 echo "{
   \"\$schema\": \"https://json.schemastore.org/tsconfig\",
-  \"display\": \"Node ${NODE_VERSION}\",
+  \"display\": \"Node ${MAJOR_VERSION}\",
     
-  \"extends\": \"@tsconfig/node${NODE_VERSION}/tsconfig.json\",
+  \"extends\": \"@tsconfig/node${MAJOR_VERSION}/tsconfig.json\",
   \"compilerOptions\": {
     \"allowJs\": true,
     \"allowSyntheticDefaultImports\": true,
@@ -922,10 +924,10 @@ describe('Customer Service', () => {
       const index = parseInt(id);
       const temp = customers.slice();
       temp.splice(index - 1, 1);
-      return `Customer ${id} deleted.`;
+      return \`Customer ${id} deleted.\`;
     });
 
-    expect(customer.deleteCustomer('1')).toEqual(`Customer 1 deleted.`);
+    expect(customer.deleteCustomer('1')).toEqual('Customer 1 deleted.');
     expect(customer.deleteCustomer).toHaveBeenCalledTimes(1);
   });
 });">./"${APP_NAME}"/src/services/customer.service.spec.ts
@@ -1038,7 +1040,7 @@ npm i -D rimraf \
     license-checker \
     @types/node \
     @types/webgl2 \
-    @tsconfig/node${NODE_VERSION} \
+    @tsconfig/node${MAJOR_VERSION} \
     @types/jest \
     @typescript-eslint/eslint-plugin \
     @typescript-eslint/parser \

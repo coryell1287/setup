@@ -1,24 +1,39 @@
 #!/bin/bash
 
-
 read -p "Enter application name: " APP_NAME
 read -p "Enter github url: " GITHUB_URL
-echo APP_NAME
-echo GITHUB_URL
+echo $APP_NAME
+echo $GITHUB_URL
 NODE=$(node -v)
-NODE_VERSION="${NODE#?}" 
+NODE_VERSION="${NODE#?}"
 # Ask whether frontend, backend or both
 # if both, ask whether mono repo, separate repo, no repo
 
-if [[ -x ./backend.sh ]]; then
-    ./backend.sh
-else
-    chmod -x ./backend.sh
-    ./backend.sh
-fi
+execute_setup() {
+    if [[ -x "$1"/backend.sh ]]; then
+        "$1"/backend.sh "$APP_NAME" "$NODE_VERSION"
+    else
+        chmod -x "$1"/backend.sh
+        "$1"/backend.sh "$APP_NAME" "$NODE_VERSION"
+    fi
 
+}
 
+read_symbolic_link() {
+    linkfile="$1"
+    if [ ! -L "$linkfile" ]; then
+        echo "$linkfile is not a simbolik link" >&2
+        return 1
+    fi
+    until [ ! -L "$linkfile" ]; do
+        lastlinkfile="$linkfile"
+        linkfile=$(readlink "$lastlinkfile")
+    done
+    EPIC_DIR=$(readlink "$lastlinkfile")
+    execute_setup ${EPIC_DIR%/*}
+}
 
+read_symbolic_link $(which epic-setup)
 
 # http://www.freekb.net/Article?id=1140
 # example.sh -f client -b server
