@@ -3,10 +3,11 @@
 ##########################################
 #  Create a directories for the server app
 ###########################################
-APP_NAME="$1"
+APP_NAME="$1"-services
 NODE_VERSION="$2"
 MAJOR_VERSION=${NODE_VERSION%%.*}
-mkdir -p "${APP_NAME}"/{src,haproxy}/{config,data-store,controller,routes,schemas,services,types}
+GITHUB_URL="$3"
+mkdir -p "${APP_NAME}"/{haproxy,src}/{config,data-store,controller,routes,schemas,services,types}
 
 
 ###################################
@@ -16,7 +17,7 @@ mkdir -p "${APP_NAME}"/{src,haproxy}/{config,data-store,controller,routes,schema
 # Dockerfile
 echo "FROM node:$NODE_VERSION-alpine as builder
 
-LABEL description="${APP_NAME}-services"
+LABEL description="${APP_NAME}"
 
 WORKDIR /app
 
@@ -51,12 +52,12 @@ networks:
     name: '${APP_NAME}-net'
 
 services:
-  ${APP_NAME}-service:
+  ${APP_NAME}:
     image: node:$NODE_VERSION-alpine
     restart: always
     networks:
       - ${APP_NAME}-net
-    container_name: ${APP_NAME}-service
+    container_name: $APP_NAME
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -65,7 +66,6 @@ services:
       - '/app/node_modules'
     ports:
       - 5000
-    restart: on-failure
 
   haproxy:
     image: haproxytech/haproxy-alpine:latest
@@ -73,9 +73,9 @@ services:
     networks:
       - ${APP_NAME}-net
     links:
-    - ${APP_NAME}-service
+    - ${APP_NAME}
     depends_on:
-    - ${APP_NAME}-service
+    - ${APP_NAME}
     ports:
       - 8001:80
     volumes:
@@ -111,7 +111,7 @@ defaults
 
 frontend ${APP_NAME}_client
     bind *:80
-    default_backend ${APP_NAME}-service
+    default_backend ${APP_NAME}
 
 
     stick-table  type ipv6  size 100k  expire 30s  store http_req_rate(10s)
@@ -134,16 +134,16 @@ frontend ${APP_NAME}_client
     use_backend microservice-customer if url-microservice-customer
 
 
-backend ${APP_NAME}-service
+backend ${APP_NAME}
     stick-table type ip size 1m expire 10s store conn_cur
     balance roundrobin
-    server ${APP_NAME}-service-1 ${APP_NAME}-service:5000 check
+    server ${APP_NAME}-1 ${APP_NAME}:5000 check
     option httpchk GET /health
     http-check expect string success
 
 backend microservice-customer
     balance roundrobin
-    server microservice-customer-1 ${APP_NAME}-service:5000 check">./"${APP_NAME}"/haproxy/haproxy.cfg
+    server microservice-customer-1 ${APP_NAME}:5000 check">./"${APP_NAME}"/haproxy/haproxy.cfg
 
 
 
@@ -385,7 +385,7 @@ echo "{
     \"typeRoots\": [\"src/types\",\"node_modules/@types\"]
   },
   \"exclude\": [\"./dist\", \"**/node_modules\", \"**/.*/\", \"**/.(spec|test)*/\"],
-  \"include\": [\"src/**/*\", \"./index.ts\", \"src/**/*.json\"]
+  \"include\": [\"src/**/*\", \"./index.ts\", \"src/**/*.json\", \"**/*.d.ts\"]
 }">./"${APP_NAME}"/tsconfig.json
 
 
@@ -453,7 +453,7 @@ echo "{
       }
     }
   }
-}">./"${APP_NAME}"/.eslintrc
+}">./"${APP_NAME}"/.eslintrc.json
 
 
 
@@ -493,7 +493,7 @@ echo "{
       \"diagnostics\": false
     }
   }
-}">./"${APP_NAME}"/jest.json
+}">./"${APP_NAME}"/jest.config.json
 
 
 # src/index.ts
@@ -502,7 +502,7 @@ echo "import util from 'util';
 import env from 'dotenv';
   
 import app from './src/config/app';
-import { config } from './src/config/config';
+import { config } from './src/config';
 
 env.config();
 
@@ -548,7 +548,7 @@ import env from 'dotenv';
 import favicon from '@wwa/fastify-favicon';
 import helmet from 'fastify-helmet';
 
-import { config } from './config';
+import { config } from '.';
 import { CustomerRoutes } from '../routes';
 
 env.config();
@@ -617,8 +617,8 @@ export function build() {
 
 
 
-# src/config/config.ts
-echo "import dotenv from 'dotenv';
+# src/config/index.ts
+echo "import env from 'dotenv';
 
 interface Config {
   host: string;
@@ -628,7 +628,7 @@ interface Config {
   environment: string;
 }
 
-dotenv.config();
+env.config();
 
 const config: Config = {
   host: '0.0.0.0',
@@ -638,7 +638,7 @@ const config: Config = {
   environment: process.env.NODE_ENV || 'production',
 };
 
-export { config };">./"${APP_NAME}"/src/config/config.ts
+export { config };">./"${APP_NAME}"/src/config/index.ts
 
 
 
@@ -924,7 +924,7 @@ describe('Customer Service', () => {
       const index = parseInt(id);
       const temp = customers.slice();
       temp.splice(index - 1, 1);
-      return \`Customer ${id} deleted.\`;
+      return \`Customer \${id} deleted.\`;
     });
 
     expect(customer.deleteCustomer('1')).toEqual('Customer 1 deleted.');
@@ -1013,8 +1013,8 @@ export interface IRequestBody {
 #######################################
 # Initialize github repo for SERVER 
 #######################################
-cd ./"${APP_NAME}"
-git init 2>&1> /dev/null
+cd ./"${APP_NAME}" &&
+git init 2>&1> /dev/null &&
 git remote add origin "${GITHUB_URL}" 2>&1> /dev/null
 
 #######################################
@@ -1096,5 +1096,5 @@ npm set-script lint "eslint --ext .ts,.js --format table"
 npm set-script prepare "husky install"
 npm set-script release "standard-version"
 npm set-script start "node ./index.js"
-npm set-script test "jest --config jest.json"
-npm set-script test:coverage "jest --config jest.json --coverage"
+npm set-script test "jest --config jest.config.json"
+npm set-script test:coverage "jest --config jest.config.json --coverage"
