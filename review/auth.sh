@@ -511,12 +511,29 @@ additional_feedback="
 evaluate_answer "$response" "$answer" "$additional_feedback"
 
 
+ESP validates a JWT in a performant way by using the JWT's issuer's 
+public keys. ESP caches the public keys for five minutes. In addition, 
+ESP caches validated JWTs for five minutes or until JWT expiry, 
+
+
+Project identification — Identify the application or the project that's making a call to this API
+
+Project authorization — Check whether the calling application has been granted 
+access to call the API and has enabled the API in their project
 
 
 
+You do want to block anonymous traffic. 
+API keys identify an application's traffic for the API producer, 
+in case the application developer needs to work with the API producer 
+to debug an issue or show their application's usage.
 
+You want to control the number of calls made to your API.
 
+You want to identify usage patterns in your API's traffic. You can see 
+application usage in APIs & services.
 
+You want to filter logs by API key.
 ########################################
 #         Calculate your score         #
 ########################################

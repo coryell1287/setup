@@ -428,6 +428,43 @@ A client that wants to authenticate itself with the server can then do so by
 403 Forbidden status code means it is impossible for this user and 
 browsers will not propose a new attempt.
 
+
+Content Security Policy (CSP) is an added layer of security that helps to detect 
+and mitigate certain types of attacks, including Cross-Site Scripting (XSS) and data injection attacks. 
+These attacks are used for everything from data theft to site defacement to distribute malware.
+
+
+
+XSS attacks exploit the browser's trust in the content received from the server. 
+Malicious scripts are executed by the victim's browser because the browser trusts 
+the source of the content, even when it's not coming from where it seems to be coming 
+from.
+
+
+
+CSP makes it possible for server administrators to reduce or eliminate the 
+vectors by which XSS can occur by specifying the domains that the browser should 
+consider to be valid sources of executable scripts. A CSP compatible browser will 
+then only execute scripts loaded in source files received from those allowed domains, 
+ignoring all other scripts (including inline scripts and event-handling HTML attributes).
+additional info
+As an ultimate form of protection, sites that want to never allow scripts to be 
+executed can opt to globally disallow script execution.
+
+
+the server can specify which protocols are allowed to be used; for example (and ideally, 
+from a security standpoint), a server can specify that all content must be loaded using HTTPS.
+
+marking all cookies with the secure attribute and providing automatic redirects from HTTP 
+pages to their HTTPS counterparts.
+
+
+Sites may also use the Strict-Transport-Security HTTP header to ensure that browsers connect 
+to them only over an encrypted channel.
+
+Configuring Content Security Policy involves adding the Content-Security-Policy HTTP header to 
+a web page and giving it values to control what resources the user agent is allowed to load for 
+that page.
 ########################################
 #         Calculate your score         #
 ########################################
