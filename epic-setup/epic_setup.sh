@@ -1,7 +1,7 @@
 #!/bin/bash
 
 make_script_executable() {
-    if [[ ! -x "$1" ]]; then
+    if [ ! -x "$1" ]; then
         chmod 755 "$1"
     fi
 }
@@ -25,7 +25,7 @@ execute_setup() {
     APP_NAME=$2
     NODE_VERSION=$3
     GITHUB_URL=$4
-    if [[ -x "$FILE_PATH"/backend.sh ]]; then
+    if [ -x "$FILE_PATH"/backend.sh ]; then
         "$FILE_PATH"/backend.sh "$APP_NAME" "$NODE_VERSION"
     else
         chmod -x "$FILE_PATH"/backend.sh
@@ -58,7 +58,8 @@ while getopts n:d: flag; do
     case "${flag}" in
     n) APP_NAME=${OPTARG} ;;
     d) DATABASE=${OPTARG} ;;
-    *) help exit 1 ;;
+    *) help 
+       exit 1 ;;
     esac
 done
 
@@ -70,52 +71,3 @@ else
     read_from_terminal
 fi
 
-# echo $APP_NAME
-# echo $GITHUB_URL
-# # Ask whether frontend, backend or both
-# # if both, ask whether mono repo, separate repo, no repo
-
-# read_symbolic_link $(which epic-setup)
-
-# while true; do
-#   case "$1" in
-#     -n|--name)
-#       APP_NAME="$2"
-#       shift 2;;
-#     -d|--database)
-#       DATA_BASE="$2"
-#       shift 2;;
-#     --)
-#       break;;
-#      *)
-#       printf "Unknown option %s\n" "$1"
-#       exit 1;;
-#   esac
-# done
-
-# echo "$APP_NAME"
-# echo "$DATABASE"
-
-# # PS3="Please enter your choice: "
-# # options=("Option 1" "Option 2" "Option 3" "Quit")
-# # select opt in "${options[@]}"
-# # do
-# #     case $opt in
-# #         "Option 1")
-# #             echo "you chose choice 1"
-# #             break
-# #             ;;
-# #         "Option 2")
-# #             echo "you chose choice 2"
-# #             break
-# #             ;;
-# #         "Option 3")
-# #             echo "you chose choice $REPLY which is $opt"
-# #             break
-# #             ;;
-# #         "Quit")
-# #             break
-# #             ;;
-# #         *) echo "invalid option $REPLY";;
-# #     esac
-# # done

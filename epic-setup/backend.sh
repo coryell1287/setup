@@ -73,9 +73,9 @@ services:
     networks:
       - ${APP_NAME}-net
     links:
-    - ${APP_NAME}
+      - ${APP_NAME}
     depends_on:
-    - ${APP_NAME}
+      - ${APP_NAME}
     ports:
       - 8001:80
     volumes:
@@ -122,7 +122,7 @@ frontend ${APP_NAME}_client
     http-request track-sc0 src
     http-request deny deny_status 429 if { sc_http_req_rate(0) gt 20 }
 
-    acl url-microservice-customer path_beg /api/v1/customers/
+    acl url-microservice-customer path_beg /api/v1/customer/
 
     compression algo gzip
     compression type text/html text/plain text/css application/javascript
@@ -421,7 +421,7 @@ echo "{
     }
   ],
   \"rules\": {
-    \"@typescript-eslint/explicit-function-return-type\": \"off\",
+    \"@typescript-eslint/explicit-function-return-type\": \"error\",
     \"@typescript-eslint/no-explicit-any\": \"error\",
     \"@typescript-eslint/no-inferrable-types\": [
       \"warn\",
@@ -583,6 +583,7 @@ app.register(oas, {
       },
     },
   },
+  addModels: true,
   exposeRoute: true,
 });
 
@@ -655,7 +656,7 @@ import { IRequestBody, IParams } from '../types';
 export async function CustomerController(fastify: FastifyInstance): Promise<void> {
   fastify.route<{ Body: IRequestBody }>({
     method: 'POST',
-    url: '/customers/',
+    url: '/customer/',
     schema: {
       response: Response,
     },
@@ -667,7 +668,7 @@ export async function CustomerController(fastify: FastifyInstance): Promise<void
 
   fastify.route({
     method: 'GET',
-    url: '/customers/',
+    url: '/customer/',
     schema: {
       response: CustomerResponseSchema,
     },
@@ -679,7 +680,7 @@ export async function CustomerController(fastify: FastifyInstance): Promise<void
 
   fastify.route<{ Params: IParams; Body: IRequestBody }>({
     method: 'PUT',
-    url: '/customers/:id/',
+    url: '/customer/:id/',
     schema: {
       params: ParamsSchema,
       response: Response
@@ -692,7 +693,7 @@ export async function CustomerController(fastify: FastifyInstance): Promise<void
 
   fastify.route<{ Params: IParams }>({
     method: 'DELETE',
-    url: '/customers/:id/',
+    url: '/customer/:id/',
     schema: {
       response: SuccessStatusSchema,
     },
@@ -726,7 +727,7 @@ describe('Customer controller', () => {
     expect.assertions(2);
 
     const res = await app.inject({
-      url: '/api/v1/customers/',
+      url: '/api/v1/customer/',
     });
 
     expect(res.statusCode).toBe(200);
@@ -737,7 +738,7 @@ describe('Customer controller', () => {
     expect.assertions(2);
 
     const res = await app.inject({
-      url: '/api/v1/customers/',
+      url: '/api/v1/customer/',
       method: 'POST',
       payload: { id: '5', name: 'Samantha' },
     });
@@ -750,7 +751,7 @@ describe('Customer controller', () => {
     expect.assertions(2);
 
     const res = await app.inject({
-      url: '/api/v1/customers/1/',
+      url: '/api/v1/customer/1/',
       method: 'PUT',
       payload: { id: '4', name: 'Gregory' },
     });
@@ -763,7 +764,7 @@ describe('Customer controller', () => {
     expect.assertions(1);
 
     const res = await app.inject({
-      url: '/api/v1/customers/1/',
+      url: '/api/v1/customer/1/',
       method: 'DELETE',
     });
     expect(res.statusCode).toBe(204);
