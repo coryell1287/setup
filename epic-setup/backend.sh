@@ -506,6 +506,11 @@ import { config } from './src/config';
 
 env.config();
 
+app.ready(function (error) {
+  if (error) throw error;
+  app.oas();
+});
+
 process.on('uncaughtException', function uncaughtException(error: Error) {
   app.log.error(\`\${config.appName} crashed \${error.stack} || \${error}\`);
 });
@@ -539,62 +544,62 @@ process.on('SIGINT', async function signalInt() {
 
 
 # src/config/app.ts
-echo "import fastify from 'fastify';
+echo "import fastify, { FastifyInstance } from 'fastify';
 import compress from 'fastify-compress';
 import cors from 'fastify-cors';
-import healthCheck from 'fastify-healthcheck';
 import oas from 'fastify-oas';
 import env from 'dotenv';
 import favicon from '@wwa/fastify-favicon';
 import helmet from 'fastify-helmet';
+import healthCheck from 'fastify-healthcheck';
 
 import { config } from '.';
 import { CustomerRoutes } from '../routes';
 
 env.config();
-const app = fastify({ logger: true });
 
-app.register(helmet);
-app.register(healthCheck);
-app.register(compress);
-app.register(cors);
-app.register(favicon);
-app.register(oas, {
-  routePrefix: '/documentation',
-  swagger: {
-    info: {
-      title: config.appName,
-      description: 'testing the fastify swagger api',
-      version: '0.1.0',
-    },
-    externalDocs: {
-      url: 'https://swagger.io',
-      description: 'Find more info here',
-    },
-    host: config.serverURI,
-    schemes: ['http'],
-    consumes: ['application/json'],
-    produces: ['application/json'],
-    securityDefinitions: {
-      apiKey: {
-        type: 'apiKey',
-        name: 'apiKey',
-        in: 'header',
+function build(opts = { logger: true }): FastifyInstance {
+  const app = fastify(opts);
+
+  app.register(healthCheck);
+  app.register(helmet);
+  app.register(compress);
+  app.register(cors);
+  app.register(favicon);
+  app.register(oas, {
+    routePrefix: '/documentation',
+    swagger: {
+      info: {
+        title: config.appName,
+        description: 'testing the fastify swagger api',
+        version: '0.1.0',
+      },
+      externalDocs: {
+        url: 'https://swagger.io',
+        description: 'Find more info here',
+      },
+      host: config.serverURI,
+      schemes: ['http'],
+      consumes: ['application/json'],
+      produces: ['application/json'],
+      securityDefinitions: {
+        apiKey: {
+          type: 'apiKey',
+          name: 'apiKey',
+          in: 'header',
+        },
       },
     },
-  },
-  addModels: true,
-  exposeRoute: true,
-});
+    addModels: true,
+    exposeRoute: true,
+  });
 
-app.register(CustomerRoutes, { prefix: '/api/v1' });
+  app.register(CustomerRoutes, { prefix: '/api/v1' });
 
-app.ready(function (error) {
-  if (error) throw error;
-  app.oas();
-});
+ return app
+}
 
-export default app;">./"${APP_NAME}"/src/config/app.ts
+export default build();">./"${APP_NAME}"/src/config/app.ts
 
 
 
@@ -604,16 +609,17 @@ export default app;">./"${APP_NAME}"/src/config/app.ts
 
 # src/config/build.ts
 echo "import app from '../config/app';
+import fastify from 'fastify';
 
-export function build() {
-  beforeEach(async () => {
-    await app.ready();
-  });
+function build(opts = { logger: false }) {
+  const app = fastify(opts);
 
-  afterAll(() => app.close());
-
+  beforeEach(async () => await app.ready());
+  afterEach(() => app.close());
   return app;
-}">./"${APP_NAME}"/src/config/build.ts
+}
+
+export default build();">./"${APP_NAME}"/src/config/build.ts
 
 
 
