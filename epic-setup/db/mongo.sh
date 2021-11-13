@@ -88,12 +88,12 @@ connection
 echo "import { Schema, model } from 'mongoose'
 
 export interface $PROPER_CASE_SERVICE_NAMEDocument {
-  id: string;
+  _id: string;
   name: string;
 }
 
 const $PROPER_CASE_SERVICE_NAMESchema = new Schema({
-  id: { type: String, required: true, unique: true },
+  _id: { type: String, required: true, unique: true },
   name: { type: String, required: true }
 });
 
@@ -115,7 +115,7 @@ echo "export const fetch$PROPER_CASE_SERVICE_NAME = {
       item: {
         type: 'object',
         properties: {
-          id: { type: 'string' },
+          _id: { type: 'string' },
           name: { type: 'string' },
         },
       },
@@ -128,7 +128,7 @@ echo "export const fetch$PROPER_CASE_SERVICE_NAME = {
       },
     },
   },
-  required: ['id', 'name'],
+  required: ['_id', 'name'],
   security: [
     {
       api_key: [],
@@ -140,19 +140,10 @@ export const create$PROPER_CASE_SERVICE_NAME = {
   description: 'Create $SERVICE_NAME',
   tags: ['Create $SERVICE_NAME'],
   summary: 'Create a $SERVICE_NAME using this service',
-  params: {
-    type: 'object',
-    properties: {
-      id: {
-        type: 'string',
-        description: '$SERVICE_NAME id',
-      },
-    },
-  },
   body: {
     type: 'object',
     properties: {
-      id: { type: 'string' },
+      _id: { type: 'string' },
       name: { type: 'string' },
     },
   },
@@ -161,7 +152,7 @@ export const create$PROPER_CASE_SERVICE_NAME = {
       description: 'Successful response',
       type: 'object',
       properties: {
-        id: { type: 'string' },
+        _id: { type: 'string' },
         name: { type: 'string' },
       },
     },
@@ -173,7 +164,7 @@ export const create$PROPER_CASE_SERVICE_NAME = {
       },
     },
   },
-  required: ['id', 'name'],
+  required: ['_id', 'name'],
   security: [
     {
       api_key: [],
@@ -189,7 +180,7 @@ export const fetchOne$PROPER_CASE_SERVICE_NAME = {
   params: {
     type: 'object',
     properties: {
-      id: {
+      _id: {
         type: 'string',
         description: '$SERVICE_NAME id',
       },
@@ -200,7 +191,7 @@ export const fetchOne$PROPER_CASE_SERVICE_NAME = {
       description: 'Successful response',
       type: 'object',
       properties: {
-        id: { type: 'string' },
+        _id: { type: 'string' },
         name: { type: 'string' },
       },
     },
@@ -212,7 +203,7 @@ export const fetchOne$PROPER_CASE_SERVICE_NAME = {
       },
     },
   },
-  required: ['id', 'name'],
+  required: ['_id', 'name'],
   security: [
     {
       api_key: [],
@@ -228,7 +219,7 @@ export const updateOne$PROPER_CASE_SERVICE_NAME = {
   params: {
     type: 'object',
     properties: {
-      id: {
+      _id: {
         type: 'string',
         description: '$SERVICE_NAME id',
       },
@@ -237,7 +228,7 @@ export const updateOne$PROPER_CASE_SERVICE_NAME = {
   body: {
     type: 'object',
     properties: {
-      id: { type: 'string' },
+      _id: { type: 'string' },
       name: { type: 'string' },
     },
   },
@@ -246,7 +237,7 @@ export const updateOne$PROPER_CASE_SERVICE_NAME = {
       description: 'Successful response',
       type: 'object',
       properties: {
-        id: { type: 'string' },
+        _id: { type: 'string' },
         name: { type: 'string' },
       },
     },
@@ -258,7 +249,7 @@ export const updateOne$PROPER_CASE_SERVICE_NAME = {
       },
     },
   },
-  required: ['id', 'name'],
+  required: ['_id', 'name'],
   security: [
     {
       api_key: [],
@@ -274,7 +265,7 @@ export const deleteOne$PROPER_CASE_SERVICE_NAME = {
   params: {
     type: 'object',
     properties: {
-      id: {
+      _id: {
         type: 'string',
         description: '$SERVICE_NAME id',
       },
@@ -296,7 +287,7 @@ export const deleteOne$PROPER_CASE_SERVICE_NAME = {
       },
     },
   },
-  required: ['id', 'name'],
+  required: ['_id', 'name'],
   security: [
     {
       api_key: [],
@@ -320,20 +311,20 @@ export class $PROPER_CASE_SERVICE_NAMEService {
     return this.database.fetch();
   }
 
-  public fetch$PROPER_CASE_SERVICE_NAMEById(id: string): Promise<IRequestBody | void> {
-    return this.database.fetchById(id);
+  public fetch$PROPER_CASE_SERVICE_NAMEById(_id: string): Promise<IRequestBody | void> {
+    return this.database.fetchById(_id);
   }
 
   public create$PROPER_CASE_SERVICE_NAME($SERVICE_NAME: IRequestBody): Promise<IRequestBody | void> {
     return this.database.add($SERVICE_NAME);
   }
 
-  public update$PROPER_CASE_SERVICE_NAME(id: string, $SERVICE_NAME: IRequestBody): Promise<IRequestBody | void> {
-    return this.database.update(id, $SERVICE_NAME);
+  public update$PROPER_CASE_SERVICE_NAME(_id: string, $SERVICE_NAME: IRequestBody): Promise<IRequestBody | void> {
+    return this.database.update(_id, $SERVICE_NAME);
   }
 
-  public delete$PROPER_CASE_SERVICE_NAME(id: string) {
-    return this.database.delete(id);
+  public delete$PROPER_CASE_SERVICE_NAME(_id: string) {
+    return this.database.delete(_id);
   }
 }
 ">./"${APP_NAME}"/src/service/"${SERVICE_NAME}".service.ts
@@ -344,10 +335,10 @@ echo "import { IRequestBody as $PROPER_CASE_SERVICE_NAMEs } from 'src/types';
 import { $PROPER_CASE_SERVICE_NAMEService } from './$SERVICE_NAME.service';
 
 const $SERVICE_NAMEs: $PROPER_CASE_SERVICE_NAMEs[] = [
-  { id: '1', name: 'Judy Hopps' },
-  { id: '2', name: 'Nick Wilde' },
-  { id: '3', name: 'Cheif Bogo' },
-  { id: '4', name: 'Clawhauser' },
+  { _id: '1', name: 'Judy Hopps' },
+  { _id: '2', name: 'Nick Wilde' },
+  { _id: '3', name: 'Cheif Bogo' },
+  { _id: '4', name: 'Clawhauser' },
 ];
 
 jest.mock('./$SERVICE_NAME.service');
@@ -355,7 +346,7 @@ jest.mock('./$SERVICE_NAME.service');
 function findElementByIndex(id: string) {
   if (!id) return -1;
   return $SERVICE_NAMEs.find(function(item) {
-    return item.id === id;
+    return item._id === id;
   });
 }
 
@@ -374,15 +365,15 @@ describe('$PROPER_CASE_SERVICE_NAME Service', () => {
     expect.assertions(2);
 
     const $SERVICE_NAME = new $PROPER_CASE_SERVICE_NAMEService();
-    ($SERVICE_NAME.fetch$PROPER_CASE_SERVICE_NAMEById as jest.Mock).mockImplementation((id: string) => findElementByIndex(id));
-    expect($SERVICE_NAME.fetch$PROPER_CASE_SERVICE_NAMEById('4')).toStrictEqual({ id: '4', name: 'Clawhauser' });
+    ($SERVICE_NAME.fetch$PROPER_CASE_SERVICE_NAMEById as jest.Mock).mockImplementation((_id: string) => findElementByIndex(_id));
+    expect($SERVICE_NAME.fetch$PROPER_CASE_SERVICE_NAMEById('4')).toStrictEqual({ _id: '4', name: 'Clawhauser' });
     expect($SERVICE_NAME.fetch$PROPER_CASE_SERVICE_NAMEById).toHaveBeenCalledTimes(1);
   });
 
   it('should create a single $SERVICE_NAME', () => {
     expect.assertions(2);
     const $SERVICE_NAME = new $PROPER_CASE_SERVICE_NAMEService();
-    const update = { id: '5', name: 'Samantha' };
+    const update = { _id: '5', name: 'Samantha' };
 
     ($SERVICE_NAME.create$PROPER_CASE_SERVICE_NAME as jest.Mock).mockImplementation((update: $PROPER_CASE_SERVICE_NAMEs) => {
       $SERVICE_NAMEs.splice($SERVICE_NAMEs.length, 0, update);
@@ -397,10 +388,10 @@ describe('$PROPER_CASE_SERVICE_NAME Service', () => {
   it('should update a single $SERVICE_NAME', () => {
     expect.assertions(2);
     const $SERVICE_NAME = new $PROPER_CASE_SERVICE_NAMEService();
-    const update = { id: '1', name: 'Samantha' };
+    const update = { _id: '1', name: 'Samantha' };
 
-    ($SERVICE_NAME.update$PROPER_CASE_SERVICE_NAME as jest.Mock).mockImplementation((id: string, update: $PROPER_CASE_SERVICE_NAMEs) => {
-      const index = parseInt(id);
+    ($SERVICE_NAME.update$PROPER_CASE_SERVICE_NAME as jest.Mock).mockImplementation((_id: string, update: $PROPER_CASE_SERVICE_NAMEs) => {
+      const index = parseInt(_id);
       const temp = $SERVICE_NAMEs.slice();
       temp[index - 1] = update;
       return update;
@@ -414,11 +405,11 @@ describe('$PROPER_CASE_SERVICE_NAME Service', () => {
     expect.assertions(2);
     const $SERVICE_NAME = new $PROPER_CASE_SERVICE_NAMEService();
 
-    ($SERVICE_NAME.delete$PROPER_CASE_SERVICE_NAME as jest.Mock).mockImplementation((id: string) => {
-      const index = parseInt(id);
+    ($SERVICE_NAME.delete$PROPER_CASE_SERVICE_NAME as jest.Mock).mockImplementation((_id: string) => {
+      const index = parseInt(_id);
       const temp = $SERVICE_NAMEs.slice();
       temp.splice(index - 1, 1);
-      return `$PROPER_CASE_SERVICE_NAME ${id} deleted.`;
+      return `$PROPER_CASE_SERVICE_NAME ${_id} deleted.`;
     });
 
     expect($SERVICE_NAME.delete$PROPER_CASE_SERVICE_NAME('1')).toEqual('$PROPER_CASE_SERVICE_NAME 1 deleted.');
@@ -431,12 +422,12 @@ describe('$PROPER_CASE_SERVICE_NAME Service', () => {
 echo "import { model, Schema } from 'mongoose';
 
 export interface ${PROPER_CASE_SERVICE_NAME}Document {
-  id: string;
+  _id: string;
   name: string;
 }
 
 const ${PROPER_CASE_SERVICE_NAME}Schema = new Schema<${PROPER_CASE_SERVICE_NAME}Document>({
-  id: { type: String, required: true, unique: true },
+  _id: { type: String, required: true, unique: true },
   name: { type: String, required: true },
 });
 
@@ -459,10 +450,10 @@ import app from '../config/app';
 
 export interface DatabaseInstance {
   fetch(): Promise<IRequestBody[] | void>;
-  fetchById(id: string): Promise<IRequestBody | void>;
+  fetchById(_id: string): Promise<IRequestBody | void>;
   add(data: IRequestBody): Promise<IRequestBody | void>;
-  update(id: string, data: IRequestBody): Promise<IRequestBody | void>;
-  delete(id: string): Promise<void>;
+  update(_id: string, data: IRequestBody): Promise<IRequestBody | void>;
+  delete(_id: string): Promise<void>;
 }
 
 export default class DataStore implements DatabaseInstance {
@@ -475,9 +466,9 @@ export default class DataStore implements DatabaseInstance {
     }
   }
 
-  public async fetchById(id: string): Promise<IRequestBody | void> {
+  public async fetchById(_id: string): Promise<IRequestBody | void> {
     try {
-      const $SERVICE_NAME = await find$PROPER_CASE_SERVICE_NAMEById({ id });
+      const $SERVICE_NAME = await find$PROPER_CASE_SERVICE_NAMEById({ _id });
       if ($SERVICE_NAME) {
         return $SERVICE_NAME;
       }
@@ -495,18 +486,18 @@ export default class DataStore implements DatabaseInstance {
     }
   }
 
-  public async update(id: string, data: IRequestBody): Promise<IRequestBody | void> {
+  public async update(_id: string, data: IRequestBody): Promise<IRequestBody | void> {
     try {
-      await modify$PROPER_CASE_SERVICE_NAME({ id }, data);
+      await modify$PROPER_CASE_SERVICE_NAME({ _id }, data);
       return data;
     } catch (error) {
       app.log.error(error);
     }
   }
 
-  public async delete(id: string): Promise<void> {
+  public async delete(_id: string): Promise<void> {
     try {
-      await delete$PROPER_CASE_SERVICE_NAME({ id });
+      await delete$PROPER_CASE_SERVICE_NAME({ _id });
     } catch (error) {
       app.log.error(error);
     }
@@ -553,7 +544,7 @@ export async function $PROPER_CASE_SERVICE_NAMEController(fastify: FastifyInstan
     schema: FetchOne$PROPER_CASE_SERVICE_NAMESchema,
     handler: async function fetch$PROPER_CASE_SERVICE_NAMEByIdController(request, reply) {
       const $SERVICE_NAME = new $PROPER_CASE_SERVICE_NAMEService();
-      return reply.send(await $SERVICE_NAME.fetch$PROPER_CASE_SERVICE_NAMEById(request.params.id));
+      return reply.send(await $SERVICE_NAME.fetch$PROPER_CASE_SERVICE_NAMEById(request.params._id));
     },
   });
 
@@ -573,7 +564,7 @@ export async function $PROPER_CASE_SERVICE_NAMEController(fastify: FastifyInstan
     schema: DeleteOne$PROPER_CASE_SERVICE_NAMESchema,
     handler: async function delete$PROPER_CASE_SERVICE_NAMEController(request, reply) {
       const $SERVICE_NAME = new $PROPER_CASE_SERVICE_NAMEService();
-      return reply.code(204).send(await $SERVICE_NAME.delete$PROPER_CASE_SERVICE_NAME(request.params.id));
+      return reply.code(204).send(await $SERVICE_NAME.delete$PROPER_CASE_SERVICE_NAME(request.params._id));
     },
   });
 }">./"${APP_NAME}"/src/controller/"${SERVICE_NAME}".controller.ts
