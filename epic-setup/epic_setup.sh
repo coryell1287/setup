@@ -47,26 +47,28 @@ help() {
     echo "
    Execute script to add a database to the current project.
    "
-    echo "   Syntax: epic-setup [-n|d|]"
+    echo "   Syntax: epic-setup [-n|d|s]"
     echo "   options:"
     echo "   n     Name the application."
     echo "   d     Configure the database. [mongo|redis|postgres]"
+    echo "   s     Configure the service name. [customer|user]"
     echo
 }
 
-while getopts n:d: flag; do
+while getopts n:d:s: flag; do
     case "${flag}" in
     n) APP_NAME=${OPTARG} ;;
     d) DATABASE=${OPTARG} ;;
+    s) SERVICE_NAME=${OPTARG} ;;
     *) help 
        exit 1 ;;
     esac
 done
 
-if [[ ! -z "$APP_NAME" && ! -z "$DATABASE" ]]; then
+if [[ ! -z "$APP_NAME" && ! -z "$DATABASE" && ! -z "$SERVICE_NAME" ]]; then
     symlink=$(read_symbolic_link $(which epic-setup))
     make_script_executable "${symlink}/db/${DATABASE}.sh"
-    "${symlink}/db/${DATABASE}.sh" "${APP_NAME}"
+    "${symlink}/db/${DATABASE}.sh" "${APP_NAME}" "$SERVICE_NAME"
 else
     read_from_terminal
 fi
