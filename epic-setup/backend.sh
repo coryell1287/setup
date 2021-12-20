@@ -528,6 +528,7 @@ echo "{
       }
     ],
     \"@typescript-eslint/no-unused-vars\": \"warn\",
+    \"no-console\": \"error\",
     \"sonarjs/cognitive-complexity\": \"error\",
     \"sonarjs/no-identical-expressions\": \"error\",
     \"sonarjs/no-collapsible-if\": \"error\",
@@ -1201,5 +1202,5 @@ npm set-script lint "eslint --ext .ts,.js --format table"
 npm set-script prepare "husky install"
 npm set-script release "standard-version"
 npm set-script start "node ./index.js"
-npm set-script test "jest --config jest.config.json"
-npm set-script test:coverage "jest --config jest.config.json --coverage"
+npm set-script test "NODE_ENV=test jest --detectOpenHandles --forceExit --config jest.config.json"
+npm set-script test:coverage "NODE_ENV=test jest --config jest.config.json --coverage"
