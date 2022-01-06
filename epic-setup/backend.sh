@@ -1134,6 +1134,7 @@ npm i fastify \
     fastify-helmet \
     fastify-healthcheck \
     source-map-support \
+    fastify-plugin \
     fastify-oas \
     @wwa/fastify-favicon \
     dotenv \

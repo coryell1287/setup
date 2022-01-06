@@ -5,8 +5,8 @@ openapi --input http://localhost:5000/documentation/json --output ./libs/openapi
 
 
 echo "name: Cypress Tests
-# on:
-#   pull_request:
+on:
+  pull_request:
 
 jobs:
   build:
@@ -15,71 +15,149 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v2
 
-      - name: Install and build UI
-        uses: cypress-io/github-action@v2
-        with:
-          runTests: false
-          build: npm run build
-          config-file: apps/k6i-ui-e2e/cypress.json
-
   chrome:
     runs-on: ubuntu-latest
     name: E2E on Chrome
-
     steps:
-      - uses: actions/checkout@v2
-      - uses: cypress-io/github-action@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
         with:
           start: npm start
-          command: npm run cy:headless
+          command: make eTe URL=https://digitalai.k6i-ui-pr${{ github.event.number }}.tpl.digitalai.cloud
           browser: chrome
           headless: true
           config-file: apps/k6i-ui-e2e/cypress.json
+          tag: chrome
         env:
           BROWSER: chrome
+          CI: true
+          URL: https://digitalai.k6i-ui-pr${{ github.event.number }}.tpl.digitalai.cloud
+          CYPRESS_E2E_ENV: ${{ secrets.CYPRESS_E2E_ENV }}
+          CYPRESS_E2E_API_SERVER: ${{ secrets.CYPRESS_E2E_API_SERVER }},
+          CYPRESS_E2E_KEYCLOAK_SERVER: ${{ secrets.CYPRESS_E2E_KEYCLOAK_SERVER }}
+          CYPRESS_E2E_GRANT_TYPE: ${{ secrets.CYPRESS_E2E_GRANT_TYPE }}
+          CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
+          CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
+          CYPRESS_E2E_CLIENT_ID: ${{ secrets.CYPRESS_E2E_CLIENT_ID }}
+          CYPRESS_E2E_CLIENT_SECRET: ${{ secrets.CYPRESS_E2E_CLIENT_SECRET }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: screenshots
+          path: dist/cypress/apps/k6i-ui-e2e/screenshots
       - name: e2e Chrome Report
         run: |
-          node ./apps/k6i-ui-e2e/cypress/cucumber-report.js --browser $BROWSER --DIR $BROWSER
+          make report BROWSER=$BROWSER
+
+  release:
+    runs-on: ubuntu-latest
+    name: Release Project
+    needs: chrome
+    steps:
+      - name: Download Cypress Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: performance-artifacts
+      - name: View content
+        run: ls -R
+      - name: Create GitHub release
+        id: create-new-release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+      - name: Archive site content
+        uses: thedoctor0/zip-release@master
+        with:
+          filename: site.zip
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-new-release.outputs.upload_url }}
+          asset_path: ./site.zip
+          asset_name: site-v${{ github.run_number }}.zip
+          asset_content_type: application/zip
 
   firefox:
     runs-on: ubuntu-latest
     name: E2E on Firefox
-
     steps:
-      - uses: actions/checkout@v2
-      - uses: cypress-io/github-action@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
         with:
           start: npm start
-          command: npm run cy:headless
+          command: make eTe URL=https://digitalai.k6i-ui-pr${{ github.event.number }}.tpl.digitalai.cloud
           browser: firefox
           headless: true
           config-file: apps/k6i-ui-e2e/cypress.json
+          tag: firefox
         env:
           BROWSER: firefox
+          CI: true
+          URL: https://digitalai.k6i-ui-pr${{ github.event.number }}.tpl.digitalai.cloud
+          CYPRESS_E2E_ENV: ${{ secrets.CYPRESS_E2E_ENV }}
+          CYPRESS_E2E_API_SERVER: ${{ secrets.CYPRESS_E2E_API_SERVER }},
+          CYPRESS_E2E_KEYCLOAK_SERVER: ${{ secrets.CYPRESS_E2E_KEYCLOAK_SERVER }}
+          CYPRESS_E2E_GRANT_TYPE: ${{ secrets.CYPRESS_E2E_GRANT_TYPE }}
+          CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
+          CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
+          CYPRESS_E2E_CLIENT_ID: ${{ secrets.CYPRESS_E2E_CLIENT_ID }}
+          CYPRESS_E2E_CLIENT_SECRET: ${{ secrets.CYPRESS_E2E_CLIENT_SECRET }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: screenshots
+          path: dist/cypress/apps/k6i-ui-e2e/screenshots
       - name: e2e Firefox Report
         run: |
-          node ./apps/k6i-ui-e2e/cypress/cucumber-report.js --browser $BROWSER --DIR $BROWSER
+          make report BROWSER=$BROWSER
 
   edge:
     name: E2E on Edge
     runs-on: windows-latest
-
     steps:
-      - uses: actions/checkout@v2
-      - uses: cypress-io/github-action@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Cypress run
+        uses: cypress-io/github-action@v2
         with:
           start: npm start
-          command: npm run cy:headless
+          command: make eTe URL=https://digitalai.k6i-ui-pr${{ github.event.number }}.tpl.digitalai.cloud
           browser: edge
           headless: true
           config-file: apps/k6i-ui-e2e/cypress.json
+          tag: edge
         env:
           BROWSER: edge
-      - name: e2e Edge Report
+          CI: true
+          URL: https://digitalai.k6i-ui-pr${{ github.event.number }}.tpl.digitalai.cloud
+          CYPRESS_E2E_ENV: ${{ secrets.CYPRESS_E2E_ENV }}
+          CYPRESS_E2E_API_SERVER: ${{ secrets.CYPRESS_E2E_API_SERVER }},
+          CYPRESS_E2E_KEYCLOAK_SERVER: ${{ secrets.CYPRESS_E2E_KEYCLOAK_SERVER }}
+          CYPRESS_E2E_GRANT_TYPE: ${{ secrets.CYPRESS_E2E_GRANT_TYPE }}
+          CYPRESS_E2E_PASSWORD: ${{ secrets.CYPRESS_E2E_PASSWORD }}
+          CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
+          CYPRESS_E2E_CLIENT_ID: ${{ secrets.CYPRESS_E2E_CLIENT_ID }}
+          CYPRESS_E2E_CLIENT_SECRET: ${{ secrets.CYPRESS_E2E_CLIENT_SECRET }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: screenshots
+          path: dist/cypress/apps/k6i-ui-e2e/screenshots
+      - name: e2e Firefox Report
         run: |
-          node ./apps/k6i-ui-e2e/cypress/cucumber-report.js --browser $BROWSER --DIR $BROWSER
-"
-
+          make report BROWSER=$BROWSER">.cypress-workflow.yml
 
 
 echo "export interface Browser {
@@ -293,3 +371,55 @@ const audits = {
     cy.lighthouse(audits, lighthouseConfig);
 
 "
+
+
+echo "{
+  \"$schema\": \"https://on.cypress.io/cypress.schema.json\",
+  \"baseUrl\": \"http://localhost:4200\",
+  \"viewportWidth\": 1600,
+  \"viewportHeight\": 900,
+  \"fileServerFolder\": \".\",
+  \"fixturesFolder\": \"cypress/fixtures\",
+  \"modifyObstructiveCode\": false,
+  \"screenshotOnRunFailure\": true,
+  \"video\": true,
+  \"videosFolder\": \"../../dist/cypress/apps/k6i-ui-e2e/videos\",
+  \"screenshotsFolder\": \"../../dist/cypress/apps/k6i-ui-e2e/screenshots\",
+  \"chromeWebSecurity\": false,
+  \"testFiles\": \"**/*.{feature,features}\",
+  \"defaultCommandTimeout\": 60000
+}
+">./cypress.json
+
+echo "// Snowpack Configuration File
+// See all supported options: https://www.snowpack.dev/reference/configuration
+
+/** @type {import(\"snowpack\").SnowpackUserConfig } */
+module.exports = {
+  mount: {
+    /* ... */
+  },
+  routes: [
+    {
+      match: 'routes',
+      src: '.*',
+      dest: '/index.html',
+    },
+  ],
+  plugins: [
+    /* ... */
+  ],
+  packageOptions: {
+    external: [
+      ...require('module').builtinModules,
+      ...Object.keys(require('./package.json').devDependencies),
+    ],
+  },
+  devOptions: {
+    /* ... */
+  },
+  buildOptions: {
+    /* ... */
+  },
+};
+">./snowpack.config.js
