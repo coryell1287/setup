@@ -24,7 +24,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
-          start: npm start
           command: make eTe URL=https://digitalai.k6i-ui-pr${{ github.event.number }}.tpl.digitalai.cloud
           browser: chrome
           headless: true
@@ -42,48 +41,21 @@ jobs:
           CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
           CYPRESS_E2E_CLIENT_ID: ${{ secrets.CYPRESS_E2E_CLIENT_ID }}
           CYPRESS_E2E_CLIENT_SECRET: ${{ secrets.CYPRESS_E2E_CLIENT_SECRET }}
-      - name: Upload artifacts
+      - name: Upload artifacts on failure
         uses: actions/upload-artifact@v2
         if: failure()
         with:
-          name: screenshots
+          name: chrome-screenshots
           path: dist/cypress/apps/k6i-ui-e2e/screenshots
       - name: e2e Chrome Report
         run: |
           make report BROWSER=$BROWSER
-
-  release:
-    runs-on: ubuntu-latest
-    name: Release Project
-    needs: chrome
-    steps:
-      - name: Download Cypress Artifacts
-        uses: actions/download-artifact@v2
+      - name: Upload cucumber report
+        if: success()
+        uses: actions/upload-artifact@v2
         with:
-          name: performance-artifacts
-      - name: View content
-        run: ls -R
-      - name: Create GitHub release
-        id: create-new-release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.run_number }}
-          release_name: Release ${{ github.run_number }}
-      - name: Archive site content
-        uses: thedoctor0/zip-release@master
-        with:
-          filename: site.zip
-      - name: Upload release asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create-new-release.outputs.upload_url }}
-          asset_path: ./site.zip
-          asset_name: site-v${{ github.run_number }}.zip
-          asset_content_type: application/zip
+          name: chrome-cucumber-report
+          path: apps/k6i-ui-e2e/cucumber-report
 
   firefox:
     runs-on: ubuntu-latest
@@ -94,7 +66,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
-          start: npm start
           command: make eTe URL=https://digitalai.k6i-ui-pr${{ github.event.number }}.tpl.digitalai.cloud
           browser: firefox
           headless: true
@@ -112,15 +83,21 @@ jobs:
           CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
           CYPRESS_E2E_CLIENT_ID: ${{ secrets.CYPRESS_E2E_CLIENT_ID }}
           CYPRESS_E2E_CLIENT_SECRET: ${{ secrets.CYPRESS_E2E_CLIENT_SECRET }}
-      - name: Upload artifacts
+      - name: Upload artifacts on failure
         uses: actions/upload-artifact@v2
         if: failure()
         with:
-          name: screenshots
+          name: firefox-screenshots
           path: dist/cypress/apps/k6i-ui-e2e/screenshots
       - name: e2e Firefox Report
         run: |
           make report BROWSER=$BROWSER
+      - name: Upload cucumber report
+        if: success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: firefox-cucumber-report
+          path: apps/k6i-ui-e2e/cucumber-report
 
   edge:
     name: E2E on Edge
@@ -131,7 +108,6 @@ jobs:
       - name: Cypress run
         uses: cypress-io/github-action@v2
         with:
-          start: npm start
           command: make eTe URL=https://digitalai.k6i-ui-pr${{ github.event.number }}.tpl.digitalai.cloud
           browser: edge
           headless: true
@@ -149,15 +125,21 @@ jobs:
           CYPRESS_E2E_USERNAME: ${{ secrets.CYPRESS_E2E_USERNAME }}
           CYPRESS_E2E_CLIENT_ID: ${{ secrets.CYPRESS_E2E_CLIENT_ID }}
           CYPRESS_E2E_CLIENT_SECRET: ${{ secrets.CYPRESS_E2E_CLIENT_SECRET }}
-      - name: Upload artifacts
+      - name: Upload artifacts on failure
         uses: actions/upload-artifact@v2
         if: failure()
         with:
-          name: screenshots
+          name: edge-screenshots
           path: dist/cypress/apps/k6i-ui-e2e/screenshots
       - name: e2e Firefox Report
         run: |
-          make report BROWSER=$BROWSER">.cypress-workflow.yml
+          make report BROWSER=$BROWSER
+      - name: Upload cucumber report
+        if: success()
+        uses: actions/upload-artifact@v2
+        with:
+          name: edge-cucumber-report
+          path: apps/k6i-ui-e2e/cucumber-report">.cypress-workflow.yml
 
 
 echo "export interface Browser {
