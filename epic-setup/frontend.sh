@@ -8,8 +8,12 @@ APP_NAME="$1"
 # MAJOR_VERSION=${NODE_VERSION%%.*}
 # GITHUB_URL="$3"
 
-mkdir -p "${APP_NAME}"/{public,src/{assets,common,providers,config,routing,pages,services,mocks,utils}}
+mkdir -p "${APP_NAME}"/{public,src/{assets,common/{nav-list,nav,types},providers,config,routing,pages,services,mocks,utils}}
 
+
+###########################
+#  Create index.html file
+###########################
 
 echo "
 
@@ -30,6 +34,9 @@ echo "
 
 ">./"${APP_NAME}"/public/index.html
 
+###########################
+#  Create app entry file
+###########################
 
 echo "import React from 'react';
 import ReactDOM from 'react-dom';
@@ -50,16 +57,10 @@ if (import.meta.hot) {
 }">./"${APP_NAME}"/src/index.tsx
 
 
-echo "describe('Test', () => {
-  it('should execute code', () => {
-    expect(1).toBe(1);
-  });
-});
 
-export {};">./"${APP_NAME}"/src/app.spec.tsx
-
-
-echo "node_modules">./"${APP_NAME}"/.gitignore
+###########################
+#  Create tsconfig file
+###########################
 
 echo "{
   \"\$schema\": \"https://json.schemastore.org/tsconfig\",
@@ -115,6 +116,10 @@ echo "{
 }">./"${APP_NAME}"/tsconfig.json
 
 
+################################
+#  Create snowpack config file
+################################
+
 echo "/** @type {import(\"snowpack\").SnowpackUserConfig } */
 export default {
   mount: {
@@ -154,6 +159,10 @@ export default {
 };">./"${APP_NAME}"/snowpack.config.mjs
 
 
+###########################
+#  Create jest config file
+###########################
+
 echo "{
   \"rootDir\": \".\",
   \"verbose\": true,
@@ -188,6 +197,9 @@ echo "{
   }
 }">./"${APP_NAME}"/jest.config.json
 
+##############################
+#  Create prettier config file
+##############################
 
 echo "{
   \"arrowParens\": \"avoid\",
@@ -215,6 +227,10 @@ echo "{
 echo "export {};">./"${APP_NAME}/mocks/styleMock.ts"
 
 
+##############################
+#  Create .editorconfig file
+##############################
+
 echo "root = true
 
 
@@ -235,6 +251,10 @@ trim_trailing_whitespace = false
 ">./"${APP_NAME}"/.editorconfig
 
 
+
+##############################
+#  Create .gitignore  file
+##############################
 echo "# Logs
 logs
 *.log
@@ -367,6 +387,138 @@ dist/
 # stryker temp files
 .stryker-tmp">./"${APP_NAME}"/.gitignore
 
+
+#######################################
+# Create Nav directories and files 
+#######################################
+
+
+echo "export { Nav } from './Nav';">./"${APP_NAME}"/src/common/nav/index.ts
+
+echo "import React, { ReactElement } from 'react';
+import { NavList } from '../nav-list';
+import { List } from '../types';
+import './navigation.css';
+
+const list: List[] = [
+  { label: 'About', href: '/about' },
+  { label: 'Products', href: '/products' },
+  { label: 'Our team', href: '/team' },
+  { label: 'Contact', href: '/contact' },
+];
+
+export const Nav = (): ReactElement => {
+  return (
+    <nav data-testid=\"main-nav\">
+      <ul className=\"main-nav\">
+        <NavList menuitems={list} />
+      </ul>
+    </nav>
+  );
+};">./"${APP_NAME}"/src/common/nav/Nav.tsx
+
+
+
+echo ".main-nav {
+  display: flex;
+  width: 500px;
+  float: right;
+}
+
+.main-nav li:last-child {
+  margin-left: auto;
+}
+
+.main-nav li {
+  height: 45px;
+  width: 100px;
+}">./"${APP_NAME}"/src/common/nav/nav.css
+
+
+echo "import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { Nav } from './Nav';
+
+describe('<Nav/>', () => {
+  it('should load the <Nav/> component', () => {
+    render(<Nav />);
+    expect(screen.getByTestId('main-nav')).toBeInTheDocument();
+  });
+});
+">./"${APP_NAME}"/src/common/nav/nav.spec.tsx
+
+#######################################
+# Create NavList directories and files 
+#######################################
+
+
+echo "export { NavList } from './NavList';">./"${APP_NAME}"/src/common/nav-list/index.ts
+
+
+echo "import { render, screen } from '@testing-library/react';
+import React from 'react';
+import type { List } from '../types/index';
+import { NavList } from './NavList';
+
+describe('<NavList/>', () => {
+  it('should render list items inside of the NavList', () => {
+    const list: List[] = [
+      { label: 'About', href: '/about' },
+      { label: 'Products', href: '/products' },
+      { label: 'Our team', href: '/team' },
+      { label: 'Contact', href: '/contact' },
+    ];
+
+    render(<NavList menuitems={list} />);
+    const menuitems = screen.getAllByTestId('menu-item').map(item => item.textContent);
+    const labels = list.map(a => a.label);
+
+    expect(menuitems).toEqual(labels);
+  });
+
+  it('should render nav links inside of the NavList', () => {
+    const list: List[] = [
+      { label: 'About', href: '/about' },
+      { label: 'Products', href: '/products' },
+      { label: 'Our team', href: '/team' },
+      { label: 'Contact', href: '/contact' },
+    ];
+
+    render(<NavList menuitems={list} />);
+    const navLinks = Array.from(screen.getAllByTestId('nav-link')).map(item => item.getAttribute('href'));
+    const href = list.map(item => item.href);
+    expect(navLinks).toEqual(href);
+  });
+});">./"${APP_NAME}"/src/common/nav-list/NavList.spec.tsx
+
+
+
+echo "import React, { ReactElement } from 'react';
+import { List } from '../types/index';
+
+interface NavListProps {
+  menuitems: List[];
+}
+
+export const NavList = ({ menuitems }: NavListProps): ReactElement => {
+  return (
+    <>
+      {menuitems.map(({ label, href }, index) => {
+        return (
+          <li key={index + label} data-testid=\"menu-item\">
+            <a data-testid=\"nav-link\" href={href}>{label}</a>
+          </li>
+        );
+      })}
+    </>
+  );
+};">./"${APP_NAME}"/src/common/nav-list/NavList.tsx
+
+
+echo "export interface List {
+  label: string;
+  href: string;
+}">./"${APP_NAME}"/src/common/types/index.ts
 
 #######################################
 # NPM package installation for SERVER 
