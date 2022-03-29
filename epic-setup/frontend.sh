@@ -15,14 +15,14 @@ mkdir -p "${APP_NAME}"/{public,src/{assets,common/{nav-list,nav,types},providers
 #  Create index.html file
 ###########################
 
-echo "
-
-<!DOCTYPE html>
+echo "<!DOCTYPE html>
 <html lang=\"en\">
 <head>
     <meta charset=\"UTF-8\">
     <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">
     <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+    <link rel=\"stylesheet\" href=\"./reset.css\">
+    <link rel=\"stylesheet\" href=\"./main.css\">
     <title>${APP_NAME}</title>
 </head>
 <body>
@@ -34,15 +34,69 @@ echo "
 
 ">./"${APP_NAME}"/public/index.html
 
+
+
+echo "html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}">./"${APP_NAME}"/public/reset.css
+
+
+
+echo "h1 {
+  font-size: 24px;
+  padding: 15px 5px;
+}">./"${APP_NAME}"/public/main.css
+
 ###########################
 #  Create app entry file
 ###########################
 
-echo "import React from 'react';
+echo "import React, { ReactElement } from 'react';
 import ReactDOM from 'react-dom';
+import { Nav } from './common/nav/Nav';
 
-function App(): React.ReactElement {
-  return <div>Typescript enabled</div>;
+function App(): ReactElement {
+  return <Nav />;
 }
 
 ReactDOM.render(
@@ -107,7 +161,6 @@ echo "{
     \"strictFunctionTypes\": true,
     \"strictNullChecks\": true,
     \"strictPropertyInitialization\": true,
-    \"target\": \"esnext\",
     \"target\": \"esnext\",
     \"types\": [\"snowpack-env\", \"@testing-library/jest-dom\"]
   },
@@ -224,7 +277,7 @@ echo "{
 }">./"${APP_NAME}"/.prettierrc.json
 
 
-echo "export {};">./"${APP_NAME}/mocks/styleMock.ts"
+echo "export {};">./"${APP_NAME}/src/mocks/styleMock.ts"
 
 
 ##############################
@@ -398,7 +451,7 @@ echo "export { Nav } from './Nav';">./"${APP_NAME}"/src/common/nav/index.ts
 echo "import React, { ReactElement } from 'react';
 import { NavList } from '../nav-list';
 import { List } from '../types';
-import './navigation.css';
+import './nav.css';
 
 const list: List[] = [
   { label: 'About', href: '/about' },
@@ -538,13 +591,14 @@ npm i -D @snowpack/plugin-react-refresh \
     @types/react-dom \
     @types/snowpack-env \
     @testing-library/jest-dom \
+    @testing-library/react \
     jest \
     ts-jest \
     snowpack \
 
 
-npm i -S react \
-    react-dom \
+npm i -S react@17 \
+    react-dom@17 \
 
 
 npm set-script start "snowpack dev"
