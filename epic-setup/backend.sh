@@ -1120,13 +1120,13 @@ export interface IRequestBody {
 # Initialize github repo for SERVER 
 #######################################
 cd ./"${APP_NAME}" &&
-git init 2>&1> /dev/null &&
-git remote add origin "${GITHUB_URL}" 2>&1> /dev/null
+git init > /dev/null 2>&1 &&
+git remote add origin "${GITHUB_URL}" > /dev/null 2>&1
 
 #######################################
 # NPM package installation for SERVER 
 #######################################
-npm init -y 2>&1> /dev/null
+npm init -y > /dev/null 2>&1
 
 npm i fastify \
     fastify-compress \
@@ -1175,11 +1175,11 @@ npm i -D rimraf \
     nodemon \
 
 # setup husky and commitizen
-npx husky install 2>&1> /dev/null
-npx commitizen init cz-conventional-changelog --save-dev --save-exact 2>&1> /dev/null
-npx husky add .husky/pre-commit "npm run lint" 2>&1> /dev/null
-npx husky add .husky/pre-commit "npx pretty-quick --staged" 2>&1> /dev/null
-npx husky add .husky/pre-commit "npm run inspect:doctor" 2>&1> /dev/null
+npx husky install > /dev/null 2>&1
+npx commitizen init cz-conventional-changelog --save-dev --save-exact > /dev/null 2>&1
+npx husky add .husky/pre-commit "npm run lint" > /dev/null 2>&1
+npx husky add .husky/pre-commit "npx pretty-quick --staged" > /dev/null 2>&1
+npx husky add .husky/pre-commit "npm run inspect:doctor" > /dev/null 2>&1
 
 
 

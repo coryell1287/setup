@@ -39,7 +39,7 @@ read_from_terminal() {
     read -p "Enter github url: " GITHUB_URL
     NODE=$(node -v)
     NODE_VERSION="${NODE#?}"
-    symlink=$(read_symbolic_link $(which epic-setup))
+    symlink=$(read_symbolic_link "$(which epic-setup)")
     execute_setup "$symlink" "$APP_NAME" "$NODE_VERSION" "$GITHUB_URL"
 }
 
@@ -66,10 +66,9 @@ while getopts n:d:s: flag; do
 done
 
 if [[ ! -z "$APP_NAME" && ! -z "$DATABASE" && ! -z "$SERVICE_NAME" ]]; then
-    symlink=$(read_symbolic_link $(which epic-setup))
+    symlink=$(read_symbolic_link "$(which epic-setup)")
     make_script_executable "${symlink}/db/${DATABASE}.sh"
     "${symlink}/db/${DATABASE}.sh" "${APP_NAME}" "$SERVICE_NAME"
 else
     read_from_terminal
 fi
-
