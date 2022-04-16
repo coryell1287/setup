@@ -92,18 +92,19 @@ echo "h1 {
 ###########################
 
 echo "import React, { ReactElement } from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { Nav } from './common/nav/Nav';
+
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLDivElement);
 
 function App(): ReactElement {
   return <Nav />;
 }
 
-ReactDOM.render(
+root.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
-  document.getElementById('root'),
 );
 
 if (import.meta.hot) {
@@ -115,7 +116,6 @@ if (import.meta.hot) {
 ###########################
 #  Create tsconfig file
 ###########################
-
 echo "{
   \"\$schema\": \"https://json.schemastore.org/tsconfig\",
   \"compilerOptions\": {
@@ -127,6 +127,7 @@ echo "{
     \"checkJs\": true,
     \"composite\": true,
     \"declaration\": true,
+    \"declarationDir\": \"./types\",
     \"declarationMap\": true,
     \"downlevelIteration\": true,
     \"emitDecoratorMetadata\": true,
@@ -135,6 +136,23 @@ echo "{
     \"forceConsistentCasingInFileNames\": true,
     \"importHelpers\": true,
     \"isolatedModules\": true,
+     \"lib\": [
+      \"es5\",
+      \"es6\",
+      \"dom\",
+      \"es2015.core\",
+      \"es2015.collection\",
+      \"es2015.generator\",
+      \"es2015.iterable\",
+      \"es2015.promise\",
+      \"es2015.proxy\",
+      \"es2015.reflect\",
+      \"es2015.symbol\",
+      \"es2015.symbol.wellknown\",
+      \"esnext.asynciterable\",
+      \"es2019\",
+      \"ESNext\"
+    ],
     \"module\": \"esnext\",
     \"moduleResolution\": \"node\",
     \"noEmit\": true,
@@ -279,6 +297,78 @@ echo "{
 
 echo "export {};">./"${APP_NAME}/src/mocks/styleMock.ts"
 
+
+##############################
+#  Create .eslint file
+##############################
+
+
+echo "{
+  \"root\": true,
+  \"parser\": \"@typescript-eslint/parser\",
+   \"env\": {
+        \"browser\": true,
+        \"es2021\": true
+    },
+  \"extends\": [
+    \"plugin:jest/all\",
+    \"plugin:@typescript-eslint/recommended\",
+    \"plugin:jsx-a11y/recommended\",
+    \"plugin:react-hooks/recommended\",
+    \"plugin:import/errors\",
+    \"plugin:import/warnings\"
+  ],
+  \"plugins\": [\"testing-library\", \"import\", \"@typescript-eslint\", \"react\", \"prettier\"],
+  \"parserOptions\": {
+    \"ecmaVersion\": \"latest\",
+    \"sourceType\": \"module\"
+  },
+  \"rules\": {
+    \"no-unused-expressions\": \"off\",
+    \"@typescript-eslint/explicit-function-return-type\": \"off\",
+    \"@typescript-eslint/no-explicit-any\": \"error\",
+    \"jest/prefer-expect-assertions\": \"error\",
+    \"jest/no-hooks\": \"off\",
+    \"jest/no-disabled-tests\": \"off\",
+    \"jest/prefer-called-with\": \"off\",
+    \"@typescript-eslint/no-inferrable-types\": [
+      \"warn\",
+      {
+        \"ignoreParameters\": true
+      }
+    ],
+    \"@typescript-eslint/no-unused-vars\": \"warn\",
+    \"prettier/prettier\": \"error\",
+    \"import/order\": [
+      \"error\",
+      {
+        \"groups\": [\"builtin\", \"external\", \"internal\", \"parent\", \"sibling\", \"index\", \"unknown\"],
+        \"newlines-between\": \"always\"
+      }
+    ]
+  },
+  \"overrides\": [
+    {
+      \"files\": [\"**/*.spec.js\"],
+      \"env\": {
+        \"jest\": true
+      }
+    }
+  ],
+  \"settings\": {
+    \"import/resolver\": {
+      \"alias\": {
+        \"map\": [
+          [\"@assets\", \"./src/assets\"],
+          [\"@components\", \"./src/components\"],
+          [\"@types/*\", \"./src/types/*\"],
+          [\"@styles\", \"./src/styles\"]
+        ],
+        \"extensions\": [\".js\", \".ts\", \".tsx\", \".json\", \".ico\"]
+      }
+    }
+  }
+}">./"${APP_NAME}"/.eslintrc.json
 
 ##############################
 #  Create .editorconfig file
@@ -574,28 +664,44 @@ echo "export interface List {
 }">./"${APP_NAME}"/src/common/types/index.ts
 
 #######################################
-# NPM package installation for SERVER 
+# Initialize github repo for SERVER 
 #######################################
 cd ./"${APP_NAME}" &&
-
 git init > /dev/null 2>&1 &&
+# git remote add origin "${GITHUB_URL}" > /dev/null 2>&1
 
+#######################################
+# NPM package installation for SERVER 
+#######################################
 npm init -y > /dev/null 2>&1
 
-
-npm i -D @snowpack/plugin-react-refresh \
-    @snowpack/plugin-typescript \
-    @snowpack/plugin-webpack \
+npm i -D jest \
+    ts-jest \
+    snowpack \
     @types/jest \
     @types/react \
     @types/react-dom \
-    @types/snowpack-env \
+    @typescript-eslint/parser \
+    eslint \
+    eslint-config-prettier \
+    eslint-import-resolver-alias \
+    eslint-plugin-import \
+    eslint-plugin-jest \
+    eslint-plugin-jsx-a11y \
+    eslint-plugin-prettier \
+    eslint-plugin-react \
+    eslint-plugin-react-hooks \
+    eslint-plugin-testing-library \
+    prettier \
     @testing-library/jest-dom \
+    @testing-library/user-event \
     @testing-library/react \
-    jest \
-    ts-jest \
-    snowpack \
-
+    @testing-library/react-hooks \
+    @snowpack/plugin-react-refresh \
+    @snowpack/plugin-typescript \
+    @snowpack/plugin-webpack \
+    @types/snowpack-env \
+    typescript \
 
 npm i -S react@17 \
     react-dom@17 \
