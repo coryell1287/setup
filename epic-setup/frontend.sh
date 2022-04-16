@@ -306,10 +306,10 @@ echo "export {};">./"${APP_NAME}/src/mocks/styleMock.ts"
 echo "{
   \"root\": true,
   \"parser\": \"@typescript-eslint/parser\",
-   \"env\": {
-        \"browser\": true,
-        \"es2021\": true
-    },
+  \"env\": {
+    \"browser\": true,
+    \"es2021\": true
+  },
   \"extends\": [
     \"plugin:jest/all\",
     \"plugin:@typescript-eslint/recommended\",
